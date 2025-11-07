@@ -9,8 +9,8 @@ authRouter.post("/sign-up/otp/send", AuthValidation.sendOTP, authController.send
 authRouter.post("/sign-up/otp/check", AuthValidation.checkOTP, authController.checkOTP);
 authRouter.post("/sign-up/set-password", AuthValidation.setPassword, authController.setPassword);
 authRouter.post("/login", AuthValidation.login, authController.login);
-// authRouter.post("/forget-password/otp/send", AuthValidation.sendOTP, authController.sendOTP);
-// authRouter.post("/forget-password/otp/check", AuthValidation.checkOTP, authController.checkOTP);
-// authRouter.post("/forget-password/set-password", AuthValidation.setPassword, authController.setPassword);
+authRouter.post("/forget-password/otp/send", AuthValidation.sendOTP, authController.sendOTP);
+authRouter.post("/forget-password/otp/check", AuthValidation.checkOTP, authController.checkOTP);
+authRouter.post("/forget-password/set-password", AuthValidation.setPassword, authController.changePassword);
 
 export default authRouter;

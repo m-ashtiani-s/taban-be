@@ -108,4 +108,25 @@ export default class AuthController extends ControllerBase {
 			});
 		}
 	};
+	changePassword = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const username = req.body.username as string;
+			const password = req.body.password as string;
+			const result = await authService.changePassword(username, password);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "changePassword",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در تایید کد تایید رخ داد",
+			});
+		}
+	};
 }

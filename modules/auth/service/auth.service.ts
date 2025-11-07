@@ -27,7 +27,7 @@ export default class AuthService {
 		const expireTime = new Date(now.getTime() + 2 * 60 * 1000);
 
 		if (existingOtp) {
-			if (existingOtp.expireTime > now) {
+			if (existingOtp.expireTime > now && !existingOtp?.approved) {
 				throw new BadRequestError("کد تایید در ۲ دقیقه اخیر ارسال شده است. لطفاً بعداً تلاش کنید");
 			}
 
@@ -123,6 +123,35 @@ export default class AuthService {
 			success: true,
 			message: "ورود با موفقیت انجام شد",
 			data: new AuthTransform().login(user),
+		};
+	}
+	async changePassword(username: string, password: string) {
+		const existingOtp = await this.otpRepository.findByOtpId(username);
+		const now = new Date();
+
+		if (existingOtp) {
+			const tenMin = new Date(existingOtp.expireTime.getTime() + 10 * 60000);
+			if (tenMin < now) {
+				throw new BadRequestError("مدت زمان زیادی از تایید شماره همراه گذشته، لطفا مجددا تلاش کنید");
+			} else if (!existingOtp?.approved) {
+				throw new BadRequestError("این شماره تایید نشده است");
+			}
+			const user = await this.userRepository.findByUsername(username);
+			if (!user) {
+				throw new BadRequestError("این کاربری وجود ندارد");
+			}
+			await this.userRepository.updateUser(user,{
+				password: password,
+			});
+			await this.otpRepository.deleteOtp(existingOtp);
+		} else {
+			throw new BadRequestError("کد تاییدی برای این کاربری ارسال نشده");
+		}
+		return {
+			field: "changePassword",
+			success: true,
+			message: "رمز عبور با موفقیت ایجاد شد",
+			data: null,
 		};
 	}
 }

@@ -13,13 +13,11 @@ export default class UserRepository {
 		const user = new userModel(data);
 		return user.save();
 	}
-
-	async updateOtp(user: UserDocument, data: Partial<UserDocument>): Promise<UserDocument> {
-		Object.assign(user, data);
-		return user.save();
-	}
-
 	async deleteOtp(user: UserDocument): Promise<void> {
 		await user.deleteOne();
+	}
+	async updateUser(user: UserDocument, data: Partial<UserDocument>): Promise<UserDocument> {
+		Object.assign(user, data);
+		return user.save();
 	}
 }
