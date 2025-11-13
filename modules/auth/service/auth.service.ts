@@ -91,23 +91,22 @@ export default class AuthService {
 			if (!!user) {
 				throw new BadRequestError("این کاربری وجود دارد");
 			}
-			await this.userRepository.createUser({
-				name: "",
+			const newUser = await this.userRepository.createUser({
 				username: username,
 				password: password,
 				role: "USER",
 				profilePic: "",
 			});
 			await this.otpRepository.deleteOtp(existingOtp);
+			return {
+				field: "setPassword",
+				success: true,
+				message: "کاربری با موفقیت ایجاد شد",
+				data: new AuthTransform().login(newUser),
+			};
 		} else {
 			throw new BadRequestError("کد تاییدی برای این کاربری ارسال نشده");
 		}
-		return {
-			field: "setPassword",
-			success: true,
-			message: "کاربری با موفقیت ایجاد شد",
-			data: null,
-		};
 	}
 	async login(username: string, password: string) {
 		const user = await this.userRepository.findByUsername(username);
@@ -140,7 +139,7 @@ export default class AuthService {
 			if (!user) {
 				throw new BadRequestError("این کاربری وجود ندارد");
 			}
-			await this.userRepository.updateUser(user,{
+			await this.userRepository.updateUser(user, {
 				password: password,
 			});
 			await this.otpRepository.deleteOtp(existingOtp);

@@ -11,7 +11,7 @@ export default class ControllerBase {
 		}));
 
 		return res.status(400).json({
-			fields: "validation",
+			field: "validation",
 			success: false,
 			data: null,
 			message: errorArray,

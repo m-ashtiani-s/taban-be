@@ -3,20 +3,25 @@ import bcrypt from "bcryptjs";
 import mongoosePaginate from "mongoose-paginate-v2";
 
 export interface User {
-	name: string;
 	username: string;
 	role: string;
 	password: string;
 	profilePic?: string;
 	isActive: boolean;
+	firstName?: string;
+	lastName?: string;
+	birthDate?: string;
+	email?: string;
+	gender?: string;
+	state?: string;
+	city?: string;
+	referralSource?: string;
 }
 
 export interface UserDocument extends User, Document {}
 
-
 const userSchema = new mongoose.Schema(
 	{
-		name: String,
 		username: {
 			type: String,
 			unique: true,
@@ -33,6 +38,38 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			required: true,
 			default: true,
+		},
+		firstName: {
+			type: String,
+			required: false,
+		},
+		lastName: {
+			type: String,
+			required: false,
+		},
+		birthDate: {
+			type: String,
+			required: false,
+		},
+		email: {
+			type: String,
+			required: false,
+		},
+		gender: {
+			type: String,
+			required: false,
+		},
+		state: {
+			type: String,
+			required: false,
+		},
+		city: {
+			type: String,
+			required: false,
+		},
+		referralSource: {
+			type: String,
+			required: false,
 		},
 	},
 	{ timestamps: true }
