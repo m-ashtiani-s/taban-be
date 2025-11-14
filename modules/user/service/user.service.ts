@@ -3,6 +3,7 @@ import { IncompleteItem, ProfileCompletionCheckDto } from "../dto/profileComplet
 import { UpdateUserRequestDto } from "../dto/updateUserRequest.dto";
 import { UserDocument } from "../model/user.model";
 import UserRepository from "../repository/user.repository";
+import UserTransform from "../transform/user.transform";
 
 export default class UserService {
 	private userRepository = new UserRepository();
@@ -58,6 +59,18 @@ export default class UserService {
 			success: true,
 			data: null,
 			message: "پروفایل با موفقیت به روز شد",
+		};
+	}
+	async getUser(userId: string) {
+		const user = await this.userRepository.findByUserId(userId);
+		if (!user) {
+			throw new BadRequestError("مشکلی در یافتن کاربری شما بوجود آمد");
+		}
+		return {
+			field: "getUser",
+			success: true,
+			data: new UserTransform().user(user),
+			message: "پروفایل با موفقیت دریافت شد",
 		};
 	}
 }

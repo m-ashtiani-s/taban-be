@@ -56,4 +56,23 @@ export default class UserController extends ControllerBase {
 			});
 		}
 	};
+	getUser = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const result = await userService.getUser(req.user?._id as string);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "getUser",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در بررسی پروفایل رخ داد",
+			});
+		}
+	};
 }

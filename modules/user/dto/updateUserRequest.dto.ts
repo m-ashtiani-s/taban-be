@@ -5,7 +5,7 @@ export interface UpdateUserRequestDto {
 	birthDate: string;
 	email: string;
 	gender: string;
-	state: string;
-	city: string;
+	state: number;
+	city: number;
 	referralSource: string;
 }

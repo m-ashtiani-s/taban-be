@@ -13,8 +13,8 @@ export interface User {
 	birthDate?: string;
 	email?: string;
 	gender?: string;
-	state?: string;
-	city?: string;
+	state?: number;
+	city?: number;
 	referralSource?: string;
 }
 
@@ -60,11 +60,11 @@ const userSchema = new mongoose.Schema(
 			required: false,
 		},
 		state: {
-			type: String,
+			type: Number,
 			required: false,
 		},
 		city: {
-			type: String,
+			type: Number,
 			required: false,
 		},
 		referralSource: {
