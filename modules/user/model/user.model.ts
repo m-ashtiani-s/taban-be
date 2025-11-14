@@ -8,12 +8,13 @@ export interface User {
 	password: string;
 	profilePic?: string;
 	isActive: boolean;
+	nationalId?: string;
 	firstName?: string;
 	lastName?: string;
 	birthDate?: string;
 	email?: string;
 	gender?: string;
-	state?: number;
+	province?: number;
 	city?: number;
 	referralSource?: string;
 }
@@ -39,6 +40,10 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			default: true,
 		},
+		nationalId: {
+			type: String,
+			required: false,
+		},
 		firstName: {
 			type: String,
 			required: false,
@@ -59,7 +64,7 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: false,
 		},
-		state: {
+		province: {
 			type: Number,
 			required: false,
 		},

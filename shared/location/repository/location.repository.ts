@@ -54,16 +54,16 @@ export default class LocationRepository {
 		if (term) {
 			const newResult = citiesData.filter((p) => {
 				if (provinceId) {
-					return p.name.includes(term) && p?.stateId === provinceId;
+					return p.name.includes(term) && p?.provinceId === provinceId;
 				} else {
-					console.log("p?.stateId === provinceId");
+					console.log("p?.provinceId === provinceId");
 					return p.name.includes(term);
 				}
 			});
 			result = newResult;
 		} else if (provinceId) {
 			const newResult = citiesData.filter((p) => {
-				return p?.stateId === provinceId;
+				return p?.provinceId === provinceId;
 			});
 			result = newResult;
 		} else {

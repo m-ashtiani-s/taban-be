@@ -20,8 +20,8 @@ export default class UserService {
 			{ itemKey: "lastName", itemName: "نام خانوادگی" },
 			{ itemKey: "birthDate", itemName: "تاریخ تولد" },
 			{ itemKey: "email", itemName: "ایمیل" },
-			{ itemKey: "gender", itemName: "جنسیت" },
-			{ itemKey: "state", itemName: "استان" },
+			// { itemKey: "gender", itemName: "جنسیت" },
+			{ itemKey: "province", itemName: "استان" },
 			{ itemKey: "city", itemName: "شهر" },
 			{ itemKey: "referralSource", itemName: "راه آشنایی با ما" },
 		];

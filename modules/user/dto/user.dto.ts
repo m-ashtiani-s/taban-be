@@ -6,11 +6,12 @@ export interface UserDto {
 	isActive: boolean;
 	firstName?: string;
 	lastName?: string;
+	fullName?: string;
 	birthDate?: string;
 	email?: string;
 	gender?: string;
-	stateId?: number | null;
-	stateName?: string;
+	provinceId?: number | null;
+	provinceName?: string;
 	cityId?: number | null;
 	cityName?: string;
 	referralSource?: string;

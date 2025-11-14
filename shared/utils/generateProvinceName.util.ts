@@ -1,7 +1,7 @@
 import LocationRepository from "../location/repository/location.repository";
 
-export function generateStateName(stateId: number) {
+export function generateProvinceName(provinceId: number) {
 	const locationRepository = new LocationRepository();
-	const province =  locationRepository.findProvinceById(stateId);
+	const province =  locationRepository.findProvinceById(provinceId);
 	return province?.name ?? "";
 }

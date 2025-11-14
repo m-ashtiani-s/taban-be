@@ -35,12 +35,13 @@ export default class UserController extends ControllerBase {
 		try {
 			const updateUserData: UpdateUserRequestDto = {
 				profilePic: req?.body?.profilePic ?? "",
+				nationalId: req?.body?.nationalId ?? "",
 				firstName: req?.body?.firstName ?? "",
 				lastName: req?.body?.lastName ?? "",
 				birthDate: req?.body?.birthDate ?? "",
 				email: req?.body?.email ?? "",
 				gender: req?.body?.gender ?? "",
-				state: req?.body?.state ?? "",
+				province: req?.body?.province ?? "",
 				city: req?.body?.city ?? "",
 				referralSource: req?.body?.referralSource ?? "",
 			};
