@@ -3,7 +3,7 @@ import mongoose, { Model, Schema, Document } from "mongoose";
 export interface TranslationItem {
 	title: string;
 	documentType: string;
-	isActive: boolean; 
+	isActive: boolean;
 }
 
 export type TranslationItemDocument = TranslationItem & Document;
@@ -13,10 +13,12 @@ const translationItemSchema = new Schema(
 		title: {
 			type: String,
 			required: true,
+			unique: true,
 		},
 		documentType: {
 			type: String,
 			required: true,
+			unique: true,
 		},
 		isActive: {
 			type: Boolean,

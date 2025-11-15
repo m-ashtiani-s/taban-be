@@ -11,6 +11,10 @@ export default class TranslationService {
 		if (translationItem) {
 			throw new BadRequestError("یک سند با این عنوان وجود دارد");
 		}
+		const translationItemByDocumentType = await this.translationRepository.findTranslationItemByDocumentType(documentType);
+		if (translationItemByDocumentType) {
+			throw new BadRequestError("یک سند با این نوع وجود دارد");
+		}
 		await this.translationRepository.createTranslationItem({
 			title,
 			documentType,

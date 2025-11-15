@@ -9,6 +9,9 @@ export default class TranslationRepository {
 	async findTranslationItemByTitle(title: string): Promise<TranslationItemDocument | null> {
 		return TranslationItemModel.findOne({ title });
 	}
+	async findTranslationItemByDocumentType(documentType: string): Promise<TranslationItemDocument | null> {
+		return TranslationItemModel.findOne({ documentType });
+	}
 	async findTranslationItems(filters: GetTranslationItemsFilters): Promise<TranslationItemDocument[] | null> {
 		const query: FilterQuery<TranslationItemDocument> = {};
 		if (typeof filters.isActive === "boolean") {
