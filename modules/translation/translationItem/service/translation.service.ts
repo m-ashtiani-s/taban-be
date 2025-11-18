@@ -1,4 +1,4 @@
-import { BadRequestError } from "../../../shared/base/badRequestError.error";
+import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
 import TranslationRepository from "../repositories/translation.repository";
 import TranslationTransform from "../transform/translation.transform";
@@ -33,7 +33,7 @@ export default class TranslationService {
 			throw new BadRequestError("مشکلی در یافتن سند ها بوجود آمد");
 		}
 		return {
-			field: "createTranslationItem",
+			field: "getTranslationItems",
 			success: true,
 			message: "لیست اسناد با موفقیت دریافت شد",
 			data: new TranslationTransform().translationItems(translationItems),

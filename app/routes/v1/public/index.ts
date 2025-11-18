@@ -1,5 +1,6 @@
 import express from "express";
 import LocationController from "../../../../shared/location/controller/location.controller";
+import translationItemsRouter from "./translation/translation-items";
 import translationRouter from "./translation";
 
 const publicRouter = express.Router();

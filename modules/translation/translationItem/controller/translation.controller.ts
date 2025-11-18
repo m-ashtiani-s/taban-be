@@ -1,10 +1,10 @@
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
-import ControllerBase from "../../../shared/base/controller.base";
+import ControllerBase from "../../../../shared/base/controller.base";
 import AuthService from "../service/translation.service";
-import { ControllerError } from "../../../types/controllerError.type";
+import { ControllerError } from "../../../../types/controllerError.type";
 import TranslationService from "../service/translation.service";
-import { convertStringToBoolean } from "../../../shared/utils/convertStringToBoolean.util";
+import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
 const translationService = new TranslationService();
 
@@ -51,7 +51,7 @@ export default class TranslationController extends ControllerBase {
 				field: "getTranslationItems",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در ایجاد مدرک رخ داد",
+				message: error.message || "مشکلی در دریافت مدرک رخ داد",
 			});
 		}
 	};

@@ -1,10 +1,9 @@
 import express from "express";
-import RateController from "../../../../../modules/rate/controller/rate.controller";
-import TranslationValidation from "../../../../../modules/translation/validation/translation.validation";
-import TranslationController from "../../../../../modules/translation/controller/rate.controller";
+import translationItemsRouter from "./translation-items";
+import languagesRouter from "./languages";
 
 const translationRouter = express.Router();
-const translationController = new TranslationController();
 
-translationRouter.get("/translation-items", translationController.getTranslationItems);
+translationRouter.use("/translation-items", translationItemsRouter);
+translationRouter.use("/languages", languagesRouter);
 export default translationRouter;
