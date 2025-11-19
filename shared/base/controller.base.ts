@@ -3,7 +3,6 @@ import { Response } from "express";
 
 export default class ControllerBase {
 	showValidationErrors(res: Response, errors: Result<ValidationError>) {
-		console.log(errors);
 		const errorArray = errors.array().map((error) => ({
 			//@ts-ignore //it is handeled in new version
 			field: error?.path,

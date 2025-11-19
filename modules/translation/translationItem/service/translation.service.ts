@@ -1,21 +1,21 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
-import TranslationRepository from "../repositories/translation.repository";
+import TranslationItemRepository from "../repositories/translation.repository";
 import TranslationTransform from "../transform/translation.transform";
 
 export default class TranslationService {
-	private translationRepository = new TranslationRepository();
+	private translationItemRepository = new TranslationItemRepository();
 
 	async createTranslationItem(title: string, documentType: string) {
-		const translationItem = await this.translationRepository.findTranslationItemByTitle(title);
+		const translationItem = await this.translationItemRepository.findTranslationItemByTitle(title);
 		if (translationItem) {
 			throw new BadRequestError("یک سند با این عنوان وجود دارد");
 		}
-		const translationItemByDocumentType = await this.translationRepository.findTranslationItemByDocumentType(documentType);
+		const translationItemByDocumentType = await this.translationItemRepository.findTranslationItemByDocumentType(documentType);
 		if (translationItemByDocumentType) {
 			throw new BadRequestError("یک سند با این نوع وجود دارد");
 		}
-		await this.translationRepository.createTranslationItem({
+		await this.translationItemRepository.createTranslationItem({
 			title,
 			documentType,
 			isActive: true,
@@ -28,7 +28,7 @@ export default class TranslationService {
 		};
 	}
 	async getTranslationItems(filters: GetTranslationItemsFilters) {
-		const translationItems = await this.translationRepository.findTranslationItems(filters);
+		const translationItems = await this.translationItemRepository.findTranslationItems(filters);
 		if (!translationItems) {
 			throw new BadRequestError("مشکلی در یافتن سند ها بوجود آمد");
 		}

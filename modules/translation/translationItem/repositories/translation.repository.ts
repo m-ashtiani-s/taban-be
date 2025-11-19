@@ -2,7 +2,7 @@ import { FilterQuery } from "mongoose";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
 import TranslationItemModel, { TranslationItemDocument } from "../model/translationItem.mode";
 
-export default class TranslationRepository {
+export default class TranslationItemRepository {
 	async findByTranslationItemId(translationItemId: string): Promise<TranslationItemDocument | null> {
 		return TranslationItemModel.findById(translationItemId);
 	}

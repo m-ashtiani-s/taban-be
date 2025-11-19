@@ -27,7 +27,6 @@ export default class LocationService {
 			page,
 			pageSize,
 		});
-        console.log(term, pagination?.getOptions(),provinceId)
 		const provinces = await this.locationRepository.findCities(term, pagination?.getOptions(),provinceId);
 		return {
 			field: "cities",

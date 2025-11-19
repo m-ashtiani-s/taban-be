@@ -12,7 +12,7 @@ const languageSchema = new Schema(
 	{
 		languageName: { type: String, required: true, unique: true },
 		languageCode: { type: String, required: true, unique: true },
-		icon: { type: String }
+		icon: { type: String}
 	},
 	{ timestamps: true }
 );

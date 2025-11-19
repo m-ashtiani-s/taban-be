@@ -56,7 +56,6 @@ export default class LocationRepository {
 				if (provinceId) {
 					return p.name.includes(term) && p?.provinceId === provinceId;
 				} else {
-					console.log("p?.provinceId === provinceId");
 					return p.name.includes(term);
 				}
 			});
