@@ -6,5 +6,6 @@ const translationItemsRouter = express.Router();
 const translationController = new TranslationController();
 
 translationItemsRouter.get("/", translationController.getTranslationItems);
+translationItemsRouter.get("/:translationItemId", translationController.getTranslationItem);
 translationItemsRouter.post("/", TranslationValidation.createTranslationItem, translationController.createTranslationItem);
 export default translationItemsRouter;

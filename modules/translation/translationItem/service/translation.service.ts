@@ -40,4 +40,16 @@ export default class TranslationService {
 			data: new TranslationTransform().translationItems(translationItems),
 		};
 	}
+	async getTranslationItem(translationItemId: string) {
+		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
+		if (!translationItem) {
+			throw new BadRequestError("مشکلی در یافتن سند بوجود آمد");
+		}
+		return {
+			field: "getTranslationItem",
+			success: true,
+			message: "سند با موفقیت دریافت شد",
+			data: new TranslationTransform().translationItem(translationItem),
+		};
+	}
 }

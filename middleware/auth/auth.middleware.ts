@@ -6,7 +6,8 @@ const userRepository = new UserRepository();
 
 const AuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const token = req.headers["token"];
+		const baseToken = req.headers["authorization"];
+		const token = baseToken?.split(" ")[1]
 
 		if (!token || typeof token !== "string") {
 			return res.status(401).json({
