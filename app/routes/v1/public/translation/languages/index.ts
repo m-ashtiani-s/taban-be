@@ -5,4 +5,5 @@ const languagesRouter = express.Router();
 const languageController = new LanguageController();
 
 languagesRouter.get("/", languageController.getLanguages);
+languagesRouter.get("/:languageId", languageController.getLanguage);
 export default languagesRouter;

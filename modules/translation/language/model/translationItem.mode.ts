@@ -4,6 +4,7 @@ export interface Language {
 	languageName: string;
 	languageCode: string;
 	icon: string;
+	isActive: boolean;
 }
 
 export type LanguageDocument = Language & Document;
@@ -12,7 +13,11 @@ const languageSchema = new Schema(
 	{
 		languageName: { type: String, required: true, unique: true },
 		languageCode: { type: String, required: true, unique: true },
-		icon: { type: String}
+		icon: { type: String },
+		isActive: {
+			type: Boolean,
+			default: true,
+		},
 	},
 	{ timestamps: true }
 );

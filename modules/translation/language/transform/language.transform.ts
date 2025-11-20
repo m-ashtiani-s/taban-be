@@ -9,6 +9,7 @@ export default class TranslationTransform {
 			languageName: language?.languageName,
 			languageCode: language?.languageCode,
 			icon: language?.icon,
+			isActive: language?.isActive,
 		};
 		return loginData;
 	}

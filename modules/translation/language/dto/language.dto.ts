@@ -3,4 +3,5 @@ export interface LanguageDto {
 	languageName: string;
 	languageCode: string;
 	icon: string;
+	isActive: boolean;
 }

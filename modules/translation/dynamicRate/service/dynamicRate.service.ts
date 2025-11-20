@@ -49,7 +49,6 @@ export default class DynamicRateService {
 	}
 	async getDynamicRates(filters: GetDynamicRatesFilters) {
 		const dynamicRates = await this.dynamicRateRepository.findDynamicRates(filters, ["translationItem", "language"]);
-		console.log(filters)
 		if (!dynamicRates) {
 			throw new BadRequestError("مشکلی در یافتن نرخ خاص ها بوجود آمد");
 		}
