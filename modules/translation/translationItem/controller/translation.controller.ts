@@ -76,4 +76,44 @@ export default class TranslationController extends ControllerBase {
 			});
 		}
 	};
+	activateTranslationItem = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const translationItemId: string = req.params.translationItemId ?? "";
+			const result = await translationService.activateTranslationItem(translationItemId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "activateTranslationItem",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در فعالسازی مدرک رخ داد",
+			});
+		}
+	};
+	deactivateTranslationItem = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const translationItemId: string = req.params.translationItemId ?? "";
+			const result = await translationService.deactivateTranslationItem(translationItemId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "deactivateTranslationItem",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در غیرفعالسازی مدرک رخ داد",
+			});
+		}
+	};
 }

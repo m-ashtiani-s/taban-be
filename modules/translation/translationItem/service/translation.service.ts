@@ -52,4 +52,36 @@ export default class TranslationService {
 			data: new TranslationTransform().translationItem(translationItem),
 		};
 	}
+	async activateTranslationItem(translationItemId: string) {
+		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
+		if (!translationItem) {
+			throw new BadRequestError("مشکلی در یافتن مدرک بوجود آمد");
+		}
+		await this.translationItemRepository.updateTranslationItem(translationItem, {
+			isActive: true,
+		});
+
+		return {
+			field: "activateTranslationItem",
+			success: true,
+			data: null,
+			message: "مدرک با موفقیت فعال شد",
+		};
+	}
+	async deactivateTranslationItem(translationItemId: string) {
+		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
+		if (!translationItem) {
+			throw new BadRequestError("مشکلی در یافتن مدرک بوجود آمد");
+		}
+		await this.translationItemRepository.updateTranslationItem(translationItem, {
+			isActive: false,
+		});
+
+		return {
+			field: "deactivateTranslationItem",
+			success: true,
+			data: null,
+			message: "مدرک با موفقیت غیرفعال شد",
+		};
+	}
 }

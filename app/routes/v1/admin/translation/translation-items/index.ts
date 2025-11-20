@@ -8,4 +8,6 @@ const translationController = new TranslationController();
 translationItemsRouter.get("/", translationController.getTranslationItems);
 translationItemsRouter.get("/:translationItemId", translationController.getTranslationItem);
 translationItemsRouter.post("/", TranslationValidation.createTranslationItem, translationController.createTranslationItem);
+translationItemsRouter.post("/:translationItemId/activate", translationController.activateTranslationItem);
+translationItemsRouter.post("/:translationItemId/deactivate", translationController.deactivateTranslationItem);
 export default translationItemsRouter;
