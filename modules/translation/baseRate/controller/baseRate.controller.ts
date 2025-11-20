@@ -52,4 +52,23 @@ export default class BaseRateController extends ControllerBase {
 			});
 		}
 	};
+	getBaseRate = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const baseRateId: string =req.params.baseRateId;
+			const result = await baseRateService.getBaseRate(baseRateId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "getBaseRate",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در دریافت نرخ پایه رخ داد",
+			});
+		}
+	};
 }

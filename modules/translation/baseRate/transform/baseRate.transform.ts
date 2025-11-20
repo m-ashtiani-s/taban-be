@@ -9,6 +9,7 @@ export default class TranslationTransform {
 		const language = baseRate.language as LanguageDocument;
 
 		return {
+			baseRateId: baseRate?._id as string,
 			translationItemId: translationItem._id?.toString() || translationItem.toString(),
 			translationItemName: translationItem.title || "",
 			languageId: language._id?.toString() || language.toString(),

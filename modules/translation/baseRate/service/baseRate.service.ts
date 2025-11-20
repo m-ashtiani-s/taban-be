@@ -51,4 +51,16 @@ export default class BaseRateService {
 			data: new BaseRateTransform().baseRates(baseRates),
 		};
 	}
+	async getBaseRate(baseRateId: string) {
+		const baseRate= await this.baseRateRepository.findByBaseRateId(baseRateId,["translationItem","language"]);
+		if (!baseRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
+		}
+		return {
+			field: "getBaseRate",
+			success: true,
+			message: "لیست نرخ پایه با موفقیت دریافت شد",
+			data: new BaseRateTransform().baseRate(baseRate),
+		};
+	}
 }

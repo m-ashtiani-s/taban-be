@@ -5,6 +5,7 @@ import BaseRateValidation from "../../../../../../modules/translation/baseRate/v
 const baseRateRouter = express.Router();
 const baseRateController = new BaseRateController();
 
-baseRateRouter.get("/", baseRateController.getBaseRates);
 baseRateRouter.post("/",BaseRateValidation.createBaseRate, baseRateController.createBaseRate);
+baseRateRouter.get("/", baseRateController.getBaseRates);
+baseRateRouter.get("/:baseRateId", baseRateController.getBaseRate);
 export default baseRateRouter;

@@ -1,6 +1,7 @@
 export interface BaseRateDto {
-	translationItemId:string;
-	translationItemName:string;
+	baseRateId: string;
+	translationItemId: string;
+	translationItemName: string;
 	languageId: string;
 	languageName: string;
 	basePrice: number;
