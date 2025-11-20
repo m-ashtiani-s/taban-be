@@ -5,7 +5,9 @@ import BaseRateValidation from "../../../../../../modules/translation/baseRate/v
 const baseRateRouter = express.Router();
 const baseRateController = new BaseRateController();
 
-baseRateRouter.post("/",BaseRateValidation.createBaseRate, baseRateController.createBaseRate);
+baseRateRouter.post("/", BaseRateValidation.createBaseRate, baseRateController.createBaseRate);
 baseRateRouter.get("/", baseRateController.getBaseRates);
 baseRateRouter.get("/:baseRateId", baseRateController.getBaseRate);
+baseRateRouter.delete("/:baseRateId", baseRateController.deleteBaseRate);
+baseRateRouter.put("/:baseRateId/price", BaseRateValidation.updateBaseRatePrice, baseRateController.updateBaseRatePrice);
 export default baseRateRouter;

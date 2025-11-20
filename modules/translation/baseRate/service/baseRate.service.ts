@@ -40,7 +40,7 @@ export default class BaseRateService {
 		};
 	}
 	async getBaseRates(filters: GetBaseRatesFilters) {
-		const baseRates = await this.baseRateRepository.findBaseRates(filters,["translationItem","language"]);
+		const baseRates = await this.baseRateRepository.findBaseRates(filters, ["translationItem", "language"]);
 		if (!baseRates) {
 			throw new BadRequestError("مشکلی در یافتن نرخ پایه ها بوجود آمد");
 		}
@@ -52,15 +52,44 @@ export default class BaseRateService {
 		};
 	}
 	async getBaseRate(baseRateId: string) {
-		const baseRate= await this.baseRateRepository.findByBaseRateId(baseRateId,["translationItem","language"]);
+		const baseRate = await this.baseRateRepository.findByBaseRateId(baseRateId, ["translationItem", "language"]);
 		if (!baseRate) {
 			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
 		}
 		return {
 			field: "getBaseRate",
 			success: true,
-			message: "لیست نرخ پایه با موفقیت دریافت شد",
+			message: "نرخ پایه با موفقیت دریافت شد",
 			data: new BaseRateTransform().baseRate(baseRate),
+		};
+	}
+	async deleteBaseRate(baseRateId: string) {
+		const baseRate = await this.baseRateRepository.findByBaseRateId(baseRateId);
+		if (!baseRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
+		}
+		await this.baseRateRepository.deleteBaseRate(baseRate);
+		return {
+			field: "deleteBaseRate",
+			success: true,
+			message: "نرخ پایه با موفقیت حذف شد",
+			data: null,
+		};
+	}
+	async updateBaseRatePrice(baseRateId: string, basePrice: number) {
+		const baseRate = await this.baseRateRepository.findByBaseRateId(baseRateId);
+		if (!baseRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
+		}
+		await this.baseRateRepository.updateBaseRate(baseRate, {
+			basePrice
+		});
+
+		return {
+			field: "updateBaseRatePrice",
+			success: true,
+			data: null,
+			message: "نرخ پایه با موفقیت به روز شد",
 		};
 	}
 }

@@ -6,6 +6,9 @@ const BaseRateValidation = {
 		body("languageId").notEmpty().withMessage("وارد کردن زبان الزامی است").isMongoId().withMessage("شناسه زبان معتبر نیست"),
 		body("basePrice").notEmpty().withMessage("وارد کردن کد نرخ پایه الزامی است").isNumeric().withMessage("نرخ پایه باید عدد باشد"),
 	],
+	updateBaseRatePrice: [
+		body("basePrice").notEmpty().withMessage("وارد کردن کد نرخ پایه الزامی است").isNumeric().withMessage("نرخ پایه باید عدد باشد"),
+	],
 };
 
 export default BaseRateValidation;

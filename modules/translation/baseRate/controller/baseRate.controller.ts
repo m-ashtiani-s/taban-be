@@ -71,4 +71,43 @@ export default class BaseRateController extends ControllerBase {
 			});
 		}
 	};
+	deleteBaseRate = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const baseRateId: string =req.params.baseRateId;
+			const result = await baseRateService.deleteBaseRate(baseRateId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "deleteBaseRate",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در حذف نرخ پایه رخ داد",
+			});
+		}
+	};
+	updateBaseRatePrice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const baseRateId: string =req.params.baseRateId;
+			const basePrice: number =+req.body.basePrice;
+			const result = await baseRateService.updateBaseRatePrice(baseRateId,basePrice);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "updateBaseRatePrice",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش قیمت نرخ پایه رخ داد",
+			});
+		}
+	};
 }
