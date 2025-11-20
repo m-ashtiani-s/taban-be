@@ -40,8 +40,8 @@ export default class TranslationService {
 			data: new TranslationTransform().translationItems(translationItems),
 		};
 	}
-	async getTranslationItem(translationItemId: string) {
-		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
+	async getTranslationItem(translationItemId: string,isActive?:boolean) {
+		const translationItem = await this.translationItemRepository.findOneTranslationItem(translationItemId,isActive);
 		if (!translationItem) {
 			throw new BadRequestError("مشکلی در یافتن سند بوجود آمد");
 		}

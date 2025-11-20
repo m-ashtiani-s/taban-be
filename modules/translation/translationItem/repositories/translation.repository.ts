@@ -6,6 +6,13 @@ export default class TranslationItemRepository {
 	async findByTranslationItemId(translationItemId: string): Promise<TranslationItemDocument | null> {
 		return TranslationItemModel.findById(translationItemId);
 	}
+	async findOneTranslationItem(translationItemId: string, isActive?: boolean): Promise<TranslationItemDocument | null> {
+		const searchFilter = {
+			...(translationItemId ? { _id: translationItemId } : undefined),
+			...(isActive === true || isActive === false ? { isActive } : undefined),
+		};
+		return TranslationItemModel.findOne(searchFilter);
+	}
 	async findTranslationItemByTitle(title: string): Promise<TranslationItemDocument | null> {
 		return TranslationItemModel.findOne({ title });
 	}

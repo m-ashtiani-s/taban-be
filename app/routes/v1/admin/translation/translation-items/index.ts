@@ -1,9 +1,9 @@
 import express from "express";
-import TranslationController from "../../../../../../modules/translation/translationItem/controller/translation.controller";
 import TranslationValidation from "../../../../../../modules/translation/translationItem/validation/translation.validation";
+import { TranslationAdminController } from "../../../../../../modules/translation/translationItem/controller/translation.admin.controller";
 
 const translationItemsRouter = express.Router();
-const translationController = new TranslationController();
+const translationController = new TranslationAdminController();
 
 translationItemsRouter.get("/", translationController.getTranslationItems);
 translationItemsRouter.get("/:translationItemId", translationController.getTranslationItem);
