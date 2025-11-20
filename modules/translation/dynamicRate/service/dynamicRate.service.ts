@@ -70,4 +70,17 @@ export default class DynamicRateService {
 			data: new DynamicRateTransform().dynamicRate(dynamicRate),
 		};
 	}
+	async deleteDynamicRate(dynamicRateId: string) {
+		const dynamicRate = await this.dynamicRateRepository.findByDynamicRateId(dynamicRateId);
+		if (!dynamicRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ خاص بوجود آمد");
+		}
+		await this.dynamicRateRepository.deleteDynamicRate(dynamicRate);
+		return {
+			field: "deleteDynamicRate",
+			success: true,
+			message: "نرخ خاص با موفقیت حذف شد",
+			data: null,
+		};
+	}
 }

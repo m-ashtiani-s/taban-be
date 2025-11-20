@@ -8,4 +8,5 @@ const dynamicRateAdminController = new DynamicRateAdminController();
 dynamicRateRouter.post("/",DynaminRateValidation.createDynamicRate, dynamicRateAdminController.createDynamicRate);
 dynamicRateRouter.get("/", dynamicRateAdminController.getDynamicRates);
 dynamicRateRouter.get("/:dynamicRateId", dynamicRateAdminController.getDynamicRate);
+dynamicRateRouter.delete("/:dynamicRateId", dynamicRateAdminController.deleteDynamicRate);
 export default dynamicRateRouter;

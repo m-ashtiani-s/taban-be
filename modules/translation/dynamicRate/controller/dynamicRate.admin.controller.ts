@@ -76,4 +76,23 @@ export default class DynamicRateAdminController extends ControllerBase {
 			});
 		}
 	};
+	deleteDynamicRate = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const dynamicRateId: string = req.params.dynamicRateId;
+			const result = await dynamicRateService.deleteDynamicRate(dynamicRateId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "deleteDynamicRate",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در حذف نرخ خاص رخ داد",
+			});
+		}
+	};
 }
