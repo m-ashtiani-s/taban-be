@@ -3,4 +3,5 @@ export interface TranslationItemDto {
 	title: string;
 	documentType: string;
 	isActive: boolean;
+	description: string;
 }

@@ -6,7 +6,7 @@ import TranslationTransform from "../transform/translation.transform";
 export default class TranslationService {
 	private translationItemRepository = new TranslationItemRepository();
 
-	async createTranslationItem(title: string, documentType: string) {
+	async createTranslationItem(title: string, documentType: string, description: string) {
 		const translationItem = await this.translationItemRepository.findTranslationItemByTitle(title);
 		if (translationItem) {
 			throw new BadRequestError("یک سند با این عنوان وجود دارد");
@@ -19,6 +19,7 @@ export default class TranslationService {
 			title,
 			documentType,
 			isActive: true,
+			description,
 		});
 		return {
 			field: "createTranslationItem",

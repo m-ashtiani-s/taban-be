@@ -4,6 +4,7 @@ export interface TranslationItem {
 	title: string;
 	documentType: string;
 	isActive: boolean;
+	description: string;
 }
 
 export type TranslationItemDocument = TranslationItem & Document;
@@ -23,6 +24,10 @@ const translationItemSchema = new Schema(
 		isActive: {
 			type: Boolean,
 			default: true,
+		},
+		description: {
+			type: String,
+			default: "",
 		},
 	},
 	{ timestamps: true }

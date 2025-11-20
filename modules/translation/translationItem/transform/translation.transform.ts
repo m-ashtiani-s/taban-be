@@ -8,6 +8,7 @@ export default class TranslationTransform {
 			title: translationItem?.title,
 			documentType: translationItem?.documentType,
 			isActive: translationItem?.isActive,
+			description: translationItem?.description,
 		};
 		return loginData;
 	}

@@ -18,7 +18,8 @@ export default class TranslationController extends ControllerBase {
 		try {
 			const title: string = req.body.title ?? "";
 			const documentType: string = req.body.documentType ?? "";
-			const result = await translationService.createTranslationItem(title, documentType);
+			const description: string = req.body.description ?? "";
+			const result = await translationService.createTranslationItem(title, documentType,description);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
