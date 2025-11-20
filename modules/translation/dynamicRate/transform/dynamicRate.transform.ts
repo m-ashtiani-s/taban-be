@@ -9,14 +9,14 @@ export default class TranslationTransform {
 		const language = dynamicRate.language as LanguageDocument;
 
 		return {
+			dynamicRateId: dynamicRate._id as string,
 			translationItemId: translationItem._id?.toString() || translationItem.toString(),
 			translationItemName: translationItem.title || "",
 			languageId: language._id?.toString() || language.toString(),
 			languageName: language.languageName || "",
 			price: dynamicRate.price,
 			inputType: dynamicRate.inputType,
-			options: dynamicRate.options,
-			isActive: dynamicRate.isActive,
+			options: dynamicRate.options
 		};
 	}
 	dynamicRates(dynamicRates: DynamicRateDocument[]): DynamicRateDto[] {

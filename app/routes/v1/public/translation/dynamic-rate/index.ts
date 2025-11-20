@@ -1,5 +1,4 @@
 import express from "express";
-import BaseRateController from "../../../../../../modules/translation/baseRate/controller/baseRate.controller";
 import DynamicRateController from "../../../../../../modules/translation/dynamicRate/controller/dynamicRate.controller";
 
 const dynamicRateRouter = express.Router();

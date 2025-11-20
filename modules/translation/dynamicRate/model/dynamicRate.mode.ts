@@ -11,7 +11,6 @@ export interface DynamicRate {
 	label: string;
 	inputType: DynamicRateInputType;
 	options: DynamicRateOption[];
-	isActive: boolean;
 }
 
 export type DynamicRateDocument = DynamicRate & Document;
@@ -29,8 +28,7 @@ const dynamicRateSchema = new Schema(
 				value: String,
 				price: Number,
 			},
-		],
-		isActive: { type: Boolean, default: true },
+		]
 	},
 	{ timestamps: true }
 );

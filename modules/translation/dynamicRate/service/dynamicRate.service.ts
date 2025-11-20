@@ -38,7 +38,6 @@ export default class DynamicRateService {
 			label,
 			inputType,
 			options,
-			isActive:true,
 		});
 		return {
 			field: "createDynamicRate",
@@ -57,6 +56,18 @@ export default class DynamicRateService {
 			success: true,
 			message: "لیست نرخ خاص ها با موفقیت دریافت شد",
 			data: new DynamicRateTransform().dynamicRates(dynamicRates),
+		};
+	}
+	async getDynamicRate(dynamicRateId: string) {
+		const dynamicRate = await this.dynamicRateRepository.findByDynamicRateId(dynamicRateId, ["translationItem", "language"]);
+		if (!dynamicRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ خاص بوجود آمد");
+		}
+		return {
+			field: "getDynamicRate",
+			success: true,
+			message: "نرخ خاص با موفقیت دریافت شد",
+			data: new DynamicRateTransform().dynamicRate(dynamicRate),
 		};
 	}
 }
