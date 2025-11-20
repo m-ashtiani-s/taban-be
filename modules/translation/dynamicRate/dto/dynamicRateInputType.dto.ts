@@ -1,0 +1,1 @@
+export type DynamicRateInputType="NUMBER" |  "CHECKBOX" | "SELECT"

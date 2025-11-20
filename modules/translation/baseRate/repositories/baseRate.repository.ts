@@ -11,7 +11,11 @@ export default class BaseRateRepository {
 		return query.exec();
 	}
 	async findBaseRates(filter: GetBaseRatesFilters, populateFields?: string[]): Promise<BaseRateDocument[]> {
-		let query = BaseRateModel.find({translationItem:filter?.translationItemId,language:filter?.languageId});
+		const searchFilter = {
+			...(filter?.translationItemId ? { translationItem: filter?.translationItemId } : undefined),
+			...(filter?.languageId ? { language: filter?.languageId } : undefined),
+		};
+		let query = BaseRateModel.find(searchFilter);
 		if (populateFields && populateFields.length) {
 			populateFields.forEach((field) => (query = query.populate(field)));
 		}
@@ -19,7 +23,11 @@ export default class BaseRateRepository {
 	}
 
 	async findOneBaseRate(filter: GetBaseRatesFilters, populateFields?: string[]): Promise<BaseRateDocument | null> {
-		let query = BaseRateModel.findOne({translationItem:filter?.translationItemId,language:filter?.languageId});
+		const searchFilter = {
+			...(filter?.translationItemId ? { translationItem: filter?.translationItemId } : undefined),
+			...(filter?.languageId ? { language: filter?.languageId } : undefined),
+		};
+		let query = BaseRateModel.findOne(searchFilter);
 		if (populateFields && populateFields.length) {
 			populateFields.forEach((field) => (query = query.populate(field)));
 		}
