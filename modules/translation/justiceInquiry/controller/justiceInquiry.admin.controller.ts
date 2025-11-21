@@ -2,34 +2,33 @@ import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import ControllerBase from "../../../../shared/base/controller.base";
 import { ControllerError } from "../../../../types/controllerError.type";
-import LanguageService from "../service/language.service";
-import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
+import JusticeInquiryService from "../service/justiceInquiry.service";
+import { GetJusticeInquirysFilters } from "../dto/getJusticeInquiryFilters.dto";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
-const languageService = new LanguageService();
+const justiceInquiryService = new JusticeInquiryService();
 
-export class LanguageAdminController extends ControllerBase {
-	createLanguage = async (req: Request, res: Response) => {
+export class JusticeInquiryAdminController extends ControllerBase {
+	createJusticeInquiry = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
 		}
 		try {
-			const languageName: string = req.body.languageName ?? "";
-			const languageCode: string = req.body.languageCode ?? "";
-			const icon: string = req.body.icon ?? "";
-			const result = await languageService.createLanguage(languageName, languageCode, icon);
+			const justiceInquiryName: string = req.body.justiceInquiryName ?? "";
+			const description: string = req.body.description ?? "";
+			const result = await justiceInquiryService.createJusticeInquiry(justiceInquiryName, description);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
 			return res.status(statusCode).json({
-				field: "createLanguage",
+				field: "createJusticeInquiry",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در ایجاد زبان رخ داد",
+				message: error.message || "مشکلی در ایجاد استعلام رخ داد",
 			});
 		}
 	};
-	getLanguages = async (req: Request, res: Response) => {
+	getJusticeInquirys = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
@@ -37,78 +36,78 @@ export class LanguageAdminController extends ControllerBase {
 		try {
 			const term: string = (req.query.term as string) ?? "";
 			const isActive = convertStringToBoolean((req.query.isActive ?? "") as string);
-			const filters: GetLanguagesFilters = {
+			const filters: GetJusticeInquirysFilters = {
 				term,
 				isActive
 			};
-			const result = await languageService.getLanguages(filters);
+			const result = await justiceInquiryService.getJusticeInquirys(filters);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
 			return res.status(statusCode).json({
-				field: "getLanguages",
+				field: "getJusticeInquirys",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در دریافت زبان ها رخ داد",
+				message: error.message || "مشکلی در دریافت استعلام ها رخ داد",
 			});
 		}
 	};
-	getLanguage = async (req: Request, res: Response) => {
+	getJusticeInquiry = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
 		}
 		try {
-			const languageId: string = req.params.languageId ?? "";
-			const result = await languageService.getLanguage(languageId);
+			const justiceInquiryId: string = req.params.justiceInquiryId ?? "";
+			const result = await justiceInquiryService.getJusticeInquiry(justiceInquiryId);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
 			return res.status(statusCode).json({
-				field: "getLanguage",
+				field: "getJusticeInquiry",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در دریافت زبان رخ داد",
+				message: error.message || "مشکلی در دریافت استعلام رخ داد",
 			});
 		}
 	};
-	activateLanguage = async (req: Request, res: Response) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return this.showValidationErrors(res, errors);
-		}
-
-		try {
-			const languageId: string = req.params.languageId ?? "";
-			const result = await languageService.activateLanguage(languageId);
-			return res.status(200).json(result);
-		} catch (error: ControllerError) {
-			const statusCode = error.name === "BadRequestError" ? 400 : 500;
-			return res.status(statusCode).json({
-				field: "activateLanguage",
-				success: false,
-				data: null,
-				message: error.message || "مشکلی در فعالسازی زبان رخ داد",
-			});
-		}
-	};
-	deactivateLanguage = async (req: Request, res: Response) => {
+	activateJusticeInquiry = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
 		}
 
 		try {
-			const languageId: string = req.params.languageId ?? "";
-			const result = await languageService.deactivateLanguage(languageId);
+			const justiceInquiryId: string = req.params.justiceInquiryId ?? "";
+			const result = await justiceInquiryService.activateJusticeInquiry(justiceInquiryId);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
 			return res.status(statusCode).json({
-				field: "deactivateLanguage",
+				field: "activateJusticeInquiry",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در غیرفعالسازی زبان رخ داد",
+				message: error.message || "مشکلی در فعالسازی استعلام رخ داد",
+			});
+		}
+	};
+	deactivateJusticeInquiry = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const justiceInquiryId: string = req.params.justiceInquiryId ?? "";
+			const result = await justiceInquiryService.deactivateJusticeInquiry(justiceInquiryId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "deactivateJusticeInquiry",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در غیرفعالسازی استعلام رخ داد",
 			});
 		}
 	};

@@ -1,0 +1,82 @@
+import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import { GetJusticeInquirysFilters } from "../dto/getJusticeInquiryFilters.dto";
+import JusticeInquiryRepository from "../repositories/justiceInquiry.repository";
+import JusticeInquiryTransform from "../transform/justiceInquiry.transform";
+
+export default class JusticeInquiryService {
+	private justiceInquiryRepository = new JusticeInquiryRepository();
+
+	async createJusticeInquiry(justiceInquiryName: string, description: string) {
+		const justiceInquiry = await this.justiceInquiryRepository.findJusticeInquiryByTitle(justiceInquiryName);
+		if (justiceInquiry) {
+			throw new BadRequestError("یک استعلام با این عنوان وجود دارد");
+		}
+		await this.justiceInquiryRepository.createJusticeInquiry({
+			justiceInquiryName,
+			description,
+			isActive: true,
+		});
+		return {
+			field: "createJusticeInquiry",
+			success: true,
+			message: "استعلام با موفقیت ایجاد شد",
+			data: null,
+		};
+	}
+	async getJusticeInquirys(filters: GetJusticeInquirysFilters) {
+		const justiceInquirys = await this.justiceInquiryRepository.findJusticeInquirys(filters);
+		if (!justiceInquirys) {
+			throw new BadRequestError("مشکلی در یافتن استعلام ها بوجود آمد");
+		}
+		return {
+			field: "getJusticeInquirys",
+			success: true,
+			message: "لیست استعلام ها با موفقیت دریافت شد",
+			data: new JusticeInquiryTransform().justiceInquirys(justiceInquirys),
+		};
+	}
+	async getJusticeInquiry(justiceInquiryId: string, isActive?: boolean) {
+		const justiceInquiry = await this.justiceInquiryRepository.findOneJusticeInquiry(justiceInquiryId, isActive);
+		if (!justiceInquiry) {
+			throw new BadRequestError("مشکلی در یافتن استعلام بوجود آمد");
+		}
+		return {
+			field: "getJusticeInquiry",
+			success: true,
+			message: "استعلام با موفقیت دریافت شد",
+			data: new JusticeInquiryTransform().justiceInquiry(justiceInquiry),
+		};
+	}
+	async activateJusticeInquiry(justiceInquiryId: string) {
+		const justiceInquiry = await this.justiceInquiryRepository.findByJusticeInquiryId(justiceInquiryId);
+		if (!justiceInquiry) {
+			throw new BadRequestError("مشکلی در یافتن استعلام بوجود آمد");
+		}
+		await this.justiceInquiryRepository.updateJusticeInquiry(justiceInquiry, {
+			isActive: true,
+		});
+
+		return {
+			field: "activateJusticeInquiry",
+			success: true,
+			data: null,
+			message: "استعلام با موفقیت فعال شد",
+		};
+	}
+	async deactivateJusticeInquiry(justiceInquiryId: string) {
+		const justiceInquiry = await this.justiceInquiryRepository.findByJusticeInquiryId(justiceInquiryId);
+		if (!justiceInquiry) {
+			throw new BadRequestError("مشکلی در یافتن استعلام بوجود آمد");
+		}
+		await this.justiceInquiryRepository.updateJusticeInquiry(justiceInquiry, {
+			isActive: false,
+		});
+
+		return {
+			field: "deactivateJusticeInquiry",
+			success: true,
+			data: null,
+			message: "استعلام با موفقیت غیرفعال شد",
+		};
+	}
+}

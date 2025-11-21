@@ -4,6 +4,7 @@ import languagesRouter from "./languages";
 import baseRateRouter from "./base-rate";
 import dynamicRateRouter from "./dynamic-rate";
 import certificationRateRouter from "./certification-rate";
+import justiceInquiryRouter from "./justice-inquiry";
 
 const translationRouter = express.Router();
 
@@ -12,5 +13,6 @@ translationRouter.use("/languages", languagesRouter);
 translationRouter.use("/base-rate", baseRateRouter);
 translationRouter.use("/dynamic-rate", dynamicRateRouter);
 translationRouter.use("/certification-rate", certificationRateRouter);
+translationRouter.use("/justice-inquiry", justiceInquiryRouter);
 
 export default translationRouter;
