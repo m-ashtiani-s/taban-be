@@ -1,5 +1,5 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
-import { GetJusticeInquirysFilters } from "../dto/getJusticeInquiryFilters.dto";
+import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
 import JusticeInquiryRepository from "../repositories/justiceInquiry.repository";
 import JusticeInquiryTransform from "../transform/justiceInquiry.transform";
 
@@ -23,16 +23,16 @@ export default class JusticeInquiryService {
 			data: null,
 		};
 	}
-	async getJusticeInquirys(filters: GetJusticeInquirysFilters) {
-		const justiceInquirys = await this.justiceInquiryRepository.findJusticeInquirys(filters);
-		if (!justiceInquirys) {
+	async getJusticeInquiryies(filters: GetJusticeInquiryiesFilters) {
+		const justiceInquiryies = await this.justiceInquiryRepository.findJusticeInquiryies(filters);
+		if (!justiceInquiryies) {
 			throw new BadRequestError("مشکلی در یافتن استعلام ها بوجود آمد");
 		}
 		return {
-			field: "getJusticeInquirys",
+			field: "getJusticeInquiryies",
 			success: true,
 			message: "لیست استعلام ها با موفقیت دریافت شد",
-			data: new JusticeInquiryTransform().justiceInquirys(justiceInquirys),
+			data: new JusticeInquiryTransform().justiceInquiryies(justiceInquiryies),
 		};
 	}
 	async getJusticeInquiry(justiceInquiryId: string, isActive?: boolean) {

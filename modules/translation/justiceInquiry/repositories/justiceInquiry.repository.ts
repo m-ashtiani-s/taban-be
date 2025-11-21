@@ -1,6 +1,6 @@
 import { FilterQuery } from "mongoose";
 import JusticeInquiryModel, { JusticeInquiryDocument } from "../model/justiceInquiry.mode";
-import { GetJusticeInquirysFilters } from "../dto/getJusticeInquiryFilters.dto";
+import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
 
 export default class JusticeInquiryRepository {
 	async findByJusticeInquiryId(justiceInquiryId: string): Promise<JusticeInquiryDocument | null> {
@@ -19,7 +19,7 @@ export default class JusticeInquiryRepository {
 	async findJusticeInquiryByJusticeInquiryCode(justiceInquiryCode: string): Promise<JusticeInquiryDocument | null> {
 		return JusticeInquiryModel.findOne({ justiceInquiryCode });
 	}
-	async findJusticeInquirys(filters: GetJusticeInquirysFilters): Promise<JusticeInquiryDocument[] | null> {
+	async findJusticeInquiryies(filters: GetJusticeInquiryiesFilters): Promise<JusticeInquiryDocument[] | null> {
 		const query: FilterQuery<JusticeInquiryDocument> = {
 			...(filters?.isActive === true || filters?.isActive === false ? { isActive: filters?.isActive } : undefined),
 		};

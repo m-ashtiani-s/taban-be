@@ -12,11 +12,11 @@ export default class TranslationTransform {
 		};
 		return loginData;
 	}
-	justiceInquirys(justiceInquirys: JusticeInquiryDocument[]): JusticeInquiryDto[] {
-		const transformedJusticeInquirys: JusticeInquiryDto[] = [];
-		justiceInquirys?.map((it) => {
-			transformedJusticeInquirys.push(this.justiceInquiry(it));
+	justiceInquiryies(justiceInquiryies: JusticeInquiryDocument[]): JusticeInquiryDto[] {
+		const transformedJusticeInquiryies: JusticeInquiryDto[] = [];
+		justiceInquiryies?.map((it) => {
+			transformedJusticeInquiryies.push(this.justiceInquiry(it));
 		});
-		return transformedJusticeInquirys;
+		return transformedJusticeInquiryies;
 	}
 }

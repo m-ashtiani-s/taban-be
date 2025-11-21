@@ -4,6 +4,6 @@ import JusticeInquiryController from "../../../../../../modules/translation/just
 const justiceInquiryRouter = express.Router();
 const justiceInquiryController = new JusticeInquiryController();
 
-justiceInquiryRouter.get("/", justiceInquiryController.getJusticeInquirys);
+justiceInquiryRouter.get("/", justiceInquiryController.getJusticeInquiryies);
 justiceInquiryRouter.get("/:justiceInquiryId", justiceInquiryController.getJusticeInquiry);
 export default justiceInquiryRouter;

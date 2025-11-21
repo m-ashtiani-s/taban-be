@@ -1,4 +1,4 @@
-export interface GetJusticeInquirysFilters {
+export interface GetJusticeInquiryiesFilters {
 	term?: string;
 	isActive?:boolean
 }

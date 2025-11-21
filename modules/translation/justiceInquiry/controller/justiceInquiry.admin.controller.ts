@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import ControllerBase from "../../../../shared/base/controller.base";
 import { ControllerError } from "../../../../types/controllerError.type";
 import JusticeInquiryService from "../service/justiceInquiry.service";
-import { GetJusticeInquirysFilters } from "../dto/getJusticeInquiryFilters.dto";
+import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 const justiceInquiryService = new JusticeInquiryService();
 
@@ -28,7 +28,7 @@ export class JusticeInquiryAdminController extends ControllerBase {
 			});
 		}
 	};
-	getJusticeInquirys = async (req: Request, res: Response) => {
+	getJusticeInquiryies = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
@@ -36,16 +36,16 @@ export class JusticeInquiryAdminController extends ControllerBase {
 		try {
 			const term: string = (req.query.term as string) ?? "";
 			const isActive = convertStringToBoolean((req.query.isActive ?? "") as string);
-			const filters: GetJusticeInquirysFilters = {
+			const filters: GetJusticeInquiryiesFilters = {
 				term,
 				isActive
 			};
-			const result = await justiceInquiryService.getJusticeInquirys(filters);
+			const result = await justiceInquiryService.getJusticeInquiryies(filters);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
 			return res.status(statusCode).json({
-				field: "getJusticeInquirys",
+				field: "getJusticeInquiryies",
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در دریافت استعلام ها رخ داد",
