@@ -5,6 +5,7 @@ import TranslationItemRepository from "../../translationItem/repositories/transl
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
 import { DynamicRateInputType } from "../dto/dynamicRateInputType.dto";
 import { DynamicRateOption } from "../dto/dynamicRateOption.dto";
+import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
 import DynamicRateRepository from "../repositories/dynamicRate.repository";
 import DynamicRateTransform from "../transform/dynamicRate.transform";
 
@@ -89,7 +90,23 @@ export default class DynamicRateService {
 			throw new BadRequestError("مشکلی در یافتن نرخ خاص بوجود آمد");
 		}
 		await this.dynamicRateRepository.updateDynamicRate(dynamicRate, {
-			price
+			price,
+		});
+
+		return {
+			field: "updateDynamicRatePrice",
+			success: true,
+			data: null,
+			message: "نرخ خاص با موفقیت به روز شد",
+		};
+	}
+	async updateDynamicRate(dynamicRateId: string, updateDynamicRateData: DynamicRateUpdateDto) {
+		const dynamicRate = await this.dynamicRateRepository.findByDynamicRateId(dynamicRateId);
+		if (!dynamicRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ خاص بوجود آمد");
+		}
+		await this.dynamicRateRepository.updateDynamicRate(dynamicRate, {
+			...updateDynamicRateData,
 		});
 
 		return {

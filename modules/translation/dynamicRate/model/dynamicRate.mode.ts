@@ -25,7 +25,6 @@ const dynamicRateSchema = new Schema(
 		options: [
 			{
 				label: String,
-				value: String,
 				price: Number,
 			},
 		]

@@ -1,5 +1,6 @@
 export type DynamicRateOption = {
 	label: string;
-	value: string;
 	price: number;
+	optionId:string
+	_id?:string
 };

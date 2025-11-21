@@ -50,7 +50,7 @@ export default class UserController extends ControllerBase {
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
 			return res.status(statusCode).json({
-				field: "profileCompletionStatus",
+				field: "updateUser",
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در بررسی پروفایل رخ داد",
