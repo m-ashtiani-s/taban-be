@@ -138,7 +138,7 @@ export default class DynamicRateAdminController extends ControllerBase {
 				field: "updateDynamicRate",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در بررسی پروفایل رخ داد",
+				message: error.message || "مشکلی در ویرایش نرخ خاص رخ داد",
 			});
 		}
 	};
