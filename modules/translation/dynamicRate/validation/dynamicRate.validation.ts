@@ -16,4 +16,5 @@ export const DynaminRateValidation = {
 		body("options.*.value").if(body("options").exists()).notEmpty().withMessage("مقدار هر گزینه الزامی است"),
 		body("options.*.price").if(body("options").exists()).isNumeric().withMessage("قیمت هر گزینه باید عدد باشد"),
 	],
+	updateDynamicRatePrice: [body("price").notEmpty().withMessage("وارد کردن نرخ خاص الزامی است").isNumeric().withMessage("نرخ خاص باید عدد باشد")],
 };

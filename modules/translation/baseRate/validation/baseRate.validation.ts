@@ -7,7 +7,7 @@ const BaseRateValidation = {
 		body("basePrice").notEmpty().withMessage("وارد کردن کد نرخ پایه الزامی است").isNumeric().withMessage("نرخ پایه باید عدد باشد"),
 	],
 	updateBaseRatePrice: [
-		body("basePrice").notEmpty().withMessage("وارد کردن کد نرخ پایه الزامی است").isNumeric().withMessage("نرخ پایه باید عدد باشد"),
+		body("basePrice").notEmpty().withMessage("وارد کردن نرخ پایه الزامی است").isNumeric().withMessage("نرخ پایه باید عدد باشد"),
 	],
 };
 

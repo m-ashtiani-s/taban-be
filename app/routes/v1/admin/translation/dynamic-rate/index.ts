@@ -9,4 +9,5 @@ dynamicRateRouter.post("/",DynaminRateValidation.createDynamicRate, dynamicRateA
 dynamicRateRouter.get("/", dynamicRateAdminController.getDynamicRates);
 dynamicRateRouter.get("/:dynamicRateId", dynamicRateAdminController.getDynamicRate);
 dynamicRateRouter.delete("/:dynamicRateId", dynamicRateAdminController.deleteDynamicRate);
+dynamicRateRouter.put("/:dynamicRateId/price", DynaminRateValidation.updateDynamicRatePrice,dynamicRateAdminController.updateDynamicRatePrice);
 export default dynamicRateRouter;

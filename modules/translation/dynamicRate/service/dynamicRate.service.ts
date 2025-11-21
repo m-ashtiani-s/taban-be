@@ -83,4 +83,20 @@ export default class DynamicRateService {
 			data: null,
 		};
 	}
+	async updateDynamicRatePrice(dynamicRateId: string, price: number) {
+		const dynamicRate = await this.dynamicRateRepository.findByDynamicRateId(dynamicRateId);
+		if (!dynamicRate) {
+			throw new BadRequestError("مشکلی در یافتن نرخ خاص بوجود آمد");
+		}
+		await this.dynamicRateRepository.updateDynamicRate(dynamicRate, {
+			price
+		});
+
+		return {
+			field: "updateDynamicRatePrice",
+			success: true,
+			data: null,
+			message: "نرخ خاص با موفقیت به روز شد",
+		};
+	}
 }
