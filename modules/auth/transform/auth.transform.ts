@@ -15,6 +15,7 @@ export default class AuthTransform {
 			username: user?.username,
 			acceeToken: token,
 			expireTime: expireTime?.toString(),
+			role: user?.role,
 		};
 
 		return loginData;

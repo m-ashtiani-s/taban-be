@@ -3,4 +3,5 @@ export interface LoginDto {
 	username: string;
 	acceeToken: string;
 	expireTime: string;
+	role:string
 }
