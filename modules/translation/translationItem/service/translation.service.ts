@@ -1,5 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
+import { TtranslationItemUpdateDto } from "../dto/ttranslationItemUpdateDto.type";
 import TranslationItemRepository from "../repositories/translation.repository";
 import TranslationTransform from "../transform/translation.transform";
 
@@ -40,8 +41,8 @@ export default class TranslationService {
 			data: new TranslationTransform().translationItems(translationItems),
 		};
 	}
-	async getTranslationItem(translationItemId: string,isActive?:boolean) {
-		const translationItem = await this.translationItemRepository.findOneTranslationItem(translationItemId,isActive);
+	async getTranslationItem(translationItemId: string, isActive?: boolean) {
+		const translationItem = await this.translationItemRepository.findOneTranslationItem(translationItemId, isActive);
 		if (!translationItem) {
 			throw new BadRequestError("مشکلی در یافتن سند بوجود آمد");
 		}
@@ -82,6 +83,22 @@ export default class TranslationService {
 			success: true,
 			data: null,
 			message: "مدرک با موفقیت غیرفعال شد",
+		};
+	}
+	async updateTranslationItem(translationItemId: string, updateTtranslationItemData: TtranslationItemUpdateDto) {
+		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
+		if (!translationItem) {
+			throw new BadRequestError("مشکلی در یافتن مدرک بوجود آمد");
+		}
+		await this.translationItemRepository.updateTranslationItem(translationItem, {
+			...updateTtranslationItemData,
+		});
+
+		return {
+			field: "updateTranslationItem",
+			success: true,
+			data: null,
+			message: "مدرک با موفقیت به روز شد",
 		};
 	}
 }

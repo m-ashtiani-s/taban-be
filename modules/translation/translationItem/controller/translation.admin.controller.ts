@@ -6,6 +6,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import TranslationService from "../service/translation.service";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
+import { TtranslationItemUpdateDto } from "../dto/ttranslationItemUpdateDto.type";
 const translationService = new TranslationService();
 
 export class TranslationAdminController extends ControllerBase {
@@ -113,6 +114,32 @@ export class TranslationAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در غیرفعالسازی مدرک رخ داد",
+			});
+		}
+	};
+	updateTranslationItem = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const translationItemId: string = req.params.translationItemId ?? "";
+			const updateTtranslationItemData: TtranslationItemUpdateDto = {
+				title: req?.body?.title ?? "",
+				documentType: req?.body?.documentType ?? "",
+				description: req?.body?.description ?? "",
+				isActive: req.body.isActive ?? false,
+			};
+			const result = await translationService.updateTranslationItem(translationItemId, updateTtranslationItemData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "updateTranslationItem",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش مدرک رخ داد",
 			});
 		}
 	};
