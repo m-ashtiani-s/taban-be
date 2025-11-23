@@ -1,10 +1,12 @@
 import mongoose, { Model, Schema, Document } from "mongoose";
+import { TranslationItemCategoryDocument } from "../../translationItemCategory/model/translationItemCategory.mode";
 
 export interface TranslationItem {
 	title: string;
 	documentType: string;
 	isActive: boolean;
 	description: string;
+	category: string | TranslationItemCategoryDocument;
 }
 
 export type TranslationItemDocument = TranslationItem & Document;
@@ -21,6 +23,7 @@ const translationItemSchema = new Schema(
 			required: true,
 			unique: true,
 		},
+		category: { type: Schema.Types.ObjectId, ref: "TranslationItemCategory" },
 		isActive: {
 			type: Boolean,
 			default: true,

@@ -3,31 +3,61 @@ import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dt
 import TranslationItemModel, { TranslationItemDocument } from "../model/translationItem.mode";
 
 export default class TranslationItemRepository {
-	async findByTranslationItemId(translationItemId: string): Promise<TranslationItemDocument | null> {
-		return TranslationItemModel.findById(translationItemId);
+	async findByTranslationItemId(translationItemId: string, populateFields?: string[]): Promise<TranslationItemDocument | null> {
+		let query = TranslationItemModel.findById(translationItemId);
+		if (populateFields?.length) {
+			populateFields.forEach((field) => (query = query.populate(field)));
+		}
+		return query.exec();
 	}
-	async findOneTranslationItem(translationItemId: string, isActive?: boolean): Promise<TranslationItemDocument | null> {
+
+	async findOneTranslationItem(translationItemId: string, isActive?: boolean, populateFields?: string[]): Promise<TranslationItemDocument | null> {
 		const searchFilter = {
 			...(translationItemId ? { _id: translationItemId } : undefined),
-			...(isActive === true || isActive === false ? { isActive } : undefined),
+			...(typeof isActive === "boolean" ? { isActive } : undefined),
 		};
-		return TranslationItemModel.findOne(searchFilter);
+
+		let query = TranslationItemModel.findOne(searchFilter);
+		if (populateFields?.length) {
+			populateFields.forEach((field) => (query = query.populate(field)));
+		}
+		return query.exec();
 	}
-	async findTranslationItemByTitle(title: string): Promise<TranslationItemDocument | null> {
-		return TranslationItemModel.findOne({ title });
+
+	async findTranslationItemByTitle(title: string, populateFields?: string[]): Promise<TranslationItemDocument | null> {
+		let query = TranslationItemModel.findOne({ title });
+		if (populateFields?.length) {
+			populateFields.forEach((field) => (query = query.populate(field)));
+		}
+		return query.exec();
 	}
-	async findTranslationItemByDocumentType(documentType: string): Promise<TranslationItemDocument | null> {
-		return TranslationItemModel.findOne({ documentType });
+
+	async findTranslationItemByDocumentType(documentType: string, populateFields?: string[]): Promise<TranslationItemDocument | null> {
+		let query = TranslationItemModel.findOne({ documentType });
+		if (populateFields?.length) {
+			populateFields.forEach((field) => (query = query.populate(field)));
+		}
+		return query.exec();
 	}
-	async findTranslationItems(filters: GetTranslationItemsFilters): Promise<TranslationItemDocument[] | null> {
-		const query: FilterQuery<TranslationItemDocument> = {};
+
+	async findTranslationItems(filters: GetTranslationItemsFilters, populateFields?: string[]): Promise<TranslationItemDocument[] | null> {
+		const queryObj: FilterQuery<TranslationItemDocument> = {};
+
 		if (typeof filters.isActive === "boolean") {
-			query.isActive = filters.isActive;
+			queryObj.isActive = filters.isActive;
 		}
+
 		if (filters.term) {
-			query.title = { $regex: filters.term, $options: "i" };
+			queryObj.title = { $regex: filters.term, $options: "i" };
 		}
-		return TranslationItemModel.find(query);
+
+		let query = TranslationItemModel.find(queryObj);
+
+		if (populateFields?.length) {
+			populateFields.forEach((field) => (query = query.populate(field)));
+		}
+
+		return query.exec();
 	}
 
 	async createTranslationItem(data: Partial<TranslationItemDocument>): Promise<TranslationItemDocument> {

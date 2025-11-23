@@ -5,6 +5,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import LanguageService from "../service/language.service";
 import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
+import { LanguageUpdateDto } from "../dto/languageUpdate.dto";
 const languageService = new LanguageService();
 
 export class LanguageAdminController extends ControllerBase {
@@ -39,7 +40,7 @@ export class LanguageAdminController extends ControllerBase {
 			const isActive = convertStringToBoolean((req.query.isActive ?? "") as string);
 			const filters: GetLanguagesFilters = {
 				term,
-				isActive
+				isActive,
 			};
 			const result = await languageService.getLanguages(filters);
 			return res.status(200).json(result);
@@ -109,6 +110,32 @@ export class LanguageAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در غیرفعالسازی زبان رخ داد",
+			});
+		}
+	};
+	updateLanguage = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const languageId: string = req.params.languageId ?? "";
+			const updateTLanguageData: LanguageUpdateDto = {
+				languageName: req?.body?.languageName ?? "",
+				languageCode: req?.body?.languageCode ?? "",
+				icon: req?.body?.icon ?? "",
+				isActive: req.body.isActive ?? false,
+			};
+			const result = await languageService.updateLanguage(languageId, updateTLanguageData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "updateLanguage",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش زبان رخ داد",
 			});
 		}
 	};

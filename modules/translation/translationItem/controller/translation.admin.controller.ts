@@ -20,7 +20,8 @@ export class TranslationAdminController extends ControllerBase {
 			const title: string = req.body.title ?? "";
 			const documentType: string = req.body.documentType ?? "";
 			const description: string = req.body.description ?? "";
-			const result = await translationService.createTranslationItem(title, documentType, description);
+			const categoryId: string = req.body.categoryId ?? "";
+			const result = await translationService.createTranslationItem(title, documentType, description,categoryId);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
@@ -40,10 +41,12 @@ export class TranslationAdminController extends ControllerBase {
 
 		try {
 			const term: string = (req.query.term as string) ?? "";
+			const category: string = req.body.categoryId ?? "";
 			const isActive = convertStringToBoolean((req.query.isActive ?? "") as string);
 			const filters: GetTranslationItemsFilters = {
 				term,
 				isActive,
+				category
 			};
 			const result = await translationService.getTranslationItems(filters);
 			return res.status(200).json(result);
@@ -129,6 +132,7 @@ export class TranslationAdminController extends ControllerBase {
 				title: req?.body?.title ?? "",
 				documentType: req?.body?.documentType ?? "",
 				description: req?.body?.description ?? "",
+				category: req?.body?.categoryId ?? "",
 				isActive: req.body.isActive ?? false,
 			};
 			const result = await translationService.updateTranslationItem(translationItemId, updateTtranslationItemData);

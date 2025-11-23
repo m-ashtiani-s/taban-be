@@ -1,5 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
+import { LanguageUpdateDto } from "../dto/languageUpdate.dto";
 import LanguageRepository from "../repositories/language.repository";
 import LanguageTransform from "../transform/language.transform";
 
@@ -82,6 +83,22 @@ export default class LanguageService {
 			success: true,
 			data: null,
 			message: "زبان با موفقیت غیرفعال شد",
+		};
+	}
+	async updateLanguage(languageId: string, updateTlanguageData: LanguageUpdateDto) {
+		const language = await this.languageRepository.findByLanguageId(languageId);
+		if (!language) {
+			throw new BadRequestError("مشکلی در یافتن زبان بوجود آمد");
+		}
+		await this.languageRepository.updateLanguage(language, {
+			...updateTlanguageData,
+		});
+
+		return {
+			field: "updateLanguage",
+			success: true,
+			data: null,
+			message: "زبان با موفقیت به روز شد",
 		};
 	}
 }
