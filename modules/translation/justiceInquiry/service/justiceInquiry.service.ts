@@ -1,5 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
+import { JusticeInquiryUpdateDto } from "../dto/justiceInquiryUpdate.dto";
 import JusticeInquiryRepository from "../repositories/justiceInquiry.repository";
 import JusticeInquiryTransform from "../transform/justiceInquiry.transform";
 
@@ -77,6 +78,22 @@ export default class JusticeInquiryService {
 			success: true,
 			data: null,
 			message: "استعلام با موفقیت غیرفعال شد",
+		};
+	}
+	async updateJusticeInquiry(justiceInquiryId: string, updateTjusticeInquiryData: JusticeInquiryUpdateDto) {
+		const justiceInquiry = await this.justiceInquiryRepository.findByJusticeInquiryId(justiceInquiryId);
+		if (!justiceInquiry) {
+			throw new BadRequestError("مشکلی در یافتن استعلام بوجود آمد");
+		}
+		await this.justiceInquiryRepository.updateJusticeInquiry(justiceInquiry, {
+			...updateTjusticeInquiryData,
+		});
+
+		return {
+			field: "updateJusticeInquiry",
+			success: true,
+			data: null,
+			message: "استعلام با موفقیت به روز شد",
 		};
 	}
 }

@@ -5,6 +5,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import JusticeInquiryService from "../service/justiceInquiry.service";
 import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
+import { JusticeInquiryUpdateDto } from "../dto/justiceInquiryUpdate.dto";
 const justiceInquiryService = new JusticeInquiryService();
 
 export class JusticeInquiryAdminController extends ControllerBase {
@@ -38,7 +39,7 @@ export class JusticeInquiryAdminController extends ControllerBase {
 			const isActive = convertStringToBoolean((req.query.isActive ?? "") as string);
 			const filters: GetJusticeInquiryiesFilters = {
 				term,
-				isActive
+				isActive,
 			};
 			const result = await justiceInquiryService.getJusticeInquiryies(filters);
 			return res.status(200).json(result);
@@ -108,6 +109,31 @@ export class JusticeInquiryAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در غیرفعالسازی استعلام رخ داد",
+			});
+		}
+	};
+	updateJusticeInquiry = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const justiceInquiryId: string = req.params.justiceInquiryId ?? "";
+			const updateTJusticeInquiryData: JusticeInquiryUpdateDto = {
+				justiceInquiryName: req?.body?.justiceInquiryName ?? "",
+				description: req?.body?.description ?? "",
+				isActive: req.body.isActive ?? false,
+			};
+			const result = await justiceInquiryService.updateJusticeInquiry(justiceInquiryId, updateTJusticeInquiryData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "updateJusticeInquiry",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش استعلام رخ داد",
 			});
 		}
 	};
