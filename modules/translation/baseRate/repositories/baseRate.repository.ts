@@ -1,13 +1,19 @@
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import BaseRateModel, { BaseRateDocument } from "../model/baseRate.mode";
 import { GetBaseRatesFilters } from "../dto/baseRateFilters.dto";
 
 export default class BaseRateRepository {
-	async findByBaseRateId(baseRateId: string, populateFields?: string[]): Promise<BaseRateDocument | null> {
+	async findByBaseRateId(baseRateId: string, populateFields?: string[], session?: mongoose.ClientSession): Promise<BaseRateDocument | null> {
 		let query = BaseRateModel.findById(baseRateId);
+
 		if (populateFields && populateFields.length) {
 			populateFields.forEach((field) => (query = query.populate(field)));
 		}
+
+		if (session) {
+			query = query.session(session);
+		}
+
 		return query.exec();
 	}
 	async findBaseRates(filter: GetBaseRatesFilters, populateFields?: string[]): Promise<BaseRateDocument[]> {

@@ -4,8 +4,6 @@ import ControllerBase from "../../../../shared/base/controller.base";
 import { ControllerError } from "../../../../types/controllerError.type";
 import DynamicRateService from "../service/dynamicRate.service";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
-import { DynamicRateInputType } from "../dto/dynamicRateInputType.dto";
-import { DynamicRateOption } from "../dto/dynamicRateOption.dto";
 import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
 const dynamicRateService = new DynamicRateService();
 
@@ -20,9 +18,7 @@ export default class DynamicRateAdminController extends ControllerBase {
 			const languageId: string = req.body.languageId;
 			const price: number = req.body.price;
 			const label: string = req.body.label;
-			const inputType: DynamicRateInputType = req.body.inputType;
-			const options: DynamicRateOption[] = req.body.options;
-			const result = await dynamicRateService.createDynamicRate(translationItemId, languageId, price, label, inputType, options);
+			const result = await dynamicRateService.createDynamicRate(translationItemId, languageId, price, label);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
@@ -127,8 +123,6 @@ export default class DynamicRateAdminController extends ControllerBase {
 			const updateDynamicRateData: DynamicRateUpdateDto = {
 				price: req?.body?.price ?? undefined,
 				label: req?.body?.label ?? undefined,
-				inputType: req?.body?.inputType ?? undefined,
-				options: req?.body?.options ?? undefined,
 			};
 			const result = await dynamicRateService.updateDynamicRate(dynamicRateId, updateDynamicRateData);
 			return res.status(200).json(result);

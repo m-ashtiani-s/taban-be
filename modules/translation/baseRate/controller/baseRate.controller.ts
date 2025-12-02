@@ -4,6 +4,7 @@ import ControllerBase from "../../../../shared/base/controller.base";
 import { ControllerError } from "../../../../types/controllerError.type";
 import BaseRateService from "../service/baseRate.service";
 import { GetBaseRatesFilters } from "../dto/baseRateFilters.dto";
+import { BaseRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
 const baseRateService = new BaseRateService();
 
 export default class BaseRateController extends ControllerBase {
@@ -107,6 +108,25 @@ export default class BaseRateController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در ویرایش قیمت نرخ پایه رخ داد",
+			});
+		}
+	};
+	bulkUpdateBaseRatePrice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const bulkUpdateData: BaseRatesUpdateList[] =req.body.bulkUpdateData;
+			const result = await baseRateService.bulkUpdateBaseRatePrice(bulkUpdateData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "bulkUpdateBaseRatePrice",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش قیمت نرخ های پایه رخ داد",
 			});
 		}
 	};

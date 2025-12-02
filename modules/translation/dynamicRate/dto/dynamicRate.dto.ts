@@ -1,5 +1,3 @@
-import { DynamicRateInputType } from "./dynamicRateInputType.dto";
-import { DynamicRateOption } from "./dynamicRateOption.dto";
 
 export interface DynamicRateDto {
 	dynamicRateId: string;
@@ -9,6 +7,4 @@ export interface DynamicRateDto {
 	languageName: string;
 	price: number;
 	label: string;
-	inputType: DynamicRateInputType;
-	options: DynamicRateOption[];
 }

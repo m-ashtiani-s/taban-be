@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import LanguageRepository from "../../language/repositories/language.repository";
@@ -5,6 +6,7 @@ import TranslationItemRepository from "../../translationItem/repositories/transl
 import { GetBaseRatesFilters } from "../dto/baseRateFilters.dto";
 import BaseRateRepository from "../repositories/baseRate.repository";
 import BaseRateTransform from "../transform/baseRate.transform";
+import { BaseRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
 
 export default class BaseRateService {
 	private baseRateRepository = new BaseRateRepository();
@@ -82,7 +84,7 @@ export default class BaseRateService {
 			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
 		}
 		await this.baseRateRepository.updateBaseRate(baseRate, {
-			basePrice
+			basePrice,
 		});
 
 		return {
@@ -91,5 +93,35 @@ export default class BaseRateService {
 			data: null,
 			message: "نرخ پایه با موفقیت به روز شد",
 		};
+	}
+	async bulkUpdateBaseRatePrice(baseRatesUpdateList: BaseRatesUpdateList[]) {
+		const session = await mongoose.startSession();
+		session.startTransaction();
+
+		try {
+			for (const { baseRateId, basePrice } of baseRatesUpdateList) {
+				const baseRate = await this.baseRateRepository.findByBaseRateId(baseRateId, undefined, session);
+				if (!baseRate) {
+					throw new BadRequestError(`نرخ پایه با شناسه ${baseRateId} یافت نشد`);
+				}
+
+				baseRate.basePrice = basePrice;
+				await baseRate.save({ session });
+			}
+
+			await session.commitTransaction();
+			session.endSession();
+
+			return {
+				field: "bulkUpdateBaseRatePrice",
+				success: true,
+				data: null,
+				message: "تمام نرخ‌های پایه با موفقیت به روز شدند",
+			};
+		} catch (error) {
+			await session.abortTransaction();
+			session.endSession();
+			throw error;
+		}
 	}
 }

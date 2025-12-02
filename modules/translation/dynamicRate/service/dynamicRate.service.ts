@@ -3,8 +3,6 @@ import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import LanguageRepository from "../../language/repositories/language.repository";
 import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
-import { DynamicRateInputType } from "../dto/dynamicRateInputType.dto";
-import { DynamicRateOption } from "../dto/dynamicRateOption.dto";
 import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
 import DynamicRateRepository from "../repositories/dynamicRate.repository";
 import DynamicRateTransform from "../transform/dynamicRate.transform";
@@ -19,8 +17,6 @@ export default class DynamicRateService {
 		languageId: string,
 		price: number,
 		label: string,
-		inputType: DynamicRateInputType,
-		options: DynamicRateOption[]
 	) {
 		const language = await this.languageRepository.findByLanguageId(languageId);
 		if (!language) {
@@ -37,8 +33,6 @@ export default class DynamicRateService {
 			language: languageId,
 			price,
 			label,
-			inputType,
-			options,
 		});
 		return {
 			field: "createDynamicRate",

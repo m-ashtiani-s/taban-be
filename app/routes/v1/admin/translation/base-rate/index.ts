@@ -10,4 +10,5 @@ baseRateRouter.get("/", baseRateController.getBaseRates);
 baseRateRouter.get("/:baseRateId", baseRateController.getBaseRate);
 baseRateRouter.delete("/:baseRateId", baseRateController.deleteBaseRate);
 baseRateRouter.put("/:baseRateId/price", BaseRateValidation.updateBaseRatePrice, baseRateController.updateBaseRatePrice);
+baseRateRouter.put("/bulk-update", baseRateController.bulkUpdateBaseRatePrice);
 export default baseRateRouter;
