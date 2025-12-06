@@ -5,6 +5,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import DynamicRateService from "../service/dynamicRate.service";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
 import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
+import { DynamicRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
 const dynamicRateService = new DynamicRateService();
 
 export default class DynamicRateAdminController extends ControllerBase {
@@ -133,6 +134,25 @@ export default class DynamicRateAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در ویرایش نرخ خاص رخ داد",
+			});
+		}
+	};
+	bulkUpdateDynamicRatePrice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const bulkUpdateData: DynamicRatesUpdateList[] = req.body.bulkUpdateData;
+			const result = await dynamicRateService.bulkUpdateDynamicRatePrice(bulkUpdateData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "bulkUpdateDynamicRatePrice",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش قیمت نرخ های خاص رخ داد",
 			});
 		}
 	};

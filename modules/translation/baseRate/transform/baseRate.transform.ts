@@ -12,8 +12,10 @@ export default class TranslationTransform {
 			baseRateId: baseRate?._id as string,
 			translationItemId: translationItem._id?.toString() || translationItem.toString(),
 			translationItemName: translationItem.title || "",
+			translationItemIsActive: translationItem.isActive,
 			languageId: language._id?.toString() || language.toString(),
 			languageName: language.languageName || "",
+			languageIsActive: language.isActive ,
 			basePrice: baseRate.basePrice,
 		};
 	}

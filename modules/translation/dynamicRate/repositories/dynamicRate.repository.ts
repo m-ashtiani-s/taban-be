@@ -1,13 +1,19 @@
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import DynamicRateModel, { DynamicRateDocument } from "../model/dynamicRate.mode";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
 
 export default class DynamicRateRepository {
-	async findByDynamicRateId(dynamicRateId: string, populateFields?: string[]): Promise<DynamicRateDocument | null> {
+	async findByDynamicRateId(dynamicRateId: string, populateFields?: string[], session?: mongoose.ClientSession): Promise<DynamicRateDocument | null> {
 		let query = DynamicRateModel.findById(dynamicRateId);
+
 		if (populateFields && populateFields.length) {
 			populateFields.forEach((field) => (query = query.populate(field)));
 		}
+
+		if (session) {
+			query = query.session(session);
+		}
+
 		return query.exec();
 	}
 	async findDynamicRates(filter: GetDynamicRatesFilters, populateFields?: string[]): Promise<DynamicRateDocument[]> {

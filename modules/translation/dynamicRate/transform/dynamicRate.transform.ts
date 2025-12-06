@@ -12,10 +12,12 @@ export default class TranslationTransform {
 			dynamicRateId: dynamicRate._id as string,
 			translationItemId: translationItem._id?.toString() || translationItem.toString(),
 			translationItemName: translationItem.title || "",
+			translationItemIsActive: translationItem.isActive,
 			languageId: language._id?.toString() || language.toString(),
 			languageName: language.languageName || "",
+			languageIsActive: language.isActive,
 			price: dynamicRate.price,
-			label: dynamicRate.label
+			label: dynamicRate.label,
 		};
 	}
 	dynamicRates(dynamicRates: DynamicRateDocument[]): DynamicRateDto[] {

@@ -5,6 +5,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import CertificationRateService from "../service/certificationRate.service";
 import { GetCertificationRatesFilters } from "../dto/certificationRateFilters.dto";
 import { CertificationRateUpdateDto } from "../dto/certificationRateUpdate.dto";
+import { CertificationRatesUpdateList } from "../dto/certificationRatesUpdateList.dto";
 const certificationRateService = new CertificationRateService();
 
 export default class CertificationRateAdminController extends ControllerBase {
@@ -102,7 +103,7 @@ export default class CertificationRateAdminController extends ControllerBase {
 			const certificationRateId: string = req.params.certificationRateId;
 			const updateCertificationRateData: CertificationRateUpdateDto = {
 				mfaPrice: req?.body?.mfaPrice ?? undefined,
-				justicePrice: req?.body?.justicePrice ?? undefined
+				justicePrice: req?.body?.justicePrice ?? undefined,
 			};
 			const result = await certificationRateService.updateCertificationRate(certificationRateId, updateCertificationRateData);
 			return res.status(200).json(result);
@@ -113,6 +114,25 @@ export default class CertificationRateAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در ویرایش نرخ تاییدیه رخ داد",
+			});
+		}
+	};
+	bulkUpdateCertificationRatePrice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const bulkUpdateData: CertificationRatesUpdateList[] = req.body.bulkUpdateData;
+			const result = await certificationRateService.bulkUpdateCertificationRatePrice(bulkUpdateData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "bulkUpdateCertificationRatePrice",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش قیمت نرخ های خاص رخ داد",
 			});
 		}
 	};

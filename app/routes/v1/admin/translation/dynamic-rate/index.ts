@@ -5,10 +5,12 @@ import DynamicRateAdminController from "../../../../../../modules/translation/dy
 const dynamicRateRouter = express.Router();
 const dynamicRateAdminController = new DynamicRateAdminController();
 
-dynamicRateRouter.post("/",DynaminRateValidation.createDynamicRate, dynamicRateAdminController.createDynamicRate);
+dynamicRateRouter.post("/", DynaminRateValidation.createDynamicRate, dynamicRateAdminController.createDynamicRate);
 dynamicRateRouter.get("/", dynamicRateAdminController.getDynamicRates);
 dynamicRateRouter.get("/:dynamicRateId", dynamicRateAdminController.getDynamicRate);
 dynamicRateRouter.delete("/:dynamicRateId", dynamicRateAdminController.deleteDynamicRate);
-dynamicRateRouter.put("/:dynamicRateId/price", DynaminRateValidation.updateDynamicRatePrice,dynamicRateAdminController.updateDynamicRatePrice);
-dynamicRateRouter.put("/:dynamicRateId", DynaminRateValidation.updateDynamicRate,dynamicRateAdminController.updateDynamicRate);
+dynamicRateRouter.put("/bulk-update", dynamicRateAdminController.bulkUpdateDynamicRatePrice);
+dynamicRateRouter.put("/:dynamicRateId/price", DynaminRateValidation.updateDynamicRatePrice, dynamicRateAdminController.updateDynamicRatePrice);
+dynamicRateRouter.put("/:dynamicRateId", DynaminRateValidation.updateDynamicRate, dynamicRateAdminController.updateDynamicRate);
+
 export default dynamicRateRouter;

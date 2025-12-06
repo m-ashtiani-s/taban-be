@@ -1,4 +1,4 @@
-import {  JusticeInquiryDocument } from "../../justiceInquiry/model/justiceInquiry.mode";
+import { JusticeInquiryDocument } from "../../justiceInquiry/model/justiceInquiry.mode";
 import { LanguageDocument } from "../../language/model/translationItem.mode";
 import { TranslationItemDocument } from "../../translationItem/model/translationItem.mode";
 import { JusticeInquiryRateDto } from "../dto/justiceInquiry.dto";
@@ -14,18 +14,24 @@ export default class TranslationTransform {
 			justiceInquiryRateId: justiceInquiryRate._id as string,
 			translationItemId: translationItem._id?.toString() || translationItem.toString(),
 			translationItemName: translationItem.title || "",
+			translationItemIsActive: translationItem.isActive,
 			languageId: language._id?.toString() || language.toString(),
 			languageName: language.languageName || "",
+			languageIsActive: language.isActive ,
 			justiceInquiryId: justiceInquiry._id?.toString() || justiceInquiry.toString(),
 			justiceInquiryName: justiceInquiry.justiceInquiryName || "",
+			justiceInquiryIsActive: justiceInquiry.isActive,
 			price: justiceInquiryRate.price,
-			isRequired: justiceInquiryRate.isRequired
+			isRequired: justiceInquiryRate.isRequired,
 		};
 	}
 	justiceInquiryRates(justiceInquiryRates: JusticeInquiryRateDocument[]): JusticeInquiryRateDto[] {
 		const transformedJusticeInquiryRates: JusticeInquiryRateDto[] = [];
 		justiceInquiryRates?.map((it) => {
-			transformedJusticeInquiryRates.push(this.justiceInquiryRate(it));
+			const justicInquiryRate = this.justiceInquiryRate(it);
+			if (justicInquiryRate?.justiceInquiryIsActive) {
+				transformedJusticeInquiryRates.push(justicInquiryRate);
+			}
 		});
 		return transformedJusticeInquiryRates;
 	}

@@ -9,5 +9,6 @@ certificationRateRouter.post("/", CertifictionRateValidation.createCertification
 certificationRateRouter.get("/", certificationRateAdminController.getCertificationRates);
 certificationRateRouter.get("/:certificationRateId", certificationRateAdminController.getCertificationRate);
 certificationRateRouter.delete("/:certificationRateId", certificationRateAdminController.deleteCertificationRate);
+certificationRateRouter.put("/bulk-update", certificationRateAdminController.bulkUpdateCertificationRatePrice);
 certificationRateRouter.put("/:certificationRateId", CertifictionRateValidation.updateCertificationRate, certificationRateAdminController.updateCertificationRate);
 export default certificationRateRouter;

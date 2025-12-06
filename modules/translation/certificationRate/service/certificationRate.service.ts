@@ -1,8 +1,10 @@
+import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import LanguageRepository from "../../language/repositories/language.repository";
 import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
 import { GetCertificationRatesFilters } from "../dto/certificationRateFilters.dto";
+import { CertificationRatesUpdateList } from "../dto/certificationRatesUpdateList.dto";
 import { CertificationRateUpdateDto } from "../dto/certificationRateUpdate.dto";
 import CertificationRateRepository from "../repositories/certificationRate.repository";
 import CertificationRateTransform from "../transform/certificationRate.transform";
@@ -91,5 +93,36 @@ export default class CertificationRateService {
 			data: null,
 			message: "نرخ تاییدیه با موفقیت به روز شد",
 		};
+	}
+	async bulkUpdateCertificationRatePrice(certificationRatesUpdateList: CertificationRatesUpdateList[]) {
+		const session = await mongoose.startSession();
+		session.startTransaction();
+
+		try {
+			for (const { certificationRateId, mfaPrice,justicePrice } of certificationRatesUpdateList) {
+				const certificationRate = await this.certificationRateRepository.findByCertificationRateId(certificationRateId, undefined, session);
+				if (!certificationRate) {
+					throw new BadRequestError(`نرخ تاییدیه با شناسه ${certificationRateId} یافت نشد`);
+				}
+
+				certificationRate.mfaPrice = mfaPrice;
+				certificationRate.justicePrice = justicePrice;
+				await certificationRate.save({ session });
+			}
+
+			await session.commitTransaction();
+			session.endSession();
+
+			return {
+				field: "bulkUpdateCertificationRatePrice",
+				success: true,
+				data: null,
+				message: "تمام نرخ‌های تاییدیه با موفقیت به روز شدند",
+			};
+		} catch (error) {
+			await session.abortTransaction();
+			session.endSession();
+			throw error;
+		}
 	}
 }

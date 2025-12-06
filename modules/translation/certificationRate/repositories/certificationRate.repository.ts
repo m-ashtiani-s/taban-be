@@ -1,13 +1,19 @@
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import CertificationRateModel, { CertificationRateDocument } from "../model/certificationRate.mode";
 import { GetCertificationRatesFilters } from "../dto/certificationRateFilters.dto";
 
 export default class CertificationRateRepository {
-	async findByCertificationRateId(certificationRateId: string, populateFields?: string[]): Promise<CertificationRateDocument | null> {
+	async findByCertificationRateId(certificationRateId: string, populateFields?: string[], session?: mongoose.ClientSession): Promise<CertificationRateDocument | null> {
 		let query = CertificationRateModel.findById(certificationRateId);
+
 		if (populateFields && populateFields.length) {
 			populateFields.forEach((field) => (query = query.populate(field)));
 		}
+
+		if (session) {
+			query = query.session(session);
+		}
+
 		return query.exec();
 	}
 	async findCertificationRates(filter: GetCertificationRatesFilters, populateFields?: string[]): Promise<CertificationRateDocument[]> {

@@ -1,7 +1,9 @@
+import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import LanguageRepository from "../../language/repositories/language.repository";
 import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
+import { DynamicRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
 import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
 import DynamicRateRepository from "../repositories/dynamicRate.repository";
@@ -12,12 +14,7 @@ export default class DynamicRateService {
 	private languageRepository = new LanguageRepository();
 	private translationItemRepository = new TranslationItemRepository();
 
-	async createDynamicRate(
-		translationItemId: string,
-		languageId: string,
-		price: number,
-		label: string,
-	) {
+	async createDynamicRate(translationItemId: string, languageId: string, price: number, label: string) {
 		const language = await this.languageRepository.findByLanguageId(languageId);
 		if (!language) {
 			throw new NotFoundError("زبان مورد نظر وجود ندارد");
@@ -109,5 +106,35 @@ export default class DynamicRateService {
 			data: null,
 			message: "نرخ خاص با موفقیت به روز شد",
 		};
+	}
+	async bulkUpdateDynamicRatePrice(dynamicRatesUpdateList: DynamicRatesUpdateList[]) {
+		const session = await mongoose.startSession();
+		session.startTransaction();
+
+		try {
+			for (const { dynamicRateId, price } of dynamicRatesUpdateList) {
+				const dynamicRate = await this.dynamicRateRepository.findByDynamicRateId(dynamicRateId, undefined, session);
+				if (!dynamicRate) {
+					throw new BadRequestError(`نرخ تاییدیه با شناسه ${dynamicRateId} یافت نشد`);
+				}
+
+				dynamicRate.price = price;
+				await dynamicRate.save({ session });
+			}
+
+			await session.commitTransaction();
+			session.endSession();
+
+			return {
+				field: "bulkUpdateDynamicRatePrice",
+				success: true,
+				data: null,
+				message: "تمام نرخ‌های خاص با موفقیت به روز شدند",
+			};
+		} catch (error) {
+			await session.abortTransaction();
+			session.endSession();
+			throw error;
+		}
 	}
 }
