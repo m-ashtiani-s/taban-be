@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import JusticeInquiryRepository from "../../justiceInquiry/repositories/justiceInquiry.repository";
@@ -6,6 +7,7 @@ import TranslationItemRepository from "../../translationItem/repositories/transl
 import { GetJusticeInquiryRatesFilters } from "../dto/justiceInquiryRateFilters.dto";
 import JusticeInquiryRateRepository from "../repositories/justiceInquiryRate.repository";
 import JusticeInquiryRateTransform from "../transform/justiceInquiryRate.transform";
+import { JusticeInquiryRatesUpdateList } from "../dto/justiceInquiryRatesUpdateList.dto";
 
 export default class JusticeInquiryRateService {
 	private justiceInquiryRateRepository = new JusticeInquiryRateRepository();
@@ -103,5 +105,35 @@ export default class JusticeInquiryRateService {
 			data: null,
 			message: "نرخ استعلام با موفقیت به روز شد",
 		};
+	}
+	async bulkUpdateJusticeInquiryRatePrice(justiceInquiryRatesUpdateList: JusticeInquiryRatesUpdateList[]) {
+		const session = await mongoose.startSession();
+		session.startTransaction();
+
+		try {
+			for (const { justiceInquiryRateId, price } of justiceInquiryRatesUpdateList) {
+				const justiceInquiryRate = await this.justiceInquiryRateRepository.findByJusticeInquiryRateId(justiceInquiryRateId, undefined, session);
+				if (!justiceInquiryRate) {
+					throw new BadRequestError(`نرخ استعلام با شناسه ${justiceInquiryRateId} یافت نشد`);
+				}
+
+				justiceInquiryRate.price = price;
+				await justiceInquiryRate.save({ session });
+			}
+
+			await session.commitTransaction();
+			session.endSession();
+
+			return {
+				field: "bulkUpdateJusticeInquiryRatePrice",
+				success: true,
+				data: null,
+				message: "تمام نرخ‌های استعلام با موفقیت به روز شدند",
+			};
+		} catch (error) {
+			await session.abortTransaction();
+			session.endSession();
+			throw error;
+		}
 	}
 }

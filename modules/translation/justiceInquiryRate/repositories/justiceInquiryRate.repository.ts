@@ -1,12 +1,19 @@
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import JusticeInquiryRateModel, { JusticeInquiryRateDocument } from "../model/justiceInquiryRate.mode";
 import { GetJusticeInquiryRatesFilters } from "../dto/justiceInquiryRateFilters.dto";
 
 export default class JusticeInquiryRateRepository {
-	async findByJusticeInquiryRateId(justiceInquiryRateId: string, populateFields?: string[]): Promise<JusticeInquiryRateDocument | null> {
+	async findByJusticeInquiryRateId(
+		justiceInquiryRateId: string,
+		populateFields?: string[],
+		session?: mongoose.ClientSession
+	): Promise<JusticeInquiryRateDocument | null> {
 		let query = JusticeInquiryRateModel.findById(justiceInquiryRateId);
 		if (populateFields && populateFields.length) {
 			populateFields.forEach((field) => (query = query.populate(field)));
+		}
+		if (session) {
+			query = query.session(session);
 		}
 		return query.exec();
 	}
@@ -26,7 +33,10 @@ export default class JusticeInquiryRateRepository {
 		return justiceInquiryRate.save();
 	}
 
-	async updateJusticeInquiryRate(justiceInquiryRate: JusticeInquiryRateDocument, data: Partial<JusticeInquiryRateDocument>): Promise<JusticeInquiryRateDocument> {
+	async updateJusticeInquiryRate(
+		justiceInquiryRate: JusticeInquiryRateDocument,
+		data: Partial<JusticeInquiryRateDocument>
+	): Promise<JusticeInquiryRateDocument> {
 		Object.assign(justiceInquiryRate, data);
 		return justiceInquiryRate.save();
 	}

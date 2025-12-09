@@ -9,5 +9,6 @@ justiceInquiryRateRouter.post("/", JusticeInquiryRateValidation.createJusticeInq
 justiceInquiryRateRouter.get("/", justiceInquiryRateAdminController.getJusticeInquiryRates);
 justiceInquiryRateRouter.get("/:justiceInquiryRateId", justiceInquiryRateAdminController.getJusticeInquiryRate);
 justiceInquiryRateRouter.delete("/:justiceInquiryRateId", justiceInquiryRateAdminController.deleteJusticeInquiryRate);
+justiceInquiryRateRouter.put("/bulk-update", justiceInquiryRateAdminController.bulkUpdateJusticeInquiryRatePrice);
 justiceInquiryRateRouter.put("/:justiceInquiryRateId/price", JusticeInquiryRateValidation.updateJusticeInquiryRatePrice, justiceInquiryRateAdminController.updateJusticeInquiryRatePrice);
 export default justiceInquiryRateRouter;

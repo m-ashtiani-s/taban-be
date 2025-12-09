@@ -4,6 +4,7 @@ import ControllerBase from "../../../../shared/base/controller.base";
 import { ControllerError } from "../../../../types/controllerError.type";
 import JusticeInquiryRateService from "../service/justiceInquiryRate.service";
 import { GetJusticeInquiryRatesFilters } from "../dto/justiceInquiryRateFilters.dto";
+import { JusticeInquiryRatesUpdateList } from "../dto/justiceInquiryRatesUpdateList.dto";
 const justiceInquiryRateService = new JusticeInquiryRateService();
 
 export default class JusticeInquiryRateAdminController extends ControllerBase {
@@ -108,6 +109,25 @@ export default class JusticeInquiryRateAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در ویرایش قیمت نرخ خاص رخ داد",
+			});
+		}
+	};
+	bulkUpdateJusticeInquiryRatePrice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const bulkUpdateData: JusticeInquiryRatesUpdateList[] = req.body.bulkUpdateData;
+			const result = await justiceInquiryRateService.bulkUpdateJusticeInquiryRatePrice(bulkUpdateData);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "bulkUpdateJusticeInquiryRatePrice",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در ویرایش قیمت نرخ های استعلام رخ داد",
 			});
 		}
 	};
