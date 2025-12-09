@@ -17,7 +17,7 @@ export default class TranslationController extends ControllerBase {
 
 		try {
 			const term: string = (req.query.term as string) ?? "";
-			const category: string = req.body.categoryId ?? "";
+			const category: string = (req.query.categoryId as string) ?? "";
 			const filters: GetTranslationItemsFilters = {
 				term,
 				isActive: true,

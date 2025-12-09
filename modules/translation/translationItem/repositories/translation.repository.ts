@@ -46,6 +46,9 @@ export default class TranslationItemRepository {
 		if (typeof filters.isActive === "boolean") {
 			queryObj.isActive = filters.isActive;
 		}
+		if ( filters.category) {
+			queryObj.category = filters.category;
+		}
 
 		if (filters.term) {
 			queryObj.title = { $regex: filters.term, $options: "i" };
