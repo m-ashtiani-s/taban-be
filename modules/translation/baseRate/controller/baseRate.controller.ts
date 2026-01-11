@@ -17,7 +17,8 @@ export default class BaseRateController extends ControllerBase {
 			const translationItemId: string = req.body.translationItemId;
 			const languageId: string = req.body.languageId;
 			const basePrice: number = req.body.basePrice;
-			const result = await baseRateService.createBaseRate(translationItemId, languageId, basePrice);
+			const title: string = req.body.title;
+			const result = await baseRateService.createBaseRate(translationItemId, languageId, basePrice,title);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;

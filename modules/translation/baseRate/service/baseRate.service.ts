@@ -13,7 +13,7 @@ export default class BaseRateService {
 	private languageRepository = new LanguageRepository();
 	private translationItemRepository = new TranslationItemRepository();
 
-	async createBaseRate(translationItemId: string, languageId: string, basePrice: number) {
+	async createBaseRate(translationItemId: string, languageId: string, basePrice: number,title:string) {
 		const language = await this.languageRepository.findByLanguageId(languageId);
 		if (!language) {
 			throw new NotFoundError("زبان مورد نظر وجود ندارد");
@@ -33,6 +33,7 @@ export default class BaseRateService {
 			translationItem: translationItemId,
 			language: languageId,
 			basePrice,
+			title
 		});
 		return {
 			field: "createBaseRate",
