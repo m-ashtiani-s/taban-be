@@ -8,7 +8,7 @@ export const createServer = (): Application => {
 
 	app.use(
 		cors({
-			origin: ["http://localhost:3000", "http://localhost:3001", "https://taban-fe.liara.run", "https://memaryab.com"],
+			origin: ["http://localhost:3000", "http://localhost:3001", "https://taban-fe.liara.run", "https://memaryab.com","https://rasmiyab.com"],
 		})
 	);
 
