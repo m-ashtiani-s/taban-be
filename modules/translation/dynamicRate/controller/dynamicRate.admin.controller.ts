@@ -19,7 +19,8 @@ export default class DynamicRateAdminController extends ControllerBase {
 			const languageId: string = req.body.languageId;
 			const price: number = req.body.price;
 			const label: string = req.body.label;
-			const result = await dynamicRateService.createDynamicRate(translationItemId, languageId, price, label);
+			const description: string = req.body.description;
+			const result = await dynamicRateService.createDynamicRate(translationItemId, languageId, price, label,description);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
@@ -124,6 +125,7 @@ export default class DynamicRateAdminController extends ControllerBase {
 			const updateDynamicRateData: DynamicRateUpdateDto = {
 				price: req?.body?.price ?? undefined,
 				label: req?.body?.label ?? undefined,
+				description: req?.body?.description ?? undefined,
 			};
 			const result = await dynamicRateService.updateDynamicRate(dynamicRateId, updateDynamicRateData);
 			return res.status(200).json(result);

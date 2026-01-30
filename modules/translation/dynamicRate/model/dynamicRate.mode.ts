@@ -7,6 +7,7 @@ export interface DynamicRate {
 	language: string | LanguageDocument;
 	price: number;
 	label: string;
+	description: string;
 }
 
 export type DynamicRateDocument = DynamicRate & Document;
@@ -17,6 +18,7 @@ const dynamicRateSchema = new Schema(
 		language: { type: Schema.Types.ObjectId, ref: "Language", required: true },
 		price: { type: Number, required: true },
 		label: { type: String, required: true },
+		description: { type: String },
 	},
 	{ timestamps: true }
 );

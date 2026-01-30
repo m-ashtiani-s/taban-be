@@ -13,7 +13,17 @@ export default class BaseRateService {
 	private languageRepository = new LanguageRepository();
 	private translationItemRepository = new TranslationItemRepository();
 
-	async createBaseRate(translationItemId: string, languageId: string, basePrice: number,title:string) {
+	async createBaseRate(
+		translationItemId: string,
+		languageId: string,
+		basePrice: number,
+		title: string,
+		sanamPrice: number,
+		daftariPrice: number,
+		tasdighPrice: number,
+		mohrPrice: number,
+		description: string
+	) {
 		const language = await this.languageRepository.findByLanguageId(languageId);
 		if (!language) {
 			throw new NotFoundError("زبان مورد نظر وجود ندارد");
@@ -33,7 +43,12 @@ export default class BaseRateService {
 			translationItem: translationItemId,
 			language: languageId,
 			basePrice,
-			title
+			title,
+			sanamPrice,
+			daftariPrice,
+			tasdighPrice,
+			mohrPrice,
+			description
 		});
 		return {
 			field: "createBaseRate",
@@ -79,13 +94,18 @@ export default class BaseRateService {
 			data: null,
 		};
 	}
-	async updateBaseRatePrice(baseRateId: string, basePrice: number) {
+	async updateBaseRatePrice(baseRateId: string, basePrice: number, sanamPrice: number, daftariPrice: number, tasdighPrice: number, mohrPrice: number,description: string) {
 		const baseRate = await this.baseRateRepository.findByBaseRateId(baseRateId);
 		if (!baseRate) {
 			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
 		}
 		await this.baseRateRepository.updateBaseRate(baseRate, {
 			basePrice,
+			sanamPrice,
+			daftariPrice,
+			tasdighPrice,
+			mohrPrice,
+			description
 		});
 
 		return {

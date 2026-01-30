@@ -14,7 +14,7 @@ export default class DynamicRateService {
 	private languageRepository = new LanguageRepository();
 	private translationItemRepository = new TranslationItemRepository();
 
-	async createDynamicRate(translationItemId: string, languageId: string, price: number, label: string) {
+	async createDynamicRate(translationItemId: string, languageId: string, price: number, label: string,description:string) {
 		const language = await this.languageRepository.findByLanguageId(languageId);
 		if (!language) {
 			throw new NotFoundError("زبان مورد نظر وجود ندارد");
@@ -30,6 +30,7 @@ export default class DynamicRateService {
 			language: languageId,
 			price,
 			label,
+			description
 		});
 		return {
 			field: "createDynamicRate",

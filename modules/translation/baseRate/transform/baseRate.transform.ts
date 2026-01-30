@@ -15,9 +15,14 @@ export default class TranslationTransform {
 			translationItemIsActive: translationItem.isActive,
 			languageId: language._id?.toString() || language.toString(),
 			languageName: language.languageName || "",
-			languageIsActive: language.isActive ,
+			languageIsActive: language.isActive,
 			basePrice: baseRate.basePrice,
-			title: baseRate.title??"جهت تست",
+			title: baseRate.title ?? "جهت تست",
+			sanamPrice: baseRate?.sanamPrice,
+			daftariPrice: baseRate?.daftariPrice,
+			tasdighPrice: baseRate?.tasdighPrice,
+			mohrPrice: baseRate?.mohrPrice,
+			description: baseRate?.description,
 		};
 	}
 	baseRates(baseRates: BaseRateDocument[]): BaseRateDto[] {

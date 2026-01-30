@@ -6,6 +6,7 @@ import certificationRateRouter from "./certification-rate";
 import justiceInquiryRateRouter from "./justice-inquiry-rate";
 import translationItemsCategoriesRouter from "./translation-items-categories";
 import baseRateRouter from "./base-rate";
+import translationPriceRouter from "./translation-price";
 
 const translationRouter = express.Router();
 
@@ -16,4 +17,5 @@ translationRouter.use("/languages", languagesRouter);
 translationRouter.use("/dynamic-rate", dynamicRateRouter);
 translationRouter.use("/certification-rate", certificationRateRouter);
 translationRouter.use("/justice-inquiry-rate", justiceInquiryRateRouter);
+translationRouter.use("/translation-price", translationPriceRouter);
 export default translationRouter;

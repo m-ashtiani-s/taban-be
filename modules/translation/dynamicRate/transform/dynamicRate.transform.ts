@@ -18,6 +18,7 @@ export default class TranslationTransform {
 			languageIsActive: language.isActive,
 			price: dynamicRate.price,
 			label: dynamicRate.label,
+			description: dynamicRate.description,
 		};
 	}
 	dynamicRates(dynamicRates: DynamicRateDocument[]): DynamicRateDto[] {

@@ -9,4 +9,5 @@ export interface DynamicRateDto {
 	languageIsActive:boolean;
 	price: number;
 	label: string;
+	description: string;
 }

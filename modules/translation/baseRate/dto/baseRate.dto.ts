@@ -7,5 +7,10 @@ export interface BaseRateDto {
 	languageName: string;
 	languageIsActive:boolean;
 	basePrice: number;
-	title:string
+	title:string;
+	sanamPrice: number;
+	daftariPrice: number;
+	tasdighPrice: number;
+	mohrPrice: number;
+	description: string;
 }

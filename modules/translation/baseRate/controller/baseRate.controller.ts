@@ -18,7 +18,22 @@ export default class BaseRateController extends ControllerBase {
 			const languageId: string = req.body.languageId;
 			const basePrice: number = req.body.basePrice;
 			const title: string = req.body.title;
-			const result = await baseRateService.createBaseRate(translationItemId, languageId, basePrice,title);
+			const sanamPrice: number = req.body.sanamPrice;
+			const daftariPrice: number = req.body.daftariPrice;
+			const tasdighPrice: number = req.body.tasdighPrice;
+			const mohrPrice: number = req.body.mohrPrice;
+			const description: string = req.body.description;
+			const result = await baseRateService.createBaseRate(
+				translationItemId,
+				languageId,
+				basePrice,
+				title,
+				sanamPrice,
+				daftariPrice,
+				tasdighPrice,
+				mohrPrice,
+				description
+			);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
@@ -60,7 +75,7 @@ export default class BaseRateController extends ControllerBase {
 			return this.showValidationErrors(res, errors);
 		}
 		try {
-			const baseRateId: string =req.params.baseRateId;
+			const baseRateId: string = req.params.baseRateId;
 			const result = await baseRateService.getBaseRate(baseRateId);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
@@ -79,7 +94,7 @@ export default class BaseRateController extends ControllerBase {
 			return this.showValidationErrors(res, errors);
 		}
 		try {
-			const baseRateId: string =req.params.baseRateId;
+			const baseRateId: string = req.params.baseRateId;
 			const result = await baseRateService.deleteBaseRate(baseRateId);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
@@ -98,9 +113,14 @@ export default class BaseRateController extends ControllerBase {
 			return this.showValidationErrors(res, errors);
 		}
 		try {
-			const baseRateId: string =req.params.baseRateId;
-			const basePrice: number =+req.body.basePrice;
-			const result = await baseRateService.updateBaseRatePrice(baseRateId,basePrice);
+			const baseRateId: string = req.params.baseRateId;
+			const basePrice: number = +req.body.basePrice;
+			const sanamPrice: number = +req.body.sanamPrice;
+			const daftariPrice: number = +req.body.daftariPrice;
+			const tasdighPrice: number = +req.body.tasdighPrice;
+			const mohrPrice: number = +req.body.mohrPrice;
+			const description: string = req.body.description;
+			const result = await baseRateService.updateBaseRatePrice(baseRateId, basePrice, sanamPrice, daftariPrice, tasdighPrice, mohrPrice,description);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
@@ -118,7 +138,7 @@ export default class BaseRateController extends ControllerBase {
 			return this.showValidationErrors(res, errors);
 		}
 		try {
-			const bulkUpdateData: BaseRatesUpdateList[] =req.body.bulkUpdateData;
+			const bulkUpdateData: BaseRatesUpdateList[] = req.body.bulkUpdateData;
 			const result = await baseRateService.bulkUpdateBaseRatePrice(bulkUpdateData);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
