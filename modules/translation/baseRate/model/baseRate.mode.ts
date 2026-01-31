@@ -26,7 +26,7 @@ const baseRateSchema = new Schema(
 		daftariPrice: { type: Number, required: true },
 		tasdighPrice: { type: Number, required: true },
 		mohrPrice: { type: Number, required: true },
-		description: { type: String },
+		description: { type: String,default: "", },
 	},
 	{ timestamps: true },
 );
