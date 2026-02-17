@@ -25,7 +25,7 @@ export default class EmbassyService {
 		};
 	}
 	async getEmbassies(filters: GetEmbassiesFilters) {
-		const embassies = await this.embassyRepository.findEmbassies(filters,["category"]);
+		const embassies = await this.embassyRepository.findEmbassies(filters,[]);
 		if (!embassies) {
 			throw new BadRequestError("مشکلی در یافتن سفارت ها بوجود آمد");
 		}
