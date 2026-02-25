@@ -120,7 +120,8 @@ export default class BaseRateController extends ControllerBase {
 			const tasdighPrice: number = +req.body.tasdighPrice;
 			const mohrPrice: number = +req.body.mohrPrice;
 			const description: string = req.body.description;
-			const result = await baseRateService.updateBaseRatePrice(baseRateId, basePrice, sanamPrice, daftariPrice, tasdighPrice, mohrPrice,description);
+			const title: string = req.body.title;
+			const result = await baseRateService.updateBaseRatePrice(baseRateId, basePrice, sanamPrice, daftariPrice, tasdighPrice, mohrPrice,description,title);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;

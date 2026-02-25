@@ -17,7 +17,7 @@ export default class TranslationTransform {
 			languageName: language.languageName || "",
 			languageIsActive: language.isActive,
 			basePrice: baseRate.basePrice,
-			title: baseRate.title ?? "جهت تست",
+			title: baseRate.title ?? "",
 			sanamPrice: baseRate?.sanamPrice,
 			daftariPrice: baseRate?.daftariPrice,
 			tasdighPrice: baseRate?.tasdighPrice,

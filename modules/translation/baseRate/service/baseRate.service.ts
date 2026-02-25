@@ -94,7 +94,7 @@ export default class BaseRateService {
 			data: null,
 		};
 	}
-	async updateBaseRatePrice(baseRateId: string, basePrice: number, sanamPrice: number, daftariPrice: number, tasdighPrice: number, mohrPrice: number,description: string) {
+	async updateBaseRatePrice(baseRateId: string, basePrice: number, sanamPrice: number, daftariPrice: number, tasdighPrice: number, mohrPrice: number,description: string,title:string) {
 		const baseRate = await this.baseRateRepository.findByBaseRateId(baseRateId);
 		if (!baseRate) {
 			throw new BadRequestError("مشکلی در یافتن نرخ پایه بوجود آمد");
@@ -105,7 +105,8 @@ export default class BaseRateService {
 			daftariPrice,
 			tasdighPrice,
 			mohrPrice,
-			description
+			description,
+			title
 		});
 
 		return {
