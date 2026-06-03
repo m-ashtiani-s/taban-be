@@ -22,9 +22,10 @@ const embassySchema = new Schema(
 		description: {
 			type: String,
 			default: "",
+			trim: true,
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 const EmbassyModel: Model<EmbassyDocument> = mongoose.model<EmbassyDocument>("Embassy", embassySchema);

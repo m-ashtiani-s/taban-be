@@ -34,16 +34,16 @@ export default class UserController extends ControllerBase {
 
 		try {
 			const updateUserData: UpdateUserRequestDto = {
-				profilePic: req?.body?.profilePic ?? "",
-				nationalId: req?.body?.nationalId ?? "",
-				firstName: req?.body?.firstName ?? "",
-				lastName: req?.body?.lastName ?? "",
-				birthDate: req?.body?.birthDate ?? "",
-				email: req?.body?.email ?? "",
-				gender: req?.body?.gender ?? "",
-				province: req?.body?.province ?? "",
-				city: req?.body?.city ?? "",
-				referralSource: req?.body?.referralSource ?? "",
+				profilePic: req?.body?.profilePic,
+				nationalId: req?.body?.nationalId,
+				firstName: req?.body?.firstName,
+				lastName: req?.body?.lastName,
+				phoneNumber: req?.body?.phoneNumber,
+				userType: req?.body?.userType,
+				requiredLanguages: req?.body?.requiredLanguages,
+				specialtyField: req?.body?.specialtyField,
+				referralSource: req?.body?.referralSource,
+				referralCode: req?.body?.referralCode,
 			};
 			const result = await userService.updateUser(req.user?._id as string, updateUserData);
 			return res.status(200).json(result);
@@ -53,7 +53,7 @@ export default class UserController extends ControllerBase {
 				field: "updateUser",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در بررسی پروفایل رخ داد",
+				message: error.message || "مشکلی در به‌روزرسانی پروفایل رخ داد",
 			});
 		}
 	};
@@ -72,7 +72,7 @@ export default class UserController extends ControllerBase {
 				field: "getUser",
 				success: false,
 				data: null,
-				message: error.message || "مشکلی در بررسی پروفایل رخ داد",
+				message: error.message || "مشکلی در دریافت پروفایل رخ داد",
 			});
 		}
 	};

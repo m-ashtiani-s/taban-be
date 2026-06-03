@@ -1,9 +1,18 @@
 import express from "express";
 import translationRouter from "./translation";
+import adminCouponsRouter from "./coupons";
+import adminShippingAddressesRouter from "./shipping-addresses";
+import adminOrdersRouter from "./orders";
+import adminUsersRouter from "./users";
+import adminCustomersRouter from "./customers";
 
 const adminRouter = express.Router();
 
-// adminRouter.get("/users", userController.getUsersList.bind(userController));
 adminRouter.use("/translation", translationRouter);
+adminRouter.use("/coupons", adminCouponsRouter);
+adminRouter.use("/shipping-addresses", adminShippingAddressesRouter);
+adminRouter.use("/orders", adminOrdersRouter);
+adminRouter.use("/users", adminUsersRouter);
+adminRouter.use("/customers", adminCustomersRouter);
 
 export default adminRouter;

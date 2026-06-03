@@ -13,13 +13,13 @@ const languageSchema = new Schema(
 	{
 		languageName: { type: String, required: true, unique: true },
 		languageCode: { type: String, required: true, unique: true },
-		icon: { type: String },
+		icon: { type: String, default: null, trim: true },
 		isActive: {
 			type: Boolean,
 			default: true,
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 const LanguageModel: Model<LanguageDocument> = mongoose.model<LanguageDocument>("Language", languageSchema);

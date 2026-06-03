@@ -1,0 +1,46 @@
+import { body, param, query } from "express-validator";
+
+const AdminOrderValidation = {
+	orderId: [
+		param("orderId").notEmpty().withMessage("شناسه سفارش الزامی است").isMongoId().withMessage("شناسه سفارش معتبر نیست"),
+	],
+
+	getOrders: [
+		query("term").optional().isString().withMessage("فرمت جستجو صحیح نیست").trim(),
+		query("status")
+			.optional()
+			.isIn(["pending", "approved", "paid", "processing", "shipped", "delivered", "canceled", "rejected"])
+			.withMessage("وضعیت سفارش معتبر نیست"),
+		query("paymentStatus").optional().isIn(["pending", "paid", "failed"]).withMessage("وضعیت پرداخت معتبر نیست"),
+		query("dateFrom").optional().isISO8601().withMessage("فرمت تاریخ شروع معتبر نیست"),
+		query("dateTo").optional().isISO8601().withMessage("فرمت تاریخ پایان معتبر نیست"),
+		query("userId").optional().isMongoId().withMessage("شناسه کاربر معتبر نیست"),
+		query("customerId").optional().isMongoId().withMessage("شناسه مشتری معتبر نیست"),
+		query("page").optional().isInt({ min: 1 }).withMessage("شماره صفحه باید عددی صحیح باشد"),
+		query("pageSize").optional().isInt({ min: 1, max: 100 }).withMessage("اندازه صفحه معتبر نیست"),
+	],
+
+	updateOrderStatus: [
+		param("orderId").notEmpty().withMessage("شناسه سفارش الزامی است").isMongoId().withMessage("شناسه سفارش معتبر نیست"),
+		body("status")
+			.notEmpty()
+			.withMessage("وضعیت سفارش الزامی است")
+			.bail()
+			.isIn(["pending", "approved", "paid", "processing", "shipped", "delivered", "canceled", "rejected"])
+			.withMessage("وضعیت سفارش معتبر نیست"),
+		body("rejectedRemarks")
+			.optional({ nullable: true })
+			.isString()
+			.withMessage("توضیحات رد سفارش باید رشته باشد")
+			.isLength({ max: 1000 })
+			.withMessage("توضیحات رد سفارش نباید بیشتر از ۱۰۰۰ کاراکتر باشد")
+			.custom((value, { req }) => {
+				if (req.body.status === "rejected" && (!value || !value.trim())) {
+					throw new Error("برای رد سفارش، وارد کردن دلیل الزامی است");
+				}
+				return true;
+			}),
+	],
+};
+
+export default AdminOrderValidation;

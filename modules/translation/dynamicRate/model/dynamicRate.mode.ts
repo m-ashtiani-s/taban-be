@@ -18,9 +18,9 @@ const dynamicRateSchema = new Schema(
 		language: { type: Schema.Types.ObjectId, ref: "Language", required: true },
 		price: { type: Number, required: true },
 		label: { type: String, required: true },
-		description: { type: String },
+		description: { type: String, default: "", trim: true },
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 const DynamicRateModel: Model<DynamicRateDocument> = mongoose.model<DynamicRateDocument>("DynamicRate", dynamicRateSchema);

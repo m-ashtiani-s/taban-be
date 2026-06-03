@@ -1,0 +1,74 @@
+import mongoose, { PaginateResult } from "mongoose";
+import OrderModel, { OrderDocument } from "../model/order.model";
+import OrderCounterModel from "../model/orderCounter.model";
+import { OrderFilters } from "../dto/order.dto";
+import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
+
+export default class OrderRepository {
+	async getNextOrderNumber(): Promise<number> {
+		const counter = await OrderCounterModel.findByIdAndUpdate(
+			"order",
+			{ $inc: { seq: 1 } },
+			{ new: true, upsert: true, setDefaultsOnInsert: true }
+		).exec();
+		return counter?.seq ?? 100001;
+	}
+
+	async create(data: Partial<OrderDocument>): Promise<OrderDocument> {
+		const order = new OrderModel(data);
+		return order.save();
+	}
+
+	async findByIdAndUser(orderId: string, userId: string): Promise<OrderDocument | null> {
+		return OrderModel.findOne({ _id: orderId, user: userId })
+			.populate("shippingAddress")
+			.populate("coupon")
+			.populate("customer")
+			.exec();
+	}
+
+	async findPaginatedByUser(
+		userId: string,
+		filters: OrderFilters,
+		pagination: PaginationInput
+	): Promise<PaginationResult<OrderDocument>> {
+		const query: any = { user: userId };
+
+		if (filters.status) query.status = filters.status;
+		if (filters.paymentStatus) query.paymentStatus = filters.paymentStatus;
+		if (filters.customerId) query.customer = filters.customerId;
+
+		const res: PaginateResult<OrderDocument> = await OrderModel.paginate(query, {
+			page: pagination.page,
+			limit: pagination.limit,
+			sort: pagination.sort,
+			populate: ["shippingAddress", "customer"],
+		});
+
+		return {
+			page: res.page ?? 1,
+			pageSize: res.limit,
+			totalPages: res.totalPages,
+			totalElements: res.totalDocs,
+			elements: res.docs,
+		};
+	}
+
+	async save(order: OrderDocument): Promise<OrderDocument> {
+		order.markModified("orderedDocs");
+		return order.save();
+	}
+
+	/**
+	 * تعداد سفارش‌های پرداخت‌شده‌ی یک کاربر که از یک کد تخفیف مشخص استفاده کرده‌اند.
+	 * برای بررسی محدودیت «تعداد استفاده‌ی هر کاربر» در زمان پرداخت استفاده می‌شود. شناسه‌ها
+	 * صریحاً به ObjectId تبدیل می‌شوند تا مطابقت کوئری قطعی باشد.
+	 */
+	async countPaidByUserAndCoupon(userId: string, couponId: string): Promise<number> {
+		return OrderModel.countDocuments({
+			user: new mongoose.Types.ObjectId(userId),
+			coupon: new mongoose.Types.ObjectId(couponId),
+			paymentStatus: "paid",
+		}).exec();
+	}
+}

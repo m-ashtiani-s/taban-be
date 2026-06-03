@@ -91,11 +91,14 @@ export default class AuthService {
 			if (!!user) {
 				throw new BadRequestError("این کاربری وجود دارد");
 			}
+			// هر کاربر هنگام ساخت، یک کد معرفِ یکتا برای دعوت دیگران دریافت می‌کند
+			const ownReferralCode = await this.userRepository.generateUniqueReferralCode();
+			// سایر فیلدهای غیرالزامی از طریق default: null در اسکیما روی دیتابیس می‌نشینند
 			const newUser = await this.userRepository.createUser({
 				username: username,
 				password: password,
 				role: "USER",
-				profilePic: "",
+				ownReferralCode,
 			});
 			await this.otpRepository.deleteOtp(existingOtp);
 			return {

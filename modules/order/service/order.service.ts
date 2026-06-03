@@ -1,0 +1,284 @@
+import { BadRequestError } from "../../../shared/base/badRequestError.error";
+import { NotFoundError } from "../../../shared/base/notFoundError.error";
+import Pagination from "../../../shared/utils/pagination.util";
+import CartRepository from "../../cart/repository/cart.repository";
+import CouponRepository from "../../coupon/repository/coupon.repository";
+import CustomerRepository from "../../customer/repository/customer.repository";
+import RateCalculatorService from "../../rateCalculator/service/rateCalculator.service";
+import ShippingAddressRepository from "../../shippingAddress/repository/shippingAddress.repository";
+import { CreateOrderDto, OrderFilters, UpdateOrderItemDto } from "../dto/order.dto";
+import { OrderedDoc } from "../model/order.model";
+import OrderRepository from "../repository/order.repository";
+import OrderTransform from "../transform/order.transform";
+
+export default class OrderService {
+	private orderRepository = new OrderRepository();
+	private cartRepository = new CartRepository();
+	private couponRepository = new CouponRepository();
+	private customerRepository = new CustomerRepository();
+	private shippingAddressRepository = new ShippingAddressRepository();
+	private rateCalculatorService = new RateCalculatorService();
+	private orderTransform = new OrderTransform();
+
+	async createOrder(userId: string, data: CreateOrderDto) {
+		const cart = await this.cartRepository.findByUserId(userId);
+		if (!cart || !cart.items || cart.items.length === 0) {
+			throw new BadRequestError("سبد خرید شما خالی است");
+		}
+
+		const shippingAddress = await this.shippingAddressRepository.findByIdAndUser(data.shippingAddressId, userId);
+		if (!shippingAddress) throw new BadRequestError("آدرس انتخاب‌شده معتبر نیست");
+
+		// مشتری سفارش از روی آیتم‌های سبد استخراج می‌شود (همگی یک customerId مشترک دارند)
+		const customerId = (cart.items[0]?.payload?.customerId ?? null) as string | null;
+		if (customerId) {
+			const customer = await this.customerRepository.findByIdAndEnterprise(customerId, userId);
+			if (!customer) throw new BadRequestError("مشتری انتخاب‌شده معتبر نیست");
+		}
+
+		const orderedDocs: OrderedDoc[] = cart.items.map((item) => ({
+			cartItemId: item.cartItemId,
+			translationItemId: item.payload.translationItemId,
+			translationItemTitle: item.breakdown.translationItemTitle,
+			languageId: item.payload.languageId,
+			languageName: item.breakdown.languageName,
+			payload: item.payload,
+			breakdown: item.breakdown,
+			itemTotal: item.breakdown?.summary?.totalPrice ?? 0,
+		}));
+
+		const totalAmount = cart.cartSum ?? orderedDocs.reduce((sum, it) => sum + it.itemTotal, 0);
+		const finalAmount = cart.cartSumWithDiscount ?? totalAmount;
+		const discountAmount = Math.max(totalAmount - finalAmount, 0);
+		const couponId = cart.appliedCoupon?.couponId ?? null;
+
+		const orderNumber = await this.orderRepository.getNextOrderNumber();
+
+		const order = await this.orderRepository.create({
+			orderNumber,
+			user: userId,
+			customer: customerId,
+			orderedDocs,
+			coupon: couponId,
+			discountAmount,
+			totalAmount,
+			shippingAddress: data.shippingAddressId,
+			status: "pending",
+			rejectedRemarks: null,
+			paymentStatus: "pending",
+			finalAmount,
+			remarks: data.remarks?.trim() ?? "",
+		});
+
+		// clear the cart
+		cart.items = [];
+		cart.cartSum = 0;
+		cart.cartSumWithDiscount = 0;
+		cart.appliedCoupon = null;
+		await this.cartRepository.updateCart(cart);
+
+		const populated = await this.orderRepository.findByIdAndUser((order._id as any).toString(), userId);
+
+		return {
+			field: "createOrder",
+			success: true,
+			message: "سفارش با موفقیت ثبت شد",
+			data: this.orderTransform.order(populated ?? order),
+		};
+	}
+
+	async getOrders(userId: string, filters: OrderFilters, page: string, pageSize: string, sortOrders: string) {
+		const pagination = new Pagination({ page, pageSize, sortOrders });
+		const paginated = await this.orderRepository.findPaginatedByUser(userId, filters, pagination.getOptions());
+		return {
+			field: "getOrders",
+			success: true,
+			message: "لیست سفارش‌ها با موفقیت دریافت شد",
+			data: this.orderTransform.paginatedOrders(paginated),
+		};
+	}
+
+	async getOrderById(userId: string, orderId: string) {
+		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
+		if (!order) throw new NotFoundError("سفارش یافت نشد");
+		return {
+			field: "getOrderById",
+			success: true,
+			message: "سفارش با موفقیت دریافت شد",
+			data: this.orderTransform.order(order),
+		};
+	}
+
+	// TODO: این یک پیاده‌سازی موقت است. در آینده باید با درگاه پرداخت واقعی جایگزین شود
+	// (هدایت به درگاه، ساخت تراکنش، و تایید پرداخت از طریق callback درگاه).
+	async payOrder(userId: string, orderId: string) {
+		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
+		if (!order) throw new NotFoundError("سفارش یافت نشد");
+
+		if (order.status !== "approved") {
+			throw new BadRequestError("این سفارش در وضعیت قابل پرداخت قرار ندارد");
+		}
+
+		// اگر روی سفارش کد تخفیف اعمال شده، درست پیش از پرداخت تمام قوانین کوپن دوباره
+		// بررسی می‌شوند. دلیلش این است که شمارنده‌ی استفاده فقط هنگام پرداخت بالا می‌رود؛
+		// بنابراین تا قبل از این لحظه چند سفارش می‌توانند هم‌زمان یک کوپن محدود را در خود
+		// نگه دارند و باید جلوی استفاده‌ی بیش از حد در زمان پرداخت گرفته شود.
+		const couponId = this.extractCouponId(order.coupon);
+		if (couponId) {
+			// مرحله ۱: بررسی قوانینی که از روی وضعیت کوپن و تاریخچه‌ی کاربر سنجیده می‌شوند
+			// (فعال بودن، بازه‌ی زمانی و سقف استفاده‌ی هر کاربر).
+			await this.assertOrderCouponStillValid(userId, couponId);
+
+			// مرحله ۲: رزرو اتمیک ظرفیت کلی کوپن. این کار شمارنده‌ی استفاده را تنها در صورت
+			// نرسیدن به سقف، در یک عملیات اتمیک افزایش می‌دهد تا حتی در پرداخت‌های هم‌زمان هم
+			// از سقف فراتر نرویم. اگر ظرفیت پر باشد، پرداخت انجام نمی‌شود.
+			const consumed = await this.couponRepository.tryConsumeUsage(couponId);
+			if (!consumed) {
+				throw new BadRequestError(
+					"ظرفیت استفاده از این کد تخفیف به پایان رسیده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید"
+				);
+			}
+
+			// مرحله ۳: نهایی‌کردن پرداخت. اگر ذخیره‌سازی سفارش با خطا مواجه شد، ظرفیت رزروشده
+			// را آزاد می‌کنیم تا شمارنده‌ی کوپن بی‌دلیل مصرف‌شده باقی نماند.
+			try {
+				order.status = "paid";
+				order.paymentStatus = "paid";
+				await this.orderRepository.save(order);
+			} catch (error) {
+				await this.couponRepository.releaseUsage(couponId);
+				throw error;
+			}
+		} else {
+			order.status = "paid";
+			order.paymentStatus = "paid";
+			await this.orderRepository.save(order);
+		}
+
+		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
+		return {
+			field: "payOrder",
+			success: true,
+			message: "پرداخت سفارش با موفقیت انجام شد",
+			data: this.orderTransform.order(populated ?? order),
+		};
+	}
+
+	async removeCouponFromOrder(userId: string, orderId: string) {
+		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
+		if (!order) throw new NotFoundError("سفارش یافت نشد");
+
+		if (order.paymentStatus === "paid" || order.status === "paid") {
+			throw new BadRequestError("این سفارش پرداخت شده و امکان حذف کد تخفیف وجود ندارد");
+		}
+
+		if (!order.coupon) {
+			throw new BadRequestError("کد تخفیفی روی این سفارش اعمال نشده است");
+		}
+
+		// با حذف کوپن، تخفیف صفر و مبلغ قابل پرداخت برابر جمع کل سفارش می‌شود.
+		order.coupon = null;
+		order.discountAmount = 0;
+		order.finalAmount = order.totalAmount;
+		await this.orderRepository.save(order);
+
+		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
+		return {
+			field: "removeCouponFromOrder",
+			success: true,
+			message: "کد تخفیف از سفارش حذف شد",
+			data: this.orderTransform.order(populated ?? order),
+		};
+	}
+
+	/** شناسه‌ی کوپن را از مقدار coupon سفارش استخراج می‌کند؛ هم حالت populate و هم شناسه‌ی خام را پوشش می‌دهد. */
+	private extractCouponId(coupon: unknown): string | null {
+		if (!coupon) return null;
+		if (typeof coupon === "string") return coupon;
+		return (coupon as { _id?: { toString(): string } })?._id?.toString() ?? null;
+	}
+
+	/**
+	 * تمام قوانین کوپن را در لحظه‌ی پرداخت دوباره می‌سنجد: فعال بودن، بازه‌ی زمانی،
+	 * سقف کل استفاده و سقف استفاده‌ی هر کاربر. در صورت نقض هر قانون، خطا پرتاب می‌شود تا
+	 * کاربر بتواند کد تخفیف را از سفارش حذف کرده و با مبلغ کامل پرداخت کند.
+	 */
+	private async assertOrderCouponStillValid(userId: string, couponId: string) {
+		const coupon = await this.couponRepository.findByCouponId(couponId);
+		if (!coupon) {
+			throw new BadRequestError("کد تخفیف اعمال‌شده دیگر معتبر نیست. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+		}
+
+		const now = new Date();
+		if (!coupon.isActive) {
+			throw new BadRequestError("کد تخفیف اعمال‌شده غیرفعال شده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+		}
+		if (coupon.startDate && coupon.startDate > now) {
+			throw new BadRequestError("کد تخفیف اعمال‌شده هنوز فعال نشده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+		}
+		if (coupon.endDate && coupon.endDate < now) {
+			throw new BadRequestError("کد تخفیف اعمال‌شده منقضی شده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+		}
+		if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+			throw new BadRequestError("ظرفیت استفاده از این کد تخفیف به پایان رسیده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+		}
+		if (coupon.perUserLimit) {
+			const usedByUser = await this.orderRepository.countPaidByUserAndCoupon(userId, couponId);
+			if (usedByUser >= coupon.perUserLimit) {
+				throw new BadRequestError("شما به سقف مجاز استفاده از این کد تخفیف رسیده‌اید. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+			}
+		}
+	}
+
+	async updateOrderItem(userId: string, orderId: string, cartItemId: string, payload: UpdateOrderItemDto) {
+		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
+		if (!order) throw new NotFoundError("سفارش یافت نشد");
+
+		if (order.status !== "pending" && order.status !== "rejected") {
+			throw new BadRequestError("امکان ویرایش این سفارش وجود ندارد");
+		}
+
+		const index = order.orderedDocs.findIndex((it) => it.cartItemId === cartItemId);
+		if (index === -1) throw new BadRequestError("آیتم مورد نظر در سفارش یافت نشد");
+
+		const breakdown = await this.rateCalculatorService.computeBreakdown({
+			translationItemId: payload.translationItemId,
+			languageId: payload.languageId,
+			documents: payload.documents,
+		});
+
+		order.orderedDocs[index] = {
+			cartItemId,
+			translationItemId: payload.translationItemId,
+			translationItemTitle: breakdown.translationItemTitle,
+			languageId: payload.languageId,
+			languageName: breakdown.languageName,
+			payload: {
+				translationItemId: payload.translationItemId,
+				languageId: payload.languageId,
+				documents: payload.documents,
+				passports: payload.passports ?? [],
+				assets: payload.assets ?? [],
+			},
+			breakdown,
+			itemTotal: breakdown?.summary?.totalPrice ?? 0,
+		};
+
+		order.totalAmount = order.orderedDocs.reduce((sum, it) => sum + (it.itemTotal ?? 0), 0);
+		order.finalAmount = Math.max(order.totalAmount - (order.discountAmount ?? 0), 0);
+
+		// any edit puts the order back into the pending pipeline for re-review
+		order.status = "pending";
+		order.rejectedRemarks = null;
+
+		await this.orderRepository.save(order);
+
+		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
+		return {
+			field: "updateOrderItem",
+			success: true,
+			message: "آیتم سفارش با موفقیت ویرایش شد",
+			data: this.orderTransform.order(populated ?? order),
+		};
+	}
+}

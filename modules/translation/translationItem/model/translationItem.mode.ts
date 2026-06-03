@@ -23,7 +23,7 @@ const translationItemSchema = new Schema(
 			required: true,
 			unique: true,
 		},
-		category: { type: Schema.Types.ObjectId, ref: "TranslationItemCategory" },
+		category: { type: Schema.Types.ObjectId, ref: "TranslationItemCategory" , default:null },
 		isActive: {
 			type: Boolean,
 			default: true,

@@ -1,23 +1,24 @@
-import mongoose, { Document, Model, ObjectId, PaginateModel, Schema } from "mongoose";
-import bcrypt from "bcryptjs";
-import mongoosePaginate from "mongoose-paginate-v2";
-import { OrderedDocumentDto } from "../dto/orderedDocumentDto.dto";
+import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
+import { CartItemDto } from "../dto/cartItem.dto";
+import { AppliedCouponDto } from "../dto/cart.dto";
 
 export interface Cart {
-	userId: ObjectId;
-	documents: OrderedDocumentDto[];
+	user: ObjectId;
+	items: CartItemDto[];
 	cartSum: number;
 	cartSumWithDiscount: number;
+	appliedCoupon: AppliedCouponDto | null;
 }
 
 export interface CartDocument extends Cart, Document {}
 
 const cartSchema = new mongoose.Schema(
 	{
-		user: { type: Schema.Types.ObjectId, ref: "user" },
-		products: [],
-		cartSum: { type: Number, required: true },
-		cartSumWithDiscount: { type: Number, required: true },
+		user: { type: Schema.Types.ObjectId, ref: "user", required: true, unique: true },
+		items: { type: [Schema.Types.Mixed], default: [] },
+		cartSum: { type: Number, required: true, default: 0 },
+		cartSumWithDiscount: { type: Number, required: true, default: 0 },
+		appliedCoupon: { type: Schema.Types.Mixed, default: null },
 	},
 	{ timestamps: true }
 );

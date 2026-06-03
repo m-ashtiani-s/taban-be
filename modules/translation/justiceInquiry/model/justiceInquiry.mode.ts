@@ -11,13 +11,13 @@ export type JusticeInquiryDocument = JusticeInquiry & Document;
 const justiceInquirySchema = new Schema(
 	{
 		justiceInquiryName: { type: String, required: true, unique: true },
-		description: { type: String },
+		description: { type: String, default: "", trim: true },
 		isActive: {
 			type: Boolean,
 			default: true,
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 const JusticeInquiryModel: Model<JusticeInquiryDocument> = mongoose.model<JusticeInquiryDocument>("JusticeInquiry", justiceInquirySchema);

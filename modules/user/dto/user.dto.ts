@@ -1,18 +1,22 @@
+import { LanguageDto } from "../../translation/language/dto/language.dto";
+import { CustomerType, UserType } from "../model/user.model";
+
 export interface UserDto {
-    userId:string
+	userId: string;
 	username: string;
 	role: string;
 	profilePic?: string;
 	isActive: boolean;
+	customerType: CustomerType;
 	firstName?: string;
 	lastName?: string;
 	fullName?: string;
-	birthDate?: string;
-	email?: string;
-	gender?: string;
-	provinceId?: number | null;
-	provinceName?: string;
-	cityId?: number | null;
-	cityName?: string;
+	nationalId?: string;
+	phoneNumber?: string;
+	userType?: UserType | null;
+	requiredLanguages?: LanguageDto[];
+	specialtyField?: string;
 	referralSource?: string;
+	referralCode?: string;
+	ownReferralCode?: string;
 }
