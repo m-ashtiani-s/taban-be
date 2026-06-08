@@ -1,4 +1,4 @@
-import { EmbassyDocument } from "../model/embassy.mode";
+import { EmbassyDocument } from "../model/embassy.model";
 import { EmbassyDto } from "../dto/embassy.dto";
 
 export default class EmbassyTransform {

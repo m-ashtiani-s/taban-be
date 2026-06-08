@@ -1,4 +1,4 @@
-import { TranslationItemCategoryDocument } from "../model/translationItemCategory.mode";
+import { TranslationItemCategoryDocument } from "../model/translationItemCategory.model";
 import { TranslationItemCategoryDto } from "../dto/translationItemCategory.dto";
 
 export default class TranslationTransform {

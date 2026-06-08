@@ -1,7 +1,7 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetTranslationItemCategoriesFilters } from "../dto/getTranslationItemCategoriesFilters.dto";
 import { TtranslationItemCategoryUpdateDto } from "../dto/translationItemCategoryUpdateDto.type";
-import TranslationItemCategoryRepository from "../repositories/translationItemCategory.repository";
+import TranslationItemCategoryRepository from "../repository/translationItemCategory.repository";
 import TranslationTransform from "../transform/translationItemCategory.transform";
 
 export default class TranslationService {

@@ -1,7 +1,7 @@
-import { LanguageDocument } from "../../language/model/translationItem.mode";
-import { TranslationItemDocument } from "../../translationItem/model/translationItem.mode";
+import { LanguageDocument } from "../../language/model/language.model";
+import { TranslationItemDocument } from "../../translationItem/model/translationItem.model";
 import { DynamicRateDto } from "../dto/dynamicRate.dto";
-import { DynamicRateDocument } from "../model/dynamicRate.mode";
+import { DynamicRateDocument } from "../model/dynamicRate.model";
 
 export default class TranslationTransform {
 	dynamicRate(dynamicRate: DynamicRateDocument): DynamicRateDto {

@@ -1,6 +1,6 @@
 import express from "express";
-import AdminShippingAddressController from "../../../../../modules/shippingAddress/controller/adminShippingAddress.controller";
-import AdminShippingAddressValidation from "../../../../../modules/shippingAddress/validation/adminShippingAddress.validation";
+import AdminShippingAddressController from "../../../../../modules/shippingAddress/controller/shippingAddress.admin.controller";
+import AdminShippingAddressValidation from "../../../../../modules/shippingAddress/validation/shippingAddress.admin.validation";
 
 const adminShippingAddressesRouter = express.Router();
 const adminShippingAddressController = new AdminShippingAddressController();

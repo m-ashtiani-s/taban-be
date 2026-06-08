@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
-import LanguageRepository from "../../language/repositories/language.repository";
-import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
+import LanguageRepository from "../../language/repository/language.repository";
+import TranslationItemRepository from "../../translationItem/repository/translation.repository";
 import { GetBaseRatesFilters } from "../dto/baseRateFilters.dto";
-import BaseRateRepository from "../repositories/baseRate.repository";
+import BaseRateRepository from "../repository/baseRate.repository";
 import BaseRateTransform from "../transform/baseRate.transform";
 import { BaseRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
 

@@ -1,7 +1,7 @@
-import { EmbassyDocument } from "../../embassy/model/embassy.mode";
-import { TranslationItemDocument } from "../../translationItem/model/translationItem.mode";
+import { EmbassyDocument } from "../../embassy/model/embassy.model";
+import { TranslationItemDocument } from "../../translationItem/model/translationItem.model";
 import { EmbassyRateDto } from "../dto/embassyRate.dto";
-import { EmbassyRateDocument } from "../model/embassyRate.mode";
+import { EmbassyRateDocument } from "../model/embassyRate.model";
 
 export default class TranslationTransform {
 	embassyRate(embassyRate: EmbassyRateDocument): EmbassyRateDto {

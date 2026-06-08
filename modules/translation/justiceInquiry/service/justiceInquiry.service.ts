@@ -1,7 +1,7 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
 import { JusticeInquiryUpdateDto } from "../dto/justiceInquiryUpdate.dto";
-import JusticeInquiryRepository from "../repositories/justiceInquiry.repository";
+import JusticeInquiryRepository from "../repository/justiceInquiry.repository";
 import JusticeInquiryTransform from "../transform/justiceInquiry.transform";
 
 export default class JusticeInquiryService {

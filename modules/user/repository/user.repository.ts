@@ -1,7 +1,7 @@
 import { PaginateResult } from "mongoose";
 import userModel, { UserDocument } from "../model/user.model";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
-import { AdminUserFilters } from "../dto/adminUser.dto";
+import { AdminUserFilters } from "../dto/user.admin.dto";
 import { generateReferralCode } from "../../../shared/utils/generateReferralCode.util";
 
 export default class UserRepository {

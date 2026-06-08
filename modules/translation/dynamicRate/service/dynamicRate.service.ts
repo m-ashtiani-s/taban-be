@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
-import LanguageRepository from "../../language/repositories/language.repository";
-import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
+import LanguageRepository from "../../language/repository/language.repository";
+import TranslationItemRepository from "../../translationItem/repository/translation.repository";
 import { DynamicRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
 import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
-import DynamicRateRepository from "../repositories/dynamicRate.repository";
+import DynamicRateRepository from "../repository/dynamicRate.repository";
 import DynamicRateTransform from "../transform/dynamicRate.transform";
 
 export default class DynamicRateService {

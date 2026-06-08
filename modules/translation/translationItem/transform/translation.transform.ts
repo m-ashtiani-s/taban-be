@@ -1,6 +1,6 @@
-import { TranslationItemDocument } from "../model/translationItem.mode";
+import { TranslationItemDocument } from "../model/translationItem.model";
 import { TranslationItemDto } from "../dto/translationItem.dto";
-import { TranslationItemCategoryDocument } from "../../translationItemCategory/model/translationItemCategory.mode";
+import { TranslationItemCategoryDocument } from "../../translationItemCategory/model/translationItemCategory.model";
 
 export default class TranslationTransform {
 	translationItem(translationItem: TranslationItemDocument): TranslationItemDto {

@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
-import EmbassyRepository from "../../embassy/repositories/embassy.repository";
-import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
+import EmbassyRepository from "../../embassy/repository/embassy.repository";
+import TranslationItemRepository from "../../translationItem/repository/translation.repository";
 import { GetEmbassyRatesFilters } from "../dto/embassyRateFilters.dto";
-import EmbassyRateRepository from "../repositories/embassyRate.repository";
+import EmbassyRateRepository from "../repository/embassyRate.repository";
 import EmbassyRateTransform from "../transform/embassyRate.transform";
 import { EmbassyRatesUpdateList } from "../dto/embassyRatesUpdateList.dto";
 

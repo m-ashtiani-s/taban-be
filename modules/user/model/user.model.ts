@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, PaginateModel } from "mongoose";
 import bcrypt from "bcryptjs";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { LanguageDocument } from "../../translation/language/model/translationItem.mode";
+import { LanguageDocument } from "../../translation/language/model/language.model";
 
 export type UserType = "individual" | "legal";
 export type CustomerType = "NORMAL" | "ENTERPRISE";

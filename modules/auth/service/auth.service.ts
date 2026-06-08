@@ -1,6 +1,6 @@
 import UserRepository from "../../user/repository/user.repository";
 import { generateOtp } from "../../../shared/utils/generateOtp.util";
-import OtpRepository from "../repositories/otp.repository";
+import OtpRepository from "../repository/otp.repository";
 import { ObjectId } from "mongoose";
 import { compare } from "bcryptjs";
 import { BadRequestError } from "../../../shared/base/badRequestError.error";

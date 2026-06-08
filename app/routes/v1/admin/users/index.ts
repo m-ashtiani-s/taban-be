@@ -1,6 +1,6 @@
 import express from "express";
-import AdminUserController from "../../../../../modules/user/controller/adminUser.controller";
-import AdminUserValidation from "../../../../../modules/user/validation/adminUser.validation";
+import AdminUserController from "../../../../../modules/user/controller/user.admin.controller";
+import AdminUserValidation from "../../../../../modules/user/validation/user.admin.validation";
 
 const adminUsersRouter = express.Router();
 const adminUserController = new AdminUserController();

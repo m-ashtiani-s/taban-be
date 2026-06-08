@@ -1,7 +1,7 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
 import { LanguageUpdateDto } from "../dto/languageUpdate.dto";
-import LanguageRepository from "../repositories/language.repository";
+import LanguageRepository from "../repository/language.repository";
 import LanguageTransform from "../transform/language.transform";
 
 export default class LanguageService {

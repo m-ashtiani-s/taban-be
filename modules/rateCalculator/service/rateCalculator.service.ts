@@ -1,10 +1,10 @@
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
-import BaseRateRepository from "../../translation/baseRate/repositories/baseRate.repository";
-import CertificationRateRepository from "../../translation/certificationRate/repositories/certificationRate.repository";
-import DynamicRateRepository from "../../translation/dynamicRate/repositories/dynamicRate.repository";
-import JusticeInquiryRateRepository from "../../translation/justiceInquiryRate/repositories/justiceInquiryRate.repository";
-import LanguageRepository from "../../translation/language/repositories/language.repository";
-import TranslationItemRepository from "../../translation/translationItem/repositories/translation.repository";
+import BaseRateRepository from "../../translation/baseRate/repository/baseRate.repository";
+import CertificationRateRepository from "../../translation/certificationRate/repository/certificationRate.repository";
+import DynamicRateRepository from "../../translation/dynamicRate/repository/dynamicRate.repository";
+import JusticeInquiryRateRepository from "../../translation/justiceInquiryRate/repository/justiceInquiryRate.repository";
+import LanguageRepository from "../../translation/language/repository/language.repository";
+import TranslationItemRepository from "../../translation/translationItem/repository/translation.repository";
 import {
 	RateCalculationDocumentBreakdown,
 	RateCalculationRequestDto,

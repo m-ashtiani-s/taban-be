@@ -1,7 +1,7 @@
-import { LanguageDocument } from "../../language/model/translationItem.mode";
-import { TranslationItemDocument } from "../../translationItem/model/translationItem.mode";
+import { LanguageDocument } from "../../language/model/language.model";
+import { TranslationItemDocument } from "../../translationItem/model/translationItem.model";
 import { BaseRateDto } from "../dto/baseRate.dto";
-import { BaseRateDocument } from "../model/baseRate.mode";
+import { BaseRateDocument } from "../model/baseRate.model";
 
 export default class TranslationTransform {
 	baseRate(baseRate: BaseRateDocument): BaseRateDto {

@@ -1,5 +1,5 @@
 import { PaginationResult } from "../../../shared/utils/pagination.util";
-import { TranslationItemDocument } from "../../translation/translationItem/model/translationItem.mode";
+import { TranslationItemDocument } from "../../translation/translationItem/model/translationItem.model";
 import { CouponDto } from "../dto/coupon.dto";
 import { CouponDocument } from "../model/coupon.model";
 

@@ -1,5 +1,5 @@
 import { JusticeInquiryDto } from "../dto/justiceInquiry.dto";
-import { JusticeInquiryDocument } from "../model/justiceInquiry.mode";
+import { JusticeInquiryDocument } from "../model/justiceInquiry.model";
 
 
 export default class TranslationTransform {

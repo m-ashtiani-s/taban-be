@@ -1,5 +1,5 @@
 import { LanguageDto } from "../dto/language.dto";
-import { LanguageDocument } from "../model/translationItem.mode";
+import { LanguageDocument } from "../model/language.model";
 
 
 export default class TranslationTransform {

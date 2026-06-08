@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
-import LanguageRepository from "../../language/repositories/language.repository";
-import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
+import LanguageRepository from "../../language/repository/language.repository";
+import TranslationItemRepository from "../../translationItem/repository/translation.repository";
 import { GetCertificationRatesFilters } from "../dto/certificationRateFilters.dto";
 import { CertificationRatesUpdateList } from "../dto/certificationRatesUpdateList.dto";
 import { CertificationRateUpdateDto } from "../dto/certificationRateUpdate.dto";
-import CertificationRateRepository from "../repositories/certificationRate.repository";
+import CertificationRateRepository from "../repository/certificationRate.repository";
 import CertificationRateTransform from "../transform/certificationRate.transform";
 
 export default class CertificationRateService {

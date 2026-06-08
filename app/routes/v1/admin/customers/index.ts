@@ -1,6 +1,6 @@
 import express from "express";
-import AdminCustomerController from "../../../../../modules/customer/controller/adminCustomer.controller";
-import AdminCustomerValidation from "../../../../../modules/customer/validation/adminCustomer.validation";
+import AdminCustomerController from "../../../../../modules/customer/controller/customer.admin.controller";
+import AdminCustomerValidation from "../../../../../modules/customer/validation/customer.admin.validation";
 
 const adminCustomersRouter = express.Router();
 const adminCustomerController = new AdminCustomerController();

@@ -1,5 +1,5 @@
 import express from "express";
-import AdminCouponController from "../../../../../modules/coupon/controller/adminCoupon.controller";
+import AdminCouponController from "../../../../../modules/coupon/controller/coupon.admin.controller";
 import CouponValidation from "../../../../../modules/coupon/validation/coupon.validation";
 
 const adminCouponsRouter = express.Router();

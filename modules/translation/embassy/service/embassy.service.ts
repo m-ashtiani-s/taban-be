@@ -1,7 +1,7 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetEmbassiesFilters } from "../dto/getEmbassyFilters.dto";
 import { TembassyUpdateDto } from "../dto/embassyUpdateDto.type";
-import EmbassyRepository from "../repositories/embassy.repository";
+import EmbassyRepository from "../repository/embassy.repository";
 import EmbassyTransform from "../transform/embassy.transform";
 
 export default class EmbassyService {

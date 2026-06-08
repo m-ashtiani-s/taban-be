@@ -1,6 +1,6 @@
 import { UserDto } from "../dto/user.dto";
 import { UserDocument } from "../model/user.model";
-import { LanguageDocument } from "../../translation/language/model/translationItem.mode";
+import { LanguageDocument } from "../../translation/language/model/language.model";
 import { LanguageDto } from "../../translation/language/dto/language.dto";
 import LanguageTransform from "../../translation/language/transform/language.transform";
 import { PaginationResult } from "../../../shared/utils/pagination.util";

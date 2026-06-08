@@ -1,6 +1,6 @@
 import express from "express";
-import AdminOrderController from "../../../../../modules/order/controller/adminOrder.controller";
-import AdminOrderValidation from "../../../../../modules/order/validation/adminOrder.validation";
+import AdminOrderController from "../../../../../modules/order/controller/order.admin.controller";
+import AdminOrderValidation from "../../../../../modules/order/validation/order.admin.validation";
 
 const adminOrdersRouter = express.Router();
 const adminOrderController = new AdminOrderController();

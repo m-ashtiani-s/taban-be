@@ -1,7 +1,7 @@
-import { LanguageDocument } from "../../language/model/translationItem.mode";
-import { TranslationItemDocument } from "../../translationItem/model/translationItem.mode";
+import { LanguageDocument } from "../../language/model/language.model";
+import { TranslationItemDocument } from "../../translationItem/model/translationItem.model";
 import { CertificationRateDto } from "../dto/certificationRate.dto";
-import { CertificationRateDocument } from "../model/certificationRate.mode";
+import { CertificationRateDocument } from "../model/certificationRate.model";
 
 export default class TranslationTransform {
 	certificationRate(certificationRate: CertificationRateDocument): CertificationRateDto {

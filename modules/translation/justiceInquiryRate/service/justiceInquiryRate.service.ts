@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
-import JusticeInquiryRepository from "../../justiceInquiry/repositories/justiceInquiry.repository";
-import LanguageRepository from "../../language/repositories/language.repository";
-import TranslationItemRepository from "../../translationItem/repositories/translation.repository";
+import JusticeInquiryRepository from "../../justiceInquiry/repository/justiceInquiry.repository";
+import LanguageRepository from "../../language/repository/language.repository";
+import TranslationItemRepository from "../../translationItem/repository/translation.repository";
 import { GetJusticeInquiryRatesFilters } from "../dto/justiceInquiryRateFilters.dto";
-import JusticeInquiryRateRepository from "../repositories/justiceInquiryRate.repository";
+import JusticeInquiryRateRepository from "../repository/justiceInquiryRate.repository";
 import JusticeInquiryRateTransform from "../transform/justiceInquiryRate.transform";
 import { JusticeInquiryRatesUpdateList } from "../dto/justiceInquiryRatesUpdateList.dto";
 
