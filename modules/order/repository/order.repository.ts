@@ -1,5 +1,5 @@
 import mongoose, { PaginateResult } from "mongoose";
-import OrderModel, { OrderDocument } from "../model/order.model";
+import OrderModel, { OrderDocument, PaymentStatus } from "../model/order.model";
 import OrderCounterModel from "../model/orderCounter.model";
 import { OrderFilters } from "../dto/order.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
@@ -71,7 +71,7 @@ export default class OrderRepository {
 		return OrderModel.countDocuments({
 			user: new mongoose.Types.ObjectId(userId),
 			coupon: new mongoose.Types.ObjectId(couponId),
-			paymentStatus: "paid",
+			paymentStatus: PaymentStatus.PAID,
 		}).exec();
 	}
 }

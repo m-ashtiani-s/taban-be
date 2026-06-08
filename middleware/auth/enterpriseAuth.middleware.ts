@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
+import { CustomerType } from "../../modules/user/model/user.model";
 
 const EnterpriseAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	if (req?.user?.customerType === "ENTERPRISE") {
+	if (req?.user?.customerType === CustomerType.ENTERPRISE) {
 		return next();
 	} else {
 		return res.status(403).json({

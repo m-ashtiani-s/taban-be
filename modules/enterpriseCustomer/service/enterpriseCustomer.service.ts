@@ -2,6 +2,7 @@ import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import UserRepository from "../../user/repository/user.repository";
 import UserService from "../../user/service/user.service";
+import { CustomerType } from "../../user/model/user.model";
 import { CreateEnterpriseCustomerDto } from "../dto/enterpriseCustomer.dto";
 import EnterpriseCustomerRepository from "../repository/enterpriseCustomer.repository";
 import EnterpriseCustomerTransform from "../transform/enterpriseCustomer.transform";
@@ -30,7 +31,7 @@ export default class EnterpriseCustomerService {
 			registrationId: data.registrationId?.trim() || null,
 		});
 
-		await this.userRepository.updateUser(user, { customerType: "ENTERPRISE" });
+		await this.userRepository.updateUser(user, { customerType: CustomerType.ENTERPRISE });
 
 		return {
 			field: "registerEnterpriseCustomer",

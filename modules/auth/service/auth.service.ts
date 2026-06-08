@@ -5,6 +5,7 @@ import { ObjectId } from "mongoose";
 import { compare } from "bcryptjs";
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import AuthTransform from "../transform/auth.transform";
+import { UserRole } from "../../user/model/user.model";
 
 export default class AuthService {
 	private userRepository = new UserRepository();
@@ -97,7 +98,7 @@ export default class AuthService {
 			const newUser = await this.userRepository.createUser({
 				username: username,
 				password: password,
-				role: "USER",
+				role: UserRole.USER,
 				ownReferralCode,
 			});
 			await this.otpRepository.deleteOtp(existingOtp);

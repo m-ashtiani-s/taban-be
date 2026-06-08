@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
+import { UserRole } from "../../modules/user/model/user.model";
 
 const AdminAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	if (req?.user?.role == "ADMIN") {
+	if (req?.user?.role === UserRole.ADMIN) {
 		return next();
 	} else {
 		return res.status(403).json({

@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { UserType } from "../model/user.model";
 
 const UserValidation = {
 	updateUser: [
@@ -51,7 +52,7 @@ const UserValidation = {
 
 		body("userType")
 			.optional({ nullable: true })
-			.isIn(["individual", "legal"])
+			.isIn(Object.values(UserType))
 			.withMessage("نوع کاربری معتبر نیست"),
 
 		body("requiredLanguages")

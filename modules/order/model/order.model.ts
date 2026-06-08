@@ -3,16 +3,21 @@ import mongoosePaginate from "mongoose-paginate-v2";
 import { AddDocumentToCartDto } from "../../cart/dto/cartItem.dto";
 import { RateCalculationResponseDto } from "../../rateCalculator/dto/rateCalculation.dto";
 
-export type OrderStatus =
-	| "pending"
-	| "approved"
-	| "paid"
-	| "processing"
-	| "shipped"
-	| "delivered"
-	| "canceled"
-	| "rejected";
-export type PaymentStatus = "pending" | "paid" | "failed";
+export enum OrderStatus {
+	PENDING = "pending",
+	APPROVED = "approved",
+	PAID = "paid",
+	PROCESSING = "processing",
+	SHIPPED = "shipped",
+	DELIVERED = "delivered",
+	CANCELED = "canceled",
+	REJECTED = "rejected",
+}
+export enum PaymentStatus {
+	PENDING = "pending",
+	PAID = "paid",
+	FAILED = "failed",
+}
 
 export interface OrderedDoc {
 	cartItemId: string;
@@ -58,15 +63,15 @@ const orderSchema = new Schema(
 		shippingAddress: { type: Schema.Types.ObjectId, ref: "ShippingAddress", required: true },
 		status: {
 			type: String,
-			enum: ["pending", "approved", "paid", "processing", "shipped", "delivered", "canceled", "rejected"],
-			default: "pending",
+			enum: Object.values(OrderStatus),
+			default: OrderStatus.PENDING,
 			required: true,
 		},
 		rejectedRemarks: { type: String, default: null },
 		paymentStatus: {
 			type: String,
-			enum: ["pending", "paid", "failed"],
-			default: "pending",
+			enum: Object.values(PaymentStatus),
+			default: PaymentStatus.PENDING,
 		},
 		finalAmount: { type: Number, required: true, min: 0 },
 		remarks: { type: String, default: "" },

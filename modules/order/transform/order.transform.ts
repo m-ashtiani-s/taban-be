@@ -5,7 +5,7 @@ import {
 	OrderDto,
 	OrderShippingAddressInfo,
 } from "../dto/order.dto";
-import { OrderDocument } from "../model/order.model";
+import { OrderDocument, PaymentStatus } from "../model/order.model";
 
 export default class OrderTransform {
 	protected shippingAddress(addr: any): OrderShippingAddressInfo | string | null {
@@ -83,7 +83,7 @@ export default class OrderTransform {
 			shippingAddress: this.shippingAddress(doc.shippingAddress),
 			status: doc.status,
 			rejectedRemarks: doc.rejectedRemarks ?? null,
-			paymentStatus: doc.paymentStatus ?? "pending",
+			paymentStatus: doc.paymentStatus ?? PaymentStatus.PENDING,
 			finalAmount: doc.finalAmount ?? 0,
 			remarks: doc.remarks ?? "",
 			createdAt: doc.createdAt,

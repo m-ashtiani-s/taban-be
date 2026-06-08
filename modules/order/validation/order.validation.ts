@@ -1,5 +1,6 @@
 import { body, param, query } from "express-validator";
 import RateCalculatorValidation from "../../rateCalculator/validation/rateCalculator.validation";
+import { OrderStatus, PaymentStatus } from "../model/order.model";
 
 const OrderValidation = {
 	orderId: [
@@ -19,9 +20,9 @@ const OrderValidation = {
 	getOrders: [
 		query("status")
 			.optional()
-			.isIn(["pending", "approved", "paid", "processing", "shipped", "delivered", "canceled", "rejected"])
+			.isIn(Object.values(OrderStatus))
 			.withMessage("وضعیت سفارش معتبر نیست"),
-		query("paymentStatus").optional().isIn(["pending", "paid", "failed"]).withMessage("وضعیت پرداخت معتبر نیست"),
+		query("paymentStatus").optional().isIn(Object.values(PaymentStatus)).withMessage("وضعیت پرداخت معتبر نیست"),
 		query("customerId").optional().isMongoId().withMessage("شناسه مشتری معتبر نیست"),
 		query("page").optional().isInt({ min: 1 }).withMessage("شماره صفحه باید عددی صحیح باشد"),
 		query("pageSize").optional().isInt({ min: 1, max: 100 }).withMessage("اندازه صفحه معتبر نیست"),

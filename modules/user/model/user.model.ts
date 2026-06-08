@@ -3,12 +3,22 @@ import bcrypt from "bcryptjs";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { LanguageDocument } from "../../translation/language/model/language.model";
 
-export type UserType = "individual" | "legal";
-export type CustomerType = "NORMAL" | "ENTERPRISE";
+export enum UserType {
+	INDIVIDUAL = "individual",
+	LEGAL = "legal",
+}
+export enum CustomerType {
+	NORMAL = "NORMAL",
+	ENTERPRISE = "ENTERPRISE",
+}
+export enum UserRole {
+	ADMIN = "ADMIN",
+	USER = "USER",
+}
 
 export interface User {
 	username: string;
-	role: string;
+	role: UserRole;
 	password: string;
 	profilePic?: string;
 	isActive: boolean;
@@ -36,8 +46,9 @@ const userSchema = new mongoose.Schema(
 		},
 		role: {
 			type: String,
+			enum: Object.values(UserRole),
 			required: true,
-			default: "USER",
+			default: UserRole.USER,
 		},
 		password: String,
 		profilePic: {
@@ -52,9 +63,9 @@ const userSchema = new mongoose.Schema(
 		},
 		customerType: {
 			type: String,
-			enum: ["NORMAL", "ENTERPRISE"],
+			enum: Object.values(CustomerType),
 			required: true,
-			default: "NORMAL",
+			default: CustomerType.NORMAL,
 		},
 		nationalId: {
 			type: String,
@@ -78,7 +89,7 @@ const userSchema = new mongoose.Schema(
 		},
 		userType: {
 			type: String,
-			enum: ["individual", "legal"],
+			enum: Object.values(UserType),
 			required: false,
 			default: null,
 		},

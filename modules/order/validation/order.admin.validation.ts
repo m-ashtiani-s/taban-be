@@ -1,4 +1,5 @@
 import { body, param, query } from "express-validator";
+import { OrderStatus, PaymentStatus } from "../model/order.model";
 
 const AdminOrderValidation = {
 	orderId: [
@@ -9,9 +10,9 @@ const AdminOrderValidation = {
 		query("term").optional().isString().withMessage("فرمت جستجو صحیح نیست").trim(),
 		query("status")
 			.optional()
-			.isIn(["pending", "approved", "paid", "processing", "shipped", "delivered", "canceled", "rejected"])
+			.isIn(Object.values(OrderStatus))
 			.withMessage("وضعیت سفارش معتبر نیست"),
-		query("paymentStatus").optional().isIn(["pending", "paid", "failed"]).withMessage("وضعیت پرداخت معتبر نیست"),
+		query("paymentStatus").optional().isIn(Object.values(PaymentStatus)).withMessage("وضعیت پرداخت معتبر نیست"),
 		query("dateFrom").optional().isISO8601().withMessage("فرمت تاریخ شروع معتبر نیست"),
 		query("dateTo").optional().isISO8601().withMessage("فرمت تاریخ پایان معتبر نیست"),
 		query("userId").optional().isMongoId().withMessage("شناسه کاربر معتبر نیست"),
@@ -26,7 +27,7 @@ const AdminOrderValidation = {
 			.notEmpty()
 			.withMessage("وضعیت سفارش الزامی است")
 			.bail()
-			.isIn(["pending", "approved", "paid", "processing", "shipped", "delivered", "canceled", "rejected"])
+			.isIn(Object.values(OrderStatus))
 			.withMessage("وضعیت سفارش معتبر نیست"),
 		body("rejectedRemarks")
 			.optional({ nullable: true })
@@ -35,7 +36,7 @@ const AdminOrderValidation = {
 			.isLength({ max: 1000 })
 			.withMessage("توضیحات رد سفارش نباید بیشتر از ۱۰۰۰ کاراکتر باشد")
 			.custom((value, { req }) => {
-				if (req.body.status === "rejected" && (!value || !value.trim())) {
+				if (req.body.status === OrderStatus.REJECTED && (!value || !value.trim())) {
 					throw new Error("برای رد سفارش، وارد کردن دلیل الزامی است");
 				}
 				return true;

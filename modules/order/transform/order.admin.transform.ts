@@ -1,4 +1,4 @@
-import { UserDocument } from "../../user/model/user.model";
+import { UserDocument, CustomerType } from "../../user/model/user.model";
 import { OrderDto, OrderUserInfo } from "../dto/order.dto";
 import { OrderDocument } from "../model/order.model";
 import OrderTransform from "./order.transform";
@@ -13,7 +13,7 @@ export default class AdminOrderTransform extends OrderTransform {
 				fullName: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim(),
 				username: u.username ?? "",
 				phoneNumber: u.phoneNumber ?? "",
-				customerType: u.customerType ?? "NORMAL",
+				customerType: u.customerType ?? CustomerType.NORMAL,
 			};
 		}
 		return user?.toString?.() ?? user;

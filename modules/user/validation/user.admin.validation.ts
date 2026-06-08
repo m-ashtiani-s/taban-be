@@ -1,4 +1,5 @@
 import { body, param, query } from "express-validator";
+import { CustomerType, UserType } from "../model/user.model";
 
 const AdminUserValidation = {
 	userId: [
@@ -14,11 +15,11 @@ const AdminUserValidation = {
 		query("term").optional().isString().withMessage("فرمت جستجو صحیح نیست").trim(),
 		query("customerType")
 			.optional()
-			.isIn(["NORMAL", "ENTERPRISE"])
+			.isIn(Object.values(CustomerType))
 			.withMessage("نوع مشتری معتبر نیست"),
 		query("userType")
 			.optional()
-			.isIn(["individual", "legal"])
+			.isIn(Object.values(UserType))
 			.withMessage("نوع کاربر معتبر نیست"),
 		query("isActive").optional().isIn(["true", "false"]).withMessage("وضعیت معتبر نیست"),
 		query("page").optional().isInt({ min: 1 }).withMessage("شماره صفحه باید عددی صحیح باشد"),
@@ -70,11 +71,11 @@ const AdminUserValidation = {
 			}),
 		body("userType")
 			.optional({ nullable: true })
-			.isIn(["individual", "legal"])
+			.isIn(Object.values(UserType))
 			.withMessage("نوع کاربری معتبر نیست"),
 		body("customerType")
 			.optional({ nullable: true })
-			.isIn(["NORMAL", "ENTERPRISE"])
+			.isIn(Object.values(CustomerType))
 			.withMessage("نوع مشتری معتبر نیست"),
 		body("requiredLanguages")
 			.optional({ nullable: true })

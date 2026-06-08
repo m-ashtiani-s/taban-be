@@ -1,5 +1,5 @@
 import { UserDto } from "../dto/user.dto";
-import { UserDocument } from "../model/user.model";
+import { UserDocument, CustomerType } from "../model/user.model";
 import { LanguageDocument } from "../../translation/language/model/language.model";
 import { LanguageDto } from "../../translation/language/dto/language.dto";
 import LanguageTransform from "../../translation/language/transform/language.transform";
@@ -38,7 +38,7 @@ export default class UserTransform {
 			role: user?.role ?? "",
 			profilePic: user?.profilePic ?? "",
 			isActive: user?.isActive ?? false,
-			customerType: user?.customerType ?? "NORMAL",
+			customerType: user?.customerType ?? CustomerType.NORMAL,
 			firstName: user?.firstName ?? "",
 			lastName: user?.lastName ?? "",
 			fullName: `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim(),

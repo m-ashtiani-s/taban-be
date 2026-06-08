@@ -8,7 +8,7 @@ import CustomerRepository from "../../customer/repository/customer.repository";
 import RateCalculatorService from "../../rateCalculator/service/rateCalculator.service";
 import ShippingAddressRepository from "../../shippingAddress/repository/shippingAddress.repository";
 import { CreateOrderDto, OrderFilters, UpdateOrderItemDto } from "../dto/order.dto";
-import { OrderedDoc } from "../model/order.model";
+import { OrderedDoc, OrderStatus, PaymentStatus } from "../model/order.model";
 import OrderRepository from "../repository/order.repository";
 import OrderTransform from "../transform/order.transform";
 
@@ -69,9 +69,9 @@ export default class OrderService {
 					discountAmount,
 					totalAmount,
 					shippingAddress: data.shippingAddressId,
-					status: "pending",
+					status: OrderStatus.PENDING,
 					rejectedRemarks: null,
-					paymentStatus: "pending",
+					paymentStatus: PaymentStatus.PENDING,
 					finalAmount,
 					remarks: data.remarks?.trim() ?? "",
 				},
@@ -131,7 +131,7 @@ export default class OrderService {
 		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
-		if (order.status !== "approved") {
+		if (order.status !== OrderStatus.APPROVED) {
 			throw new BadRequestError("این سفارش در وضعیت قابل پرداخت قرار ندارد");
 		}
 
@@ -158,16 +158,16 @@ export default class OrderService {
 			// مرحله ۳: نهایی‌کردن پرداخت. اگر ذخیره‌سازی سفارش با خطا مواجه شد، ظرفیت رزروشده
 			// را آزاد می‌کنیم تا شمارنده‌ی کوپن بی‌دلیل مصرف‌شده باقی نماند.
 			try {
-				order.status = "paid";
-				order.paymentStatus = "paid";
+				order.status = OrderStatus.PAID;
+				order.paymentStatus = PaymentStatus.PAID;
 				await this.orderRepository.save(order);
 			} catch (error) {
 				await this.couponRepository.releaseUsage(couponId);
 				throw error;
 			}
 		} else {
-			order.status = "paid";
-			order.paymentStatus = "paid";
+			order.status = OrderStatus.PAID;
+			order.paymentStatus = PaymentStatus.PAID;
 			await this.orderRepository.save(order);
 		}
 
@@ -184,7 +184,7 @@ export default class OrderService {
 		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
-		if (order.paymentStatus === "paid" || order.status === "paid") {
+		if (order.paymentStatus === PaymentStatus.PAID || order.status === OrderStatus.PAID) {
 			throw new BadRequestError("این سفارش پرداخت شده و امکان حذف کد تخفیف وجود ندارد");
 		}
 
@@ -250,7 +250,7 @@ export default class OrderService {
 		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
-		if (order.status !== "pending" && order.status !== "rejected") {
+		if (order.status !== OrderStatus.PENDING && order.status !== OrderStatus.REJECTED) {
 			throw new BadRequestError("امکان ویرایش این سفارش وجود ندارد");
 		}
 
@@ -284,7 +284,7 @@ export default class OrderService {
 		order.finalAmount = Math.max(order.totalAmount - (order.discountAmount ?? 0), 0);
 
 		// any edit puts the order back into the pending pipeline for re-review
-		order.status = "pending";
+		order.status = OrderStatus.PENDING;
 		order.rejectedRemarks = null;
 
 		await this.orderRepository.save(order);

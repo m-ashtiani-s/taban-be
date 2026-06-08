@@ -2,7 +2,7 @@ import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
 import { OrderFilters, UpdateOrderStatusDto } from "../dto/order.dto";
-import { PaymentStatus } from "../model/order.model";
+import { OrderStatus, PaymentStatus } from "../model/order.model";
 import AdminOrderRepository from "../repository/order.admin.repository";
 import AdminOrderTransform from "../transform/order.admin.transform";
 
@@ -36,14 +36,14 @@ export default class AdminOrderService {
 		const order = await this.orderRepository.findById(orderId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
-		if (data.status === "rejected" && (!data.rejectedRemarks || !data.rejectedRemarks.trim())) {
+		if (data.status === OrderStatus.REJECTED && (!data.rejectedRemarks || !data.rejectedRemarks.trim())) {
 			throw new BadRequestError("برای رد سفارش، وارد کردن دلیل الزامی است");
 		}
 
-		const rejectedRemarks = data.status === "rejected" ? data.rejectedRemarks!.trim() : null;
+		const rejectedRemarks = data.status === OrderStatus.REJECTED ? data.rejectedRemarks!.trim() : null;
 
 		let paymentStatus: PaymentStatus | undefined;
-		if (data.status === "paid") paymentStatus = "paid";
+		if (data.status === OrderStatus.PAID) paymentStatus = PaymentStatus.PAID;
 
 		const updated = await this.orderRepository.updateStatus(orderId, data.status, rejectedRemarks, paymentStatus);
 

@@ -1,5 +1,6 @@
 import { AddDocumentToCartDto } from "../../cart/dto/cartItem.dto";
 import { OrderedDoc, OrderStatus, PaymentStatus } from "../model/order.model";
+import { CustomerType } from "../../user/model/user.model";
 
 export interface CreateOrderDto {
 	shippingAddressId: string;
@@ -37,7 +38,7 @@ export interface OrderUserInfo {
 	fullName: string;
 	username: string;
 	phoneNumber: string;
-	customerType: "NORMAL" | "ENTERPRISE";
+	customerType: CustomerType;
 }
 
 export interface OrderShippingAddressInfo {
