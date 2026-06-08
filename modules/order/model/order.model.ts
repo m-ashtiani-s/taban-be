@@ -75,7 +75,6 @@ const orderSchema = new Schema(
 );
 
 orderSchema.index({ user: 1, status: 1 });
-orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ status: 1, paymentStatus: 1, createdAt: -1 });
 orderSchema.plugin(mongoosePaginate);
 

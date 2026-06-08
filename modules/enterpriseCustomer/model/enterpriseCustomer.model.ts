@@ -25,7 +25,6 @@ const enterpriseCustomerSchema = new Schema(
 	{ timestamps: true }
 );
 
-enterpriseCustomerSchema.index({ user: 1 });
 enterpriseCustomerSchema.plugin(mongoosePaginate);
 
 const EnterpriseCustomerModel = mongoose.model<EnterpriseCustomerDocument, PaginateModel<EnterpriseCustomerDocument>>(

@@ -46,7 +46,6 @@ const couponSchema = new Schema(
 	{ timestamps: true }
 );
 
-couponSchema.index({ code: 1 });
 couponSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
 couponSchema.plugin(mongoosePaginate);
 
