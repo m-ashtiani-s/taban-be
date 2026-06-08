@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
@@ -21,70 +22,85 @@ export default class OrderService {
 	private orderTransform = new OrderTransform();
 
 	async createOrder(userId: string, data: CreateOrderDto) {
-		const cart = await this.cartRepository.findByUserId(userId);
-		if (!cart || !cart.items || cart.items.length === 0) {
-			throw new BadRequestError("سبد خرید شما خالی است");
+		const session = await mongoose.startSession();
+		session.startTransaction();
+
+		try {
+			const cart = await this.cartRepository.findByUserId(userId, session);
+			if (!cart || !cart.items || cart.items.length === 0) {
+				throw new BadRequestError("سبد خرید شما خالی است");
+			}
+
+			const shippingAddress = await this.shippingAddressRepository.findByIdAndUser(data.shippingAddressId, userId);
+			if (!shippingAddress) throw new BadRequestError("آدرس انتخاب‌شده معتبر نیست");
+
+			// مشتری سفارش از روی آیتم‌های سبد استخراج می‌شود (همگی یک customerId مشترک دارند)
+			const customerId = (cart.items[0]?.payload?.customerId ?? null) as string | null;
+			if (customerId) {
+				const customer = await this.customerRepository.findByIdAndEnterprise(customerId, userId);
+				if (!customer) throw new BadRequestError("مشتری انتخاب‌شده معتبر نیست");
+			}
+
+			const orderedDocs: OrderedDoc[] = cart.items.map((item) => ({
+				cartItemId: item.cartItemId,
+				translationItemId: item.payload.translationItemId,
+				translationItemTitle: item.breakdown.translationItemTitle,
+				languageId: item.payload.languageId,
+				languageName: item.breakdown.languageName,
+				payload: item.payload,
+				breakdown: item.breakdown,
+				itemTotal: item.breakdown?.summary?.totalPrice ?? 0,
+			}));
+
+			const totalAmount = cart.cartSum ?? orderedDocs.reduce((sum, it) => sum + it.itemTotal, 0);
+			const finalAmount = cart.cartSumWithDiscount ?? totalAmount;
+			const discountAmount = Math.max(totalAmount - finalAmount, 0);
+			const couponId = cart.appliedCoupon?.couponId ?? null;
+
+			const orderNumber = await this.orderRepository.getNextOrderNumber(session);
+
+			const order = await this.orderRepository.create(
+				{
+					orderNumber,
+					user: userId,
+					customer: customerId,
+					orderedDocs,
+					coupon: couponId,
+					discountAmount,
+					totalAmount,
+					shippingAddress: data.shippingAddressId,
+					status: "pending",
+					rejectedRemarks: null,
+					paymentStatus: "pending",
+					finalAmount,
+					remarks: data.remarks?.trim() ?? "",
+				},
+				session
+			);
+
+			// clear the cart
+			cart.items = [];
+			cart.cartSum = 0;
+			cart.cartSumWithDiscount = 0;
+			cart.appliedCoupon = null;
+			await this.cartRepository.updateCart(cart, session);
+
+			const populated = await this.orderRepository.findByIdAndUser((order._id as any).toString(), userId, session);
+
+			await session.commitTransaction();
+			session.endSession();
+
+			return {
+				field: "createOrder",
+				success: true,
+				message: "سفارش با موفقیت ثبت شد",
+				data: this.orderTransform.order(populated ?? order),
+			};
+		} catch (error) {
+			await session.abortTransaction();
+			session.endSession();
+			throw error;
 		}
-
-		const shippingAddress = await this.shippingAddressRepository.findByIdAndUser(data.shippingAddressId, userId);
-		if (!shippingAddress) throw new BadRequestError("آدرس انتخاب‌شده معتبر نیست");
-
-		// مشتری سفارش از روی آیتم‌های سبد استخراج می‌شود (همگی یک customerId مشترک دارند)
-		const customerId = (cart.items[0]?.payload?.customerId ?? null) as string | null;
-		if (customerId) {
-			const customer = await this.customerRepository.findByIdAndEnterprise(customerId, userId);
-			if (!customer) throw new BadRequestError("مشتری انتخاب‌شده معتبر نیست");
-		}
-
-		const orderedDocs: OrderedDoc[] = cart.items.map((item) => ({
-			cartItemId: item.cartItemId,
-			translationItemId: item.payload.translationItemId,
-			translationItemTitle: item.breakdown.translationItemTitle,
-			languageId: item.payload.languageId,
-			languageName: item.breakdown.languageName,
-			payload: item.payload,
-			breakdown: item.breakdown,
-			itemTotal: item.breakdown?.summary?.totalPrice ?? 0,
-		}));
-
-		const totalAmount = cart.cartSum ?? orderedDocs.reduce((sum, it) => sum + it.itemTotal, 0);
-		const finalAmount = cart.cartSumWithDiscount ?? totalAmount;
-		const discountAmount = Math.max(totalAmount - finalAmount, 0);
-		const couponId = cart.appliedCoupon?.couponId ?? null;
-
-		const orderNumber = await this.orderRepository.getNextOrderNumber();
-
-		const order = await this.orderRepository.create({
-			orderNumber,
-			user: userId,
-			customer: customerId,
-			orderedDocs,
-			coupon: couponId,
-			discountAmount,
-			totalAmount,
-			shippingAddress: data.shippingAddressId,
-			status: "pending",
-			rejectedRemarks: null,
-			paymentStatus: "pending",
-			finalAmount,
-			remarks: data.remarks?.trim() ?? "",
-		});
-
-		// clear the cart
-		cart.items = [];
-		cart.cartSum = 0;
-		cart.cartSumWithDiscount = 0;
-		cart.appliedCoupon = null;
-		await this.cartRepository.updateCart(cart);
-
-		const populated = await this.orderRepository.findByIdAndUser((order._id as any).toString(), userId);
-
-		return {
-			field: "createOrder",
-			success: true,
-			message: "سفارش با موفقیت ثبت شد",
-			data: this.orderTransform.order(populated ?? order),
-		};
 	}
 
 	async getOrders(userId: string, filters: OrderFilters, page: string, pageSize: string, sortOrders: string) {

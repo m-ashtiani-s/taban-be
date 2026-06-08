@@ -5,26 +5,29 @@ import { OrderFilters } from "../dto/order.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
 export default class OrderRepository {
-	async getNextOrderNumber(): Promise<number> {
+	async getNextOrderNumber(session?: mongoose.ClientSession): Promise<number> {
 		const counter = await OrderCounterModel.findByIdAndUpdate(
 			"order",
 			{ $inc: { seq: 1 } },
-			{ new: true, upsert: true, setDefaultsOnInsert: true }
+			{ new: true, upsert: true, setDefaultsOnInsert: true, session }
 		).exec();
 		return counter?.seq ?? 100001;
 	}
 
-	async create(data: Partial<OrderDocument>): Promise<OrderDocument> {
+	async create(data: Partial<OrderDocument>, session?: mongoose.ClientSession): Promise<OrderDocument> {
 		const order = new OrderModel(data);
-		return order.save();
+		return order.save({ session });
 	}
 
-	async findByIdAndUser(orderId: string, userId: string): Promise<OrderDocument | null> {
-		return OrderModel.findOne({ _id: orderId, user: userId })
+	async findByIdAndUser(orderId: string, userId: string, session?: mongoose.ClientSession): Promise<OrderDocument | null> {
+		let query = OrderModel.findOne({ _id: orderId, user: userId })
 			.populate("shippingAddress")
 			.populate("coupon")
-			.populate("customer")
-			.exec();
+			.populate("customer");
+		if (session) {
+			query = query.session(session);
+		}
+		return query.exec();
 	}
 
 	async findPaginatedByUser(

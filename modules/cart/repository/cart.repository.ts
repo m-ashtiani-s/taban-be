@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import CartModel, { CartDocument } from "../model/cart.model";
 
 export default class CartRepository {
@@ -5,8 +6,12 @@ export default class CartRepository {
 		return await CartModel.findById(id);
 	}
 
-	async findByUserId(userId: string): Promise<CartDocument | null> {
-		return await CartModel.findOne({ user: userId });
+	async findByUserId(userId: string, session?: mongoose.ClientSession): Promise<CartDocument | null> {
+		let query = CartModel.findOne({ user: userId });
+		if (session) {
+			query = query.session(session);
+		}
+		return await query;
 	}
 
 	async findOrCreateByUserId(userId: string): Promise<CartDocument> {
@@ -16,9 +21,9 @@ export default class CartRepository {
 		return cart.save();
 	}
 
-	async updateCart(updatedCart: CartDocument): Promise<void> {
+	async updateCart(updatedCart: CartDocument, session?: mongoose.ClientSession): Promise<void> {
 		updatedCart.markModified("items");
 		updatedCart.markModified("appliedCoupon");
-		await updatedCart.save();
+		await updatedCart.save({ session });
 	}
 }
