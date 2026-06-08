@@ -21,7 +21,7 @@ export interface CustomerDocument extends Customer, Document {
 
 const customerSchema = new Schema(
 	{
-		enterprise: { type: Schema.Types.ObjectId, ref: "user", required: true },
+		enterprise: { type: Schema.Types.ObjectId, ref: "User", required: true },
 		firstName: { type: String, required: true, trim: true },
 		lastName: { type: String, required: true, trim: true },
 		nationalId: { type: String, required: true, trim: true },

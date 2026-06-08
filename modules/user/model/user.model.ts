@@ -136,6 +136,6 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.plugin(mongoosePaginate);
-const userModel = mongoose.model<UserDocument, PaginateModel<UserDocument>>("user", userSchema);
+const userModel = mongoose.model<UserDocument, PaginateModel<UserDocument>>("User", userSchema);
 
 export default userModel;

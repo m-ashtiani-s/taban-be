@@ -34,7 +34,7 @@ const shippingAddressSchema = new Schema(
 		addressDescription: { type: String, default: null, trim: true },
 		landlineNumber: { type: String, default: null, trim: true },
 		isActive: { type: Boolean, default: true },
-		user: { type: Schema.Types.ObjectId, ref: "user", required: true },
+		user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	},
 	{ timestamps: true }
 );

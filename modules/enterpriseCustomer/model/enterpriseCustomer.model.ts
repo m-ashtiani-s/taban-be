@@ -16,7 +16,7 @@ export interface EnterpriseCustomerDocument extends EnterpriseCustomer, Document
 
 const enterpriseCustomerSchema = new Schema(
 	{
-		user: { type: Schema.Types.ObjectId, ref: "user", required: true, unique: true },
+		user: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: true },
 		institutionName: { type: String, required: true, trim: true },
 		institutionAddress: { type: String, required: true, trim: true },
 		registrationId: { type: String, default: null, trim: true },
