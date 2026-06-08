@@ -1,7 +1,8 @@
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
-import { CreateCustomerDto, CustomerFilters, UpdateCustomerDto } from "../dto/customer.dto";
+import { CreateCustomerDto, UpdateCustomerDto } from "../dto/customer.dto";
+import { CustomerFilters } from "../dto/customerFilters.dto";
 import CustomerRepository from "../repository/customer.repository";
 import CustomerTransform from "../transform/customer.transform";
 

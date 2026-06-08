@@ -1,7 +1,8 @@
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
-import { AdminUpdateUserDto, AdminUserFilters } from "../dto/user.admin.dto";
+import { AdminUpdateUserDto } from "../dto/user.admin.dto";
+import { AdminUserFilters } from "../dto/userFilters.admin.dto";
 import { UserDocument } from "../model/user.model";
 import UserRepository from "../repository/user.repository";
 import UserTransform from "../transform/user.transform";

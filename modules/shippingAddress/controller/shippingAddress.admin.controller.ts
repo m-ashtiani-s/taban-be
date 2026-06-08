@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import ControllerBase from "../../../shared/base/controller.base";
 import { ControllerError } from "../../../types/controllerError.type";
 import AdminShippingAddressService from "../service/shippingAddress.admin.service";
-import { ShippingAddressFilters } from "../dto/shippingAddress.dto";
+import { ShippingAddressFilters } from "../dto/shippingAddressFilters.dto";
 
 const adminShippingAddressService = new AdminShippingAddressService();
 

@@ -1,6 +1,6 @@
 import { PaginateResult } from "mongoose";
 import OrderModel, { OrderDocument, OrderStatus, PaymentStatus } from "../model/order.model";
-import { OrderFilters } from "../dto/order.dto";
+import { OrderFilters } from "../dto/orderFilters.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
 export default class AdminOrderRepository {

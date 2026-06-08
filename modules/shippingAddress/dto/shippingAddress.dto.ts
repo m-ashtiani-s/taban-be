@@ -14,14 +14,6 @@ export interface CreateShippingAddressDto {
 
 export type UpdateShippingAddressDto = CreateShippingAddressDto;
 
-export interface ShippingAddressFilters {
-	term?: string;
-	provinceCode?: number;
-	cityCode?: number;
-	isActive?: boolean;
-	userId?: string;
-}
-
 export interface ShippingAddressUserInfo {
 	userId: string;
 	fullName: string;

@@ -1,7 +1,8 @@
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
-import { OrderFilters, UpdateOrderStatusDto } from "../dto/order.dto";
+import { UpdateOrderStatusDto } from "../dto/order.dto";
+import { OrderFilters } from "../dto/orderFilters.dto";
 import { OrderStatus, PaymentStatus } from "../model/order.model";
 import AdminOrderRepository from "../repository/order.admin.repository";
 import AdminOrderTransform from "../transform/order.admin.transform";

@@ -1,8 +1,6 @@
-const path = require("path");
-
 const Config = {
-	port: 8000,
-	secret: "qwertyuiop[]asdfghjklzxcvbnm@#$%^&*()QWERTYUIOPASDFGHJKLZXCVBNM<>?{}",
+	port: process.env.PORT || 8000,
+	secret: process.env.SECRET_KEY as string,
 };
 
 export default Config;

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import ControllerBase from "../../../shared/base/controller.base";
 import { ControllerError } from "../../../types/controllerError.type";
 import AdminCustomerService from "../service/customer.admin.service";
-import { AdminCustomerFilters } from "../dto/customer.admin.dto";
+import { AdminCustomerFilters } from "../dto/customerFilters.admin.dto";
 import { UpdateCustomerDto } from "../dto/customer.dto";
 
 const adminCustomerService = new AdminCustomerService();

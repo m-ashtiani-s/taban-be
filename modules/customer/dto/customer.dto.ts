@@ -12,13 +12,6 @@ export interface CreateCustomerDto {
 
 export type UpdateCustomerDto = CreateCustomerDto;
 
-export interface CustomerFilters {
-	term?: string;
-	provinceCode?: number;
-	cityCode?: number;
-	isActive?: boolean;
-}
-
 export interface CustomerDto {
 	customerId: string;
 	firstName: string;

@@ -2,7 +2,8 @@ import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
 import TranslationItemRepository from "../../translation/translationItem/repository/translation.repository";
-import { CouponFilters, CreateCouponDto, UpdateCouponDto } from "../dto/coupon.dto";
+import { CreateCouponDto, UpdateCouponDto } from "../dto/coupon.dto";
+import { CouponFilters } from "../dto/couponFilters.dto";
 import CouponRepository from "../repository/coupon.repository";
 import CouponTransform from "../transform/coupon.transform";
 

@@ -1,6 +1,7 @@
 import { PaginateResult } from "mongoose";
 import ShippingAddressModel, { ShippingAddressDocument } from "../model/shippingAddress.model";
-import { ShippingAddressFilters, UpdateShippingAddressDto } from "../dto/shippingAddress.dto";
+import { UpdateShippingAddressDto } from "../dto/shippingAddress.dto";
+import { ShippingAddressFilters } from "../dto/shippingAddressFilters.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
 export default class AdminShippingAddressRepository {

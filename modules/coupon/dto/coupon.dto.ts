@@ -18,13 +18,6 @@ export interface CreateCouponDto {
 
 export type UpdateCouponDto = CreateCouponDto;
 
-export interface CouponFilters {
-	term?: string;
-	discountType?: DiscountType;
-	appliesTo?: AppliesTo;
-	isActive?: boolean;
-}
-
 export interface CouponDto {
 	couponId: string;
 	code: string;

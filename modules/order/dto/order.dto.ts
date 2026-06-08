@@ -14,16 +14,6 @@ export interface UpdateOrderStatusDto {
 	rejectedRemarks?: string | null;
 }
 
-export interface OrderFilters {
-	term?: string;
-	status?: OrderStatus;
-	paymentStatus?: PaymentStatus;
-	dateFrom?: string;
-	dateTo?: string;
-	userId?: string;
-	customerId?: string;
-}
-
 export interface OrderCustomerInfo {
 	customerId: string;
 	fullName: string;

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import ControllerBase from "../../../shared/base/controller.base";
 import { ControllerError } from "../../../types/controllerError.type";
 import AdminCouponService from "../service/coupon.admin.service";
-import { CouponFilters } from "../dto/coupon.dto";
+import { CouponFilters } from "../dto/couponFilters.dto";
 
 const adminCouponService = new AdminCouponService();
 

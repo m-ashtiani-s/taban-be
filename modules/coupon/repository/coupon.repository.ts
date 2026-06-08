@@ -1,6 +1,7 @@
 import { PaginateResult } from "mongoose";
 import CouponModel, { CouponDocument } from "../model/coupon.model";
-import { CouponFilters, CreateCouponDto, UpdateCouponDto } from "../dto/coupon.dto";
+import { CreateCouponDto, UpdateCouponDto } from "../dto/coupon.dto";
+import { CouponFilters } from "../dto/couponFilters.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
 export default class CouponRepository {

@@ -1,7 +1,7 @@
 import mongoose, { PaginateResult } from "mongoose";
 import OrderModel, { OrderDocument, PaymentStatus } from "../model/order.model";
 import OrderCounterModel from "../model/orderCounter.model";
-import { OrderFilters } from "../dto/order.dto";
+import { OrderFilters } from "../dto/orderFilters.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
 export default class OrderRepository {

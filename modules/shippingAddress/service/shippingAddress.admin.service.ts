@@ -1,7 +1,8 @@
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
-import { ShippingAddressFilters, UpdateShippingAddressDto } from "../dto/shippingAddress.dto";
+import { UpdateShippingAddressDto } from "../dto/shippingAddress.dto";
+import { ShippingAddressFilters } from "../dto/shippingAddressFilters.dto";
 import AdminShippingAddressRepository from "../repository/shippingAddress.admin.repository";
 import AdminShippingAddressTransform from "../transform/shippingAddress.admin.transform";
 

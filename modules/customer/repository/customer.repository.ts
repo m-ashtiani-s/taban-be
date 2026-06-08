@@ -1,6 +1,7 @@
 import { PaginateResult } from "mongoose";
 import CustomerModel, { CustomerDocument } from "../model/customer.model";
-import { CreateCustomerDto, CustomerFilters, UpdateCustomerDto } from "../dto/customer.dto";
+import { CreateCustomerDto, UpdateCustomerDto } from "../dto/customer.dto";
+import { CustomerFilters } from "../dto/customerFilters.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
 export default class CustomerRepository {

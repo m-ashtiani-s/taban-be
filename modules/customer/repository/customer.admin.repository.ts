@@ -1,6 +1,6 @@
 import { PaginateResult } from "mongoose";
 import CustomerModel, { CustomerDocument } from "../model/customer.model";
-import { AdminCustomerFilters } from "../dto/customer.admin.dto";
+import { AdminCustomerFilters } from "../dto/customerFilters.admin.dto";
 import { UpdateCustomerDto } from "../dto/customer.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 
