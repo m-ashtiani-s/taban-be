@@ -7,8 +7,8 @@ const justiceInquiryAdminController = new JusticeInquiryAdminController();
 
 justiceInquiryRouter.post("/",JusticeInquiryValidation.createJusticeInquiry, justiceInquiryAdminController.createJusticeInquiry);
 justiceInquiryRouter.get("/", justiceInquiryAdminController.getJusticeInquiryies);
-justiceInquiryRouter.get("/:justiceInquiryId", justiceInquiryAdminController.getJusticeInquiry);
-justiceInquiryRouter.post("/:justiceInquiryId/activate", justiceInquiryAdminController.activateJusticeInquiry);
-justiceInquiryRouter.post("/:justiceInquiryId/deactivate", justiceInquiryAdminController.deactivateJusticeInquiry);
-justiceInquiryRouter.put("/:justiceInquiryId",JusticeInquiryValidation.updateJusticeInquiry, justiceInquiryAdminController.updateJusticeInquiry);
+justiceInquiryRouter.get("/:justiceInquiryId", JusticeInquiryValidation.justiceInquiryId, justiceInquiryAdminController.getJusticeInquiry);
+justiceInquiryRouter.post("/:justiceInquiryId/activate", JusticeInquiryValidation.justiceInquiryId, justiceInquiryAdminController.activateJusticeInquiry);
+justiceInquiryRouter.post("/:justiceInquiryId/deactivate", JusticeInquiryValidation.justiceInquiryId, justiceInquiryAdminController.deactivateJusticeInquiry);
+justiceInquiryRouter.put("/:justiceInquiryId", JusticeInquiryValidation.justiceInquiryId, JusticeInquiryValidation.updateJusticeInquiry, justiceInquiryAdminController.updateJusticeInquiry);
 export default justiceInquiryRouter;

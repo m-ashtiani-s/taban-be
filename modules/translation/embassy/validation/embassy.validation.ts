@@ -1,6 +1,13 @@
-import { body, check, query } from "express-validator";
+import { body, param } from "express-validator";
 
 const EmbassyValidation = {
+	embassyId: [
+		param("embassyId")
+			.notEmpty()
+			.withMessage("شناسه سفارت الزامی است")
+			.isMongoId()
+			.withMessage("شناسه سفارت معتبر نیست"),
+	],
 	createEmbassy: [
 		body("title").notEmpty().withMessage("وارد کردن عنوان سفارت الزامی است")
 	],

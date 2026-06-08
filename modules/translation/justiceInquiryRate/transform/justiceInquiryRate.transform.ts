@@ -1,7 +1,7 @@
 import { JusticeInquiryDocument } from "../../justiceInquiry/model/justiceInquiry.model";
 import { LanguageDocument } from "../../language/model/language.model";
 import { TranslationItemDocument } from "../../translationItem/model/translationItem.model";
-import { JusticeInquiryRateDto } from "../dto/justiceInquiry.dto";
+import { JusticeInquiryRateDto } from "../dto/justiceInquiryRate.dto";
 import { JusticeInquiryRateDocument } from "../model/justiceInquiryRate.model";
 
 export default class TranslationTransform {

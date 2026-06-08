@@ -7,8 +7,8 @@ const languageAdminController = new LanguageAdminController();
 
 languagesRouter.post("/", LanguageValidation.createLanguage, languageAdminController.createLanguage);
 languagesRouter.get("/", languageAdminController.getLanguages);
-languagesRouter.get("/:languageId", languageAdminController.getLanguage);
-languagesRouter.post("/:languageId/activate", languageAdminController.activateLanguage);
-languagesRouter.post("/:languageId/deactivate", languageAdminController.deactivateLanguage);
-languagesRouter.put("/:languageId", LanguageValidation.updateLanguage, languageAdminController.updateLanguage);
+languagesRouter.get("/:languageId", LanguageValidation.languageId, languageAdminController.getLanguage);
+languagesRouter.post("/:languageId/activate", LanguageValidation.languageId, languageAdminController.activateLanguage);
+languagesRouter.post("/:languageId/deactivate", LanguageValidation.languageId, languageAdminController.deactivateLanguage);
+languagesRouter.put("/:languageId", LanguageValidation.languageId, LanguageValidation.updateLanguage, languageAdminController.updateLanguage);
 export default languagesRouter;

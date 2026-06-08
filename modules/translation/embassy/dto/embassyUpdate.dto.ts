@@ -1,4 +1,4 @@
-export type TembassyUpdateDto = {
+export type EmbassyUpdateDto = {
 	title:string;
 	description:string;
 	isActive:boolean;

@@ -11,7 +11,7 @@ import {
 	AppliedCouponItemDiscountDto,
 } from "../dto/cart.dto";
 import { CartDocument } from "../model/cart.model";
-import { CouponDocument } from "../../coupon/model/coupon.model";
+import { AppliesTo, CouponDocument, DiscountType } from "../../coupon/model/coupon.model";
 import CouponRepository from "../../coupon/repository/coupon.repository";
 
 export default class CartService {
@@ -284,7 +284,7 @@ export default class CartService {
 			applicableItemIds.add(item.cartItemId);
 			for (const doc of item.breakdown?.documents ?? []) {
 				const contribution =
-					coupon.appliesTo === "base"
+					coupon.appliesTo === AppliesTo.BASE
 						? (doc.base?.total ?? 0) + (doc.specialsTotal ?? 0)
 						: doc.documentTotal ?? 0;
 				if (contribution <= 0) continue;
@@ -365,7 +365,7 @@ export default class CartService {
 
 	private computeDiscount(coupon: CouponDocument, applicableSubtotal: number): number {
 		if (applicableSubtotal <= 0) return 0;
-		if (coupon.discountType === "percent") {
+		if (coupon.discountType === DiscountType.PERCENT) {
 			let discount = (applicableSubtotal * coupon.discountValue) / 100;
 			if (coupon.maxDiscountAmount && discount > coupon.maxDiscountAmount) {
 				discount = coupon.maxDiscountAmount;

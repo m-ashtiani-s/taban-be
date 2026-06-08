@@ -1,6 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetEmbassiesFilters } from "../dto/getEmbassyFilters.dto";
-import { TembassyUpdateDto } from "../dto/embassyUpdateDto.type";
+import { EmbassyUpdateDto } from "../dto/embassyUpdate.dto";
 import EmbassyRepository from "../repository/embassy.repository";
 import EmbassyTransform from "../transform/embassy.transform";
 
@@ -80,7 +80,7 @@ export default class EmbassyService {
 			message: "سفارت با موفقیت غیرفعال شد",
 		};
 	}
-	async updateEmbassy(embassyId: string, updateTembassyData: TembassyUpdateDto) {
+	async updateEmbassy(embassyId: string, updateTembassyData: EmbassyUpdateDto) {
 		const embassy = await this.embassyRepository.findByEmbassyId(embassyId);
 		if (!embassy) {
 			throw new BadRequestError("مشکلی در یافتن سفارت بوجود آمد");

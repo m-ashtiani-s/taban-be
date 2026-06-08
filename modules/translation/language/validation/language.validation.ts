@@ -1,6 +1,13 @@
-import { body, check, query } from "express-validator";
+import { body, param } from "express-validator";
 
 const LanguageValidation = {
+	languageId: [
+		param("languageId")
+			.notEmpty()
+			.withMessage("شناسه زبان الزامی است")
+			.isMongoId()
+			.withMessage("شناسه زبان معتبر نیست"),
+	],
 	createLanguage: [
 		body("languageName").notEmpty().withMessage("وارد کردن ربان الزامی است"),
 		body("languageCode").notEmpty().withMessage("وارد کردن کد زبان الزامی است"),

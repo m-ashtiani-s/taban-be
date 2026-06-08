@@ -5,7 +5,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import DynamicRateService from "../service/dynamicRate.service";
 import { GetDynamicRatesFilters } from "../dto/dynamicRateFilters.dto";
 import { DynamicRateUpdateDto } from "../dto/dynamicRateUpdate.dto";
-import { DynamicRatesUpdateList } from "../dto/baseRatesUpdateList.dto";
+import { DynamicRatesUpdateList } from "../dto/dynamicRatesUpdateList.dto";
 const dynamicRateService = new DynamicRateService();
 
 export default class DynamicRateAdminController extends ControllerBase {

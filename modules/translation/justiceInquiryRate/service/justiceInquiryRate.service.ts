@@ -3,7 +3,7 @@ import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import JusticeInquiryRepository from "../../justiceInquiry/repository/justiceInquiry.repository";
 import LanguageRepository from "../../language/repository/language.repository";
-import TranslationItemRepository from "../../translationItem/repository/translation.repository";
+import TranslationItemRepository from "../../translationItem/repository/translationItem.repository";
 import { GetJusticeInquiryRatesFilters } from "../dto/justiceInquiryRateFilters.dto";
 import JusticeInquiryRateRepository from "../repository/justiceInquiryRate.repository";
 import JusticeInquiryRateTransform from "../transform/justiceInquiryRate.transform";

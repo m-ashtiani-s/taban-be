@@ -1,9 +1,10 @@
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
-import TranslationItemRepository from "../../translation/translationItem/repository/translation.repository";
+import TranslationItemRepository from "../../translation/translationItem/repository/translationItem.repository";
 import { CreateCouponDto, UpdateCouponDto } from "../dto/coupon.dto";
 import { CouponFilters } from "../dto/couponFilters.dto";
+import { DiscountType } from "../model/coupon.model";
 import CouponRepository from "../repository/coupon.repository";
 import CouponTransform from "../transform/coupon.transform";
 
@@ -122,11 +123,11 @@ export default class AdminCouponService {
 			}
 		}
 
-		if (data.discountType === "percent" && data.discountValue > 100) {
+		if (data.discountType === DiscountType.PERCENT && data.discountValue > 100) {
 			throw new BadRequestError("مقدار تخفیف درصدی نمی‌تواند بیشتر از ۱۰۰ باشد");
 		}
 
-		if (!!data.maxDiscountAmount && data.discountType === "fixed") {
+		if (!!data.maxDiscountAmount && data.discountType === DiscountType.FIXED) {
 			throw new BadRequestError("سقف تخفیف فقط برای نوع درصدی قابل تنظیم است");
 		}
 

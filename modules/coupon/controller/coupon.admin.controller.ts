@@ -4,6 +4,7 @@ import ControllerBase from "../../../shared/base/controller.base";
 import { ControllerError } from "../../../types/controllerError.type";
 import AdminCouponService from "../service/coupon.admin.service";
 import { CouponFilters } from "../dto/couponFilters.dto";
+import { AppliesTo, DiscountType } from "../model/coupon.model";
 
 const adminCouponService = new AdminCouponService();
 
@@ -16,8 +17,8 @@ export default class AdminCouponController extends ControllerBase {
 			const pageSize = (req.query.pageSize as string) ?? "";
 			const sortOrders = (req.query.sortOrders as string) ?? "";
 			const term = (req.query.term as string) ?? undefined;
-			const discountType = (req.query.discountType as "percent" | "fixed") ?? undefined;
-			const appliesTo = (req.query.appliesTo as "base" | "total") ?? undefined;
+			const discountType = (req.query.discountType as DiscountType) ?? undefined;
+			const appliesTo = (req.query.appliesTo as AppliesTo) ?? undefined;
 			const isActiveRaw = (req.query.isActive as string) ?? undefined;
 			const filters: CouponFilters = {
 				term,

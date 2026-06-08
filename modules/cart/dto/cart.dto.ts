@@ -1,3 +1,4 @@
+import { AppliesTo, DiscountType } from "../../coupon/model/coupon.model";
 import { CartItemDto } from "./cartItem.dto";
 
 export interface AppliedCouponDocumentDiscountDto {
@@ -15,9 +16,9 @@ export interface AppliedCouponItemDiscountDto {
 export interface AppliedCouponDto {
 	couponId: string;
 	code: string;
-	discountType: "percent" | "fixed";
+	discountType: DiscountType;
 	discountValue: number;
-	appliesTo: "base" | "total";
+	appliesTo: AppliesTo;
 	applicableSubtotal: number;
 	discountAmount: number;
 	itemDiscounts: AppliedCouponItemDiscountDto[];

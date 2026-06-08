@@ -1,6 +1,13 @@
-import { body, check, query } from "express-validator";
+import { body, param } from "express-validator";
 
 const TranslationItemCategoryValidation = {
+	translationItemCategoryId: [
+		param("translationItemCategoryId")
+			.notEmpty()
+			.withMessage("شناسه دسته‌بندی الزامی است")
+			.isMongoId()
+			.withMessage("شناسه دسته‌بندی معتبر نیست"),
+	],
 	createTranslationItemCategory: [
 		body("title").notEmpty().withMessage("وارد کردن عنوان دسته‌بندی الزامی است"),
 	],

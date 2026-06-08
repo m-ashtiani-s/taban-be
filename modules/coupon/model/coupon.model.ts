@@ -1,8 +1,14 @@
 import mongoose, { Document, Model, ObjectId, PaginateModel, Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-export type DiscountType = "percent" | "fixed";
-export type AppliesTo = "base" | "total";
+export enum DiscountType {
+	PERCENT = "percent",
+	FIXED = "fixed",
+}
+export enum AppliesTo {
+	BASE = "base",
+	TOTAL = "total",
+}
 
 export interface Coupon {
 	code: string;
@@ -29,7 +35,7 @@ export interface CouponDocument extends Coupon, Document {
 const couponSchema = new Schema(
 	{
 		code: { type: String, required: true, unique: true, uppercase: true, trim: true },
-		discountType: { type: String, enum: ["percent", "fixed"], required: true },
+		discountType: { type: String, enum: Object.values(DiscountType), required: true },
 		discountValue: { type: Number, required: true, min: 0 },
 		maxDiscountAmount: { type: Number, min: 0, default: null },
 		minPurchaseAmount: { type: Number, min: 0, default: null },
@@ -40,7 +46,7 @@ const couponSchema = new Schema(
 		perUserLimit: { type: Number, min: 0, default: null },
 		isActive: { type: Boolean, default: true },
 		description: { type: String, default: "" },
-		appliesTo: { type: String, enum: ["base", "total"], default: "total", required: true },
+		appliesTo: { type: String, enum: Object.values(AppliesTo), default: AppliesTo.TOTAL, required: true },
 		applicableTranslationItems: [{ type: Schema.Types.ObjectId, ref: "TranslationItem" }],
 	},
 	{ timestamps: true }

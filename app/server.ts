@@ -6,9 +6,14 @@ import webRouter from "./routes";
 export const createServer = (): Application => {
 	const app = express();
 
+	const allowedOrigins = (process.env.CORS_ORIGINS ?? "")
+		.split(",")
+		.map((origin) => origin.trim())
+		.filter(Boolean);
+
 	app.use(
 		cors({
-			origin: ["http://localhost:3000", "http://localhost:3001", "https://taban-fe.liara.run", "https://memaryab.com","https://rasmiyab.com"],
+			origin: allowedOrigins,
 		})
 	);
 

@@ -1,8 +1,8 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
-import { TtranslationItemUpdateDto } from "../dto/ttranslationItemUpdateDto.type";
-import TranslationItemRepository from "../repository/translation.repository";
-import TranslationTransform from "../transform/translation.transform";
+import { TranslationItemUpdateDto } from "../dto/translationItemUpdate.dto";
+import TranslationItemRepository from "../repository/translationItem.repository";
+import TranslationTransform from "../transform/translationItem.transform";
 
 export default class TranslationService {
 	private translationItemRepository = new TranslationItemRepository();
@@ -86,7 +86,7 @@ export default class TranslationService {
 			message: "مدرک با موفقیت غیرفعال شد",
 		};
 	}
-	async updateTranslationItem(translationItemId: string, updateTtranslationItemData: TtranslationItemUpdateDto) {
+	async updateTranslationItem(translationItemId: string, updateTtranslationItemData: TranslationItemUpdateDto) {
 		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
 		if (!translationItem) {
 			throw new BadRequestError("مشکلی در یافتن مدرک بوجود آمد");

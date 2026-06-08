@@ -1,12 +1,12 @@
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import ControllerBase from "../../../../shared/base/controller.base";
-import AuthService from "../service/translation.service";
+import AuthService from "../service/translationItem.service";
 import { ControllerError } from "../../../../types/controllerError.type";
-import TranslationService from "../service/translation.service";
+import TranslationService from "../service/translationItem.service";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
-import { TtranslationItemUpdateDto } from "../dto/ttranslationItemUpdateDto.type";
+import { TranslationItemUpdateDto } from "../dto/translationItemUpdate.dto";
 const translationService = new TranslationService();
 
 export class TranslationAdminController extends ControllerBase {
@@ -128,7 +128,7 @@ export class TranslationAdminController extends ControllerBase {
 
 		try {
 			const translationItemId: string = req.params.translationItemId ?? "";
-			const updateTtranslationItemData: TtranslationItemUpdateDto = {
+			const updateTtranslationItemData: TranslationItemUpdateDto = {
 				title: req?.body?.title ?? "",
 				documentType: req?.body?.documentType ?? "",
 				description: req?.body?.description ?? "",

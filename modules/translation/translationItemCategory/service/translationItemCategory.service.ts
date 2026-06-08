@@ -1,6 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { GetTranslationItemCategoriesFilters } from "../dto/getTranslationItemCategoriesFilters.dto";
-import { TtranslationItemCategoryUpdateDto } from "../dto/translationItemCategoryUpdateDto.type";
+import { TranslationItemCategoryUpdateDto } from "../dto/translationItemCategoryUpdate.dto";
 import TranslationItemCategoryRepository from "../repository/translationItemCategory.repository";
 import TranslationTransform from "../transform/translationItemCategory.transform";
 
@@ -47,7 +47,7 @@ export default class TranslationService {
 			data: new TranslationTransform().translationItemCategory(translationItemCategory),
 		};
 	}
-	async updateTranslationItemCategory(translationItemCategoryId: string, updateTtranslationItemCategoryData: TtranslationItemCategoryUpdateDto) {
+	async updateTranslationItemCategory(translationItemCategoryId: string, updateTtranslationItemCategoryData: TranslationItemCategoryUpdateDto) {
 		const translationItemCategory= await this.translationItemCategoryRepository.findByTranslationItemCategoryId(translationItemCategoryId);
 		if (!translationItemCategory) {
 			throw new BadRequestError("مشکلی در یافتن دسته‌بندی بوجود آمد");

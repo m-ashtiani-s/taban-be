@@ -5,7 +5,7 @@ import AuthService from "../service/translationItemCategory.service";
 import { ControllerError } from "../../../../types/controllerError.type";
 import TranslationService from "../service/translationItemCategory.service";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
-import { TtranslationItemCategoryUpdateDto } from "../dto/translationItemCategoryUpdateDto.type";
+import { TranslationItemCategoryUpdateDto } from "../dto/translationItemCategoryUpdate.dto";
 import { GetTranslationItemCategoriesFilters } from "../dto/getTranslationItemCategoriesFilters.dto";
 const translationService = new TranslationService();
 
@@ -82,7 +82,7 @@ export class TranslationItemCategoryAdminController extends ControllerBase {
 
 		try {
 			const translationItemCategoryId: string = req.params.translationItemCategoryId ?? "";
-			const updateTtranslationItemCategoryData: TtranslationItemCategoryUpdateDto = {
+			const updateTtranslationItemCategoryData: TranslationItemCategoryUpdateDto = {
 				title: req?.body?.title ?? ""
 			};
 			const result = await translationService.updateTranslationItemCategory(translationItemCategoryId, updateTtranslationItemCategoryData);

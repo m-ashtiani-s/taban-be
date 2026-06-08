@@ -2,7 +2,7 @@ import { LanguageDto } from "../dto/language.dto";
 import { LanguageDocument } from "../model/language.model";
 
 
-export default class TranslationTransform {
+export default class LanguageTransform {
 	language(language: LanguageDocument): LanguageDto {
 		const loginData: LanguageDto = {
 			languageId: language?._id as string,

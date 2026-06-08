@@ -4,7 +4,7 @@ import CertificationRateRepository from "../../translation/certificationRate/rep
 import DynamicRateRepository from "../../translation/dynamicRate/repository/dynamicRate.repository";
 import JusticeInquiryRateRepository from "../../translation/justiceInquiryRate/repository/justiceInquiryRate.repository";
 import LanguageRepository from "../../translation/language/repository/language.repository";
-import TranslationItemRepository from "../../translation/translationItem/repository/translation.repository";
+import TranslationItemRepository from "../../translation/translationItem/repository/translationItem.repository";
 import {
 	RateCalculationDocumentBreakdown,
 	RateCalculationRequestDto,

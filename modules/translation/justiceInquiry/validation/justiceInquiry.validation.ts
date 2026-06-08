@@ -1,6 +1,13 @@
-import { body, check, query } from "express-validator";
+import { body, param } from "express-validator";
 
 const JusticeInquiryValidation = {
+	justiceInquiryId: [
+		param("justiceInquiryId")
+			.notEmpty()
+			.withMessage("شناسه استعلام الزامی است")
+			.isMongoId()
+			.withMessage("شناسه استعلام معتبر نیست"),
+	],
 	createJusticeInquiry: [
 		body("justiceInquiryName").notEmpty().withMessage("وارد کردن استعلام الزامی است")
 	],

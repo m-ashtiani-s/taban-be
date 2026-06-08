@@ -6,9 +6,9 @@ const embassiesRouter = express.Router();
 const embassyController = new EmbassyAdminController();
 
 embassiesRouter.get("/", embassyController.getEmbassies);
-embassiesRouter.get("/:embassyId", embassyController.getEmbassy);
+embassiesRouter.get("/:embassyId", EmbassyValidation.embassyId, embassyController.getEmbassy);
 embassiesRouter.post("/", EmbassyValidation.createEmbassy, embassyController.createEmbassy);
-embassiesRouter.post("/:embassyId/activate", embassyController.activateEmbassy);
-embassiesRouter.post("/:embassyId/deactivate", embassyController.deactivateEmbassy);
-embassiesRouter.put("/:embassyId",EmbassyValidation.updateEmbassy, embassyController.updateEmbassy);
+embassiesRouter.post("/:embassyId/activate", EmbassyValidation.embassyId, embassyController.activateEmbassy);
+embassiesRouter.post("/:embassyId/deactivate", EmbassyValidation.embassyId, embassyController.deactivateEmbassy);
+embassiesRouter.put("/:embassyId", EmbassyValidation.embassyId, EmbassyValidation.updateEmbassy, embassyController.updateEmbassy);
 export default embassiesRouter;

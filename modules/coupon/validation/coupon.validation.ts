@@ -1,4 +1,5 @@
 import { body, param, query } from "express-validator";
+import { AppliesTo, DiscountType } from "../model/coupon.model";
 
 const couponBodyFields = [
 	body("code")
@@ -17,7 +18,7 @@ const couponBodyFields = [
 		.notEmpty()
 		.withMessage("نوع تخفیف الزامی است")
 		.bail()
-		.isIn(["percent", "fixed"])
+		.isIn(Object.values(DiscountType))
 		.withMessage("نوع تخفیف باید درصدی یا مقداری باشد"),
 
 	body("discountValue")
@@ -27,7 +28,7 @@ const couponBodyFields = [
 		.isFloat({ min: 0.01 })
 		.withMessage("مقدار تخفیف باید عددی مثبت باشد")
 		.custom((value, { req }) => {
-			if (req.body.discountType === "percent" && Number(value) > 100) {
+			if (req.body.discountType === DiscountType.PERCENT && Number(value) > 100) {
 				throw new Error("مقدار تخفیف درصدی نمی‌تواند بیشتر از ۱۰۰ باشد");
 			}
 			return true;
@@ -83,7 +84,7 @@ const couponBodyFields = [
 		.notEmpty()
 		.withMessage("محل اعمال کد تخفیف الزامی است")
 		.bail()
-		.isIn(["base", "total"])
+		.isIn(Object.values(AppliesTo))
 		.withMessage("محل اعمال کد تخفیف معتبر نیست"),
 
 	body("applicableTranslationItems")
@@ -104,8 +105,8 @@ const CouponValidation = {
 
 	getCoupons: [
 		query("term").optional().isString().withMessage("فرمت جستجو صحیح نیست").trim(),
-		query("discountType").optional().isIn(["percent", "fixed"]).withMessage("نوع تخفیف معتبر نیست"),
-		query("appliesTo").optional().isIn(["base", "total"]).withMessage("محل اعمال معتبر نیست"),
+		query("discountType").optional().isIn(Object.values(DiscountType)).withMessage("نوع تخفیف معتبر نیست"),
+		query("appliesTo").optional().isIn(Object.values(AppliesTo)).withMessage("محل اعمال معتبر نیست"),
 		query("isActive").optional().isBoolean({ strict: false }).withMessage("مقدار وضعیت معتبر نیست"),
 		query("page").optional().isInt({ min: 1 }).withMessage("شماره صفحه باید عددی صحیح باشد"),
 		query("pageSize").optional().isInt({ min: 1, max: 100 }).withMessage("اندازه صفحه معتبر نیست"),

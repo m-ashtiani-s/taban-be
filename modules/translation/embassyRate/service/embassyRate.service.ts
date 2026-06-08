@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import EmbassyRepository from "../../embassy/repository/embassy.repository";
-import TranslationItemRepository from "../../translationItem/repository/translation.repository";
+import TranslationItemRepository from "../../translationItem/repository/translationItem.repository";
 import { GetEmbassyRatesFilters } from "../dto/embassyRateFilters.dto";
 import EmbassyRateRepository from "../repository/embassyRate.repository";
 import EmbassyRateTransform from "../transform/embassyRate.transform";

@@ -6,7 +6,7 @@ import { ControllerError } from "../../../../types/controllerError.type";
 import EmbassyService from "../service/embassy.service";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { GetEmbassiesFilters } from "../dto/getEmbassyFilters.dto";
-import { TembassyUpdateDto } from "../dto/embassyUpdateDto.type";
+import { EmbassyUpdateDto } from "../dto/embassyUpdate.dto";
 const embassyService = new EmbassyService();
 
 export class EmbassyAdminController extends ControllerBase {
@@ -124,7 +124,7 @@ export class EmbassyAdminController extends ControllerBase {
 
 		try {
 			const embassyId: string = req.params.embassyId ?? "";
-			const updateTembassyData: TembassyUpdateDto = {
+			const updateTembassyData: EmbassyUpdateDto = {
 				title: req?.body?.title ?? "",
 				description: req?.body?.description ?? "",
 				isActive: req.body.isActive ?? false,
