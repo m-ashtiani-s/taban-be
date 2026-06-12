@@ -3,5 +3,6 @@ export type TranslationItemUpdateDto = {
 	documentType:string;
 	category:string;
 	description:string;
+	uploadDescription:string;
 	isActive:boolean;
 };

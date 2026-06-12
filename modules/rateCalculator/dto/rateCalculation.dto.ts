@@ -2,6 +2,7 @@ export type RateCalculationDocumentDto = {
 	documentKey: string;
 	title: string;
 	baseRateCount: number;
+	copyCount?: number;
 	specials: {
 		dynamicRateId: string;
 		count: number;
@@ -10,6 +11,8 @@ export type RateCalculationDocumentDto = {
 	justiceCertificationRateId?: string | null;
 	justiceInquiryRateIds: string[];
 	embassyRateIds?: string[];
+	/** فایل‌های آپلودشده‌ی این مدرک (به‌صورت مجزا برای هر مدرک نگه‌داری می‌شود) */
+	assets?: string[];
 };
 
 export type RateCalculationRequestDto = {
@@ -46,6 +49,7 @@ export type RateCalculationEmbassyLine = {
 export type RateCalculationDocumentBreakdown = {
 	documentKey: string;
 	title: string;
+	copyCount: number;
 	base: {
 		baseRateId: string;
 		title: string;

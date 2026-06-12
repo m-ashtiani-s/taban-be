@@ -10,6 +10,7 @@ export default class RateCalculatorTransform {
 			documents: data.documents.map((doc) => ({
 				documentKey: doc.documentKey,
 				title: doc.title,
+				copyCount: doc.copyCount,
 				base: {
 					baseRateId: doc.base.baseRateId,
 					title: doc.base.title,

@@ -6,6 +6,8 @@ export interface TranslationItem {
 	documentType: string;
 	isActive: boolean;
 	description: string;
+	/** توضیحات راهنمای آپلود مدارک که ادمین می‌نویسد و در مرحله‌ی آپلود به کاربر نمایش داده می‌شود */
+	uploadDescription: string;
 	category: string | TranslationItemCategoryDocument;
 }
 
@@ -29,6 +31,10 @@ const translationItemSchema = new Schema(
 			default: true,
 		},
 		description: {
+			type: String,
+			default: "",
+		},
+		uploadDescription: {
 			type: String,
 			default: "",
 		},

@@ -28,6 +28,10 @@ const RateCalculatorValidation = {
 		body("documents.*.baseRateCount")
 			.isInt({ min: 1 })
 			.withMessage("تعداد نرخ پایه باید عدد صحیح بزرگ‌تر از صفر باشد"),
+		body("documents.*.copyCount")
+			.optional({ nullable: true })
+			.isInt({ min: 1 })
+			.withMessage("تعداد نسخه باید عدد صحیح بزرگ‌تر از صفر باشد"),
 		body("documents.*.specials")
 			.isArray()
 			.withMessage("لیست خاص‌های ترجمه باید آرایه باشد"),
@@ -58,6 +62,13 @@ const RateCalculatorValidation = {
 		body("documents.*.embassyRateIds.*")
 			.isMongoId()
 			.withMessage("شناسه تایید سفارت معتبر نیست"),
+		body("documents.*.assets")
+			.optional({ nullable: true })
+			.isArray()
+			.withMessage("لیست فایل‌های مدرک باید آرایه باشد"),
+		body("documents.*.assets.*")
+			.isString()
+			.withMessage("شناسه فایل مدرک معتبر نیست"),
 	],
 };
 

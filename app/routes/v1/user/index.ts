@@ -3,6 +3,7 @@ import UserController from "../../../../modules/user/controller/user.controller"
 import UserValidation from "../../../../modules/user/validation/user.validation";
 import cartRouter from "./cart";
 import userShippingAddressesRouter from "./shipping-addresses";
+import userPassportsRouter from "./passports";
 import userOrdersRouter from "./orders";
 import userEnterpriseCustomersRouter from "./enterprise-customers";
 import userCustomersRouter from "./customers";
@@ -16,6 +17,7 @@ userRouter.get("/", userController.getUser);
 
 userRouter.use("/cart", cartRouter);
 userRouter.use("/shipping-addresses", userShippingAddressesRouter);
+	userRouter.use("/passports", userPassportsRouter);
 userRouter.use("/orders", userOrdersRouter);
 userRouter.use("/enterprise-customers", userEnterpriseCustomersRouter);
 userRouter.use("/customers", userCustomersRouter);

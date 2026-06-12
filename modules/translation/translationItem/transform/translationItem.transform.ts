@@ -12,6 +12,7 @@ export default class TranslationTransform {
 			documentType: translationItem?.documentType,
 			isActive: translationItem?.isActive,
 			description: translationItem?.description,
+			uploadDescription: translationItem?.uploadDescription ?? "",
 			categoryId: (category?._id?.toString() || category?.toString()) ?? "",
 			categoryName: category?.title ?? "",
 		};

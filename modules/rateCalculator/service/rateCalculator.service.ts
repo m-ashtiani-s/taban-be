@@ -14,7 +14,8 @@ import {
 } from "../dto/rateCalculation.dto";
 import RateCalculatorTransform from "../transform/rateCalculator.transform";
 
-const TAX_PERCENT = 10;
+// درصد مالیات؛ فعلاً صفر است (از کاربر مالیات دریافت نمی‌کنیم) ولی قابل تنظیم نگه داشته شده است.
+const TAX_PERCENT = 0;
 
 export default class RateCalculatorService {
 	private baseRateRepository = new BaseRateRepository();
@@ -132,11 +133,16 @@ export default class RateCalculatorService {
 			}
 			const embassyTotal = embassyApprovals.reduce((sum, line) => sum + line.price, 0);
 
-			const documentTotal = baseTotal + specialsTotal + certificationsTotal + inquiriesTotal + embassyTotal;
+			// تعداد نسخه‌ی این مدرک (پیش‌فرض ۱). در نسخه‌های اضافه هزینه‌ی ترجمه (پایه + داینامیک)
+			// ثابت می‌ماند و فقط تاییدات، استعلام‌ها و تایید سفارت به ازای هر نسخه دریافت می‌شوند.
+			const copyCount = doc.copyCount && doc.copyCount > 0 ? doc.copyCount : 1;
+			const perCopyExtras = certificationsTotal + inquiriesTotal + embassyTotal;
+			const documentTotal = baseTotal + specialsTotal + perCopyExtras * copyCount;
 
 			documents.push({
 				documentKey: doc.documentKey,
 				title: doc.title,
+				copyCount,
 				base: {
 					baseRateId: baseRate._id as string,
 					title: baseRate.title,
@@ -161,9 +167,9 @@ export default class RateCalculatorService {
 			(sum, d) => sum + d.base.total + d.specialsTotal,
 			0,
 		);
-		const certificationPrice = documents.reduce((sum, d) => sum + d.certificationsTotal, 0);
-		const inquiryPrice = documents.reduce((sum, d) => sum + d.inquiriesTotal, 0);
-		const embassyPrice = documents.reduce((sum, d) => sum + d.embassyTotal, 0);
+		const certificationPrice = documents.reduce((sum, d) => sum + d.certificationsTotal * d.copyCount, 0);
+		const inquiryPrice = documents.reduce((sum, d) => sum + d.inquiriesTotal * d.copyCount, 0);
+		const embassyPrice = documents.reduce((sum, d) => sum + d.embassyTotal * d.copyCount, 0);
 		const subtotal = translationPrice + certificationPrice + inquiryPrice + embassyPrice;
 		const taxPrice = Math.round((subtotal * TAX_PERCENT) / 100);
 		const totalPrice = subtotal + taxPrice;

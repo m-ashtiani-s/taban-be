@@ -4,6 +4,7 @@ export interface TranslationItemDto {
 	documentType: string;
 	isActive: boolean;
 	description: string;
+	uploadDescription: string;
 	categoryId:string
 	categoryName:string
 }
