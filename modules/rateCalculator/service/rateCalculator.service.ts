@@ -3,6 +3,7 @@ import BaseRateRepository from "../../translation/baseRate/repository/baseRate.r
 import CertificationRateRepository from "../../translation/certificationRate/repository/certificationRate.repository";
 import DynamicRateRepository from "../../translation/dynamicRate/repository/dynamicRate.repository";
 import JusticeInquiryRateRepository from "../../translation/justiceInquiryRate/repository/justiceInquiryRate.repository";
+import EmbassyRateRepository from "../../translation/embassyRate/repository/embassyRate.repository";
 import LanguageRepository from "../../translation/language/repository/language.repository";
 import TranslationItemRepository from "../../translation/translationItem/repository/translationItem.repository";
 import {
@@ -20,6 +21,7 @@ export default class RateCalculatorService {
 	private dynamicRateRepository = new DynamicRateRepository();
 	private certificationRateRepository = new CertificationRateRepository();
 	private justiceInquiryRateRepository = new JusticeInquiryRateRepository();
+	private embassyRateRepository = new EmbassyRateRepository();
 	private translationItemRepository = new TranslationItemRepository();
 	private languageRepository = new LanguageRepository();
 
@@ -115,7 +117,22 @@ export default class RateCalculatorService {
 			}
 			const inquiriesTotal = justiceInquiries.reduce((sum, line) => sum + line.price, 0);
 
-			const documentTotal = baseTotal + specialsTotal + certificationsTotal + inquiriesTotal;
+			const embassyApprovals = [];
+			for (const embassyRateId of doc.embassyRateIds ?? []) {
+				const embassyRate = await this.embassyRateRepository.findByEmbassyRateId(embassyRateId, ["embassy"]);
+				if (!embassyRate) {
+					throw new BadRequestError("تایید سفارت انتخاب‌شده یافت نشد");
+				}
+				const embassyRef: any = embassyRate.embassy;
+				embassyApprovals.push({
+					embassyRateId,
+					embassyName: embassyRef?.title ?? "",
+					price: embassyRate.price,
+				});
+			}
+			const embassyTotal = embassyApprovals.reduce((sum, line) => sum + line.price, 0);
+
+			const documentTotal = baseTotal + specialsTotal + certificationsTotal + inquiriesTotal + embassyTotal;
 
 			documents.push({
 				documentKey: doc.documentKey,
@@ -134,6 +151,8 @@ export default class RateCalculatorService {
 				certificationsTotal,
 				justiceInquiries,
 				inquiriesTotal,
+				embassyApprovals,
+				embassyTotal,
 				documentTotal,
 			});
 		}
@@ -144,7 +163,8 @@ export default class RateCalculatorService {
 		);
 		const certificationPrice = documents.reduce((sum, d) => sum + d.certificationsTotal, 0);
 		const inquiryPrice = documents.reduce((sum, d) => sum + d.inquiriesTotal, 0);
-		const subtotal = translationPrice + certificationPrice + inquiryPrice;
+		const embassyPrice = documents.reduce((sum, d) => sum + d.embassyTotal, 0);
+		const subtotal = translationPrice + certificationPrice + inquiryPrice + embassyPrice;
 		const taxPrice = Math.round((subtotal * TAX_PERCENT) / 100);
 		const totalPrice = subtotal + taxPrice;
 
@@ -158,6 +178,7 @@ export default class RateCalculatorService {
 				translationPrice,
 				certificationPrice,
 				inquiryPrice,
+				embassyPrice,
 				subtotal,
 				taxPercent: TAX_PERCENT,
 				taxPrice,

@@ -46,6 +46,12 @@ export default class RateCalculatorTransform {
 					price: i.price,
 				})),
 				inquiriesTotal: doc.inquiriesTotal,
+				embassyApprovals: doc.embassyApprovals.map((e) => ({
+					embassyRateId: e.embassyRateId,
+					embassyName: e.embassyName,
+					price: e.price,
+				})),
+				embassyTotal: doc.embassyTotal,
 				documentTotal: doc.documentTotal,
 			})),
 			summary: { ...data.summary },

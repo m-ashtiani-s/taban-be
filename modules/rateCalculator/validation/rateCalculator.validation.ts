@@ -51,6 +51,13 @@ const RateCalculatorValidation = {
 		body("documents.*.justiceInquiryRateIds.*")
 			.isMongoId()
 			.withMessage("شناسه استعلام معتبر نیست"),
+		body("documents.*.embassyRateIds")
+			.optional({ nullable: true })
+			.isArray()
+			.withMessage("لیست تایید سفارت‌ها باید آرایه باشد"),
+		body("documents.*.embassyRateIds.*")
+			.isMongoId()
+			.withMessage("شناسه تایید سفارت معتبر نیست"),
 	],
 };
 
