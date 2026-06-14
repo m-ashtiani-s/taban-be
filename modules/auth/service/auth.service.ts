@@ -1,5 +1,6 @@
 import UserRepository from "../../user/repository/user.repository";
 import { generateOtp } from "../../../shared/utils/generateOtp.util";
+import { sendOtpSms } from "../../../shared/utils/kavenegar.util";
 import OtpRepository from "../repository/otp.repository";
 import { ObjectId } from "mongoose";
 import { compare } from "bcryptjs";
@@ -45,6 +46,13 @@ export default class AuthService {
 				approved: false,
 			});
 		}
+
+		try {
+			await sendOtpSms(username, otpCode);
+		} catch {
+			throw new BadRequestError("ارسال پیامک با خطا مواجه شد، لطفاً مجدداً تلاش کنید");
+		}
+
 		return {
 			field: "sendOTP",
 			success: true,
