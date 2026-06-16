@@ -4,6 +4,7 @@ export interface CreateShippingAddressDto {
 	provinceCode: number;
 	cityName: string;
 	cityCode: number;
+	postalCode: string;
 	plaque?: string | null;
 	unit?: string | null;
 	fullAddress: string;
@@ -28,6 +29,7 @@ export interface ShippingAddressDto {
 	provinceCode: number;
 	cityName: string;
 	cityCode: number;
+	postalCode: string;
 	plaque: string | null;
 	unit: string | null;
 	fullAddress: string;

@@ -7,6 +7,7 @@ export interface ShippingAddress {
 	provinceCode: number;
 	cityName: string;
 	cityCode: number;
+	postalCode: string;
 	plaque: string | null;
 	unit: string | null;
 	fullAddress: string;
@@ -28,6 +29,7 @@ const shippingAddressSchema = new Schema(
 		provinceCode: { type: Number, required: true },
 		cityName: { type: String, required: true, trim: true },
 		cityCode: { type: Number, required: true },
+		postalCode: { type: String, required: true, trim: true },
 		plaque: { type: String, default: null, trim: true },
 		unit: { type: String, default: null, trim: true },
 		fullAddress: { type: String, required: true, trim: true },

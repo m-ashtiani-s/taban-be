@@ -11,6 +11,7 @@ export default class ShippingAddressTransform {
 			provinceCode: doc.provinceCode,
 			cityName: doc.cityName,
 			cityCode: doc.cityCode,
+			postalCode: doc.postalCode,
 			plaque: doc.plaque ?? null,
 			unit: doc.unit ?? null,
 			fullAddress: doc.fullAddress,

@@ -38,6 +38,15 @@ const shippingAddressBodyFields = [
 		.isInt({ min: 0 })
 		.withMessage("کد شهر معتبر نیست"),
 
+	body("postalCode")
+		.notEmpty()
+		.withMessage("کد پستی الزامی است")
+		.bail()
+		.isString()
+		.withMessage("کد پستی باید رشته باشد")
+		.matches(/^\d{10}$/)
+		.withMessage("کد پستی باید دقیقاً ۱۰ رقم باشد"),
+
 	body("plaque")
 		.optional({ nullable: true })
 		.isString()

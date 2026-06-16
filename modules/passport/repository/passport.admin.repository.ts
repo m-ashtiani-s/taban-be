@@ -47,6 +47,10 @@ export default class AdminPassportRepository {
 		};
 	}
 
+	async findByIds(passportIds: string[]): Promise<PassportDocument[]> {
+		return PassportModel.find({ _id: { $in: passportIds } }).exec();
+	}
+
 	async setActiveStatus(passportId: string, isActive: boolean): Promise<PassportDocument | null> {
 		return PassportModel.findByIdAndUpdate(passportId, { isActive }, { new: true }).exec();
 	}
