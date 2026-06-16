@@ -43,6 +43,8 @@ export interface Invoice {
 	issuedBy: ObjectId | string | null;
 	paymentDetail: Record<string, unknown> | null;
 	paidAt: Date | null;
+	// حذف نرم — صورتحساب‌های isActive=false در هیچ لیست/جزئیاتی نمایش داده نمی‌شوند
+	isActive: boolean;
 }
 
 export interface InvoiceDocument extends Invoice, Document {
@@ -89,6 +91,8 @@ const invoiceSchema = new Schema(
 		// تا راه‌اندازی سیستم پرداخت نال می‌ماند
 		paymentDetail: { type: Schema.Types.Mixed, default: null },
 		paidAt: { type: Date, default: null },
+		// حذف نرم
+		isActive: { type: Boolean, default: true },
 	},
 	{ timestamps: true }
 );

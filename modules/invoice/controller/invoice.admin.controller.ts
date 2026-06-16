@@ -145,4 +145,22 @@ export default class AdminInvoiceController extends ControllerBase {
 			});
 		}
 	};
+
+	deleteInvoice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) return this.showValidationErrors(res, errors);
+		try {
+			const invoiceId: string = req.params.invoiceId;
+			const result = await adminInvoiceService.deleteInvoice(invoiceId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : error.name === "NotFoundError" ? 404 : 500;
+			return res.status(statusCode).json({
+				field: "deleteInvoice",
+				success: false,
+				data: null,
+				message: error.message || "حذف صورتحساب با خطا مواجه شد",
+			});
+		}
+	};
 }

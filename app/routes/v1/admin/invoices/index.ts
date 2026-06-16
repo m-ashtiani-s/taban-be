@@ -17,5 +17,6 @@ adminInvoicesRouter.put(
 );
 adminInvoicesRouter.put("/:invoiceId/issue", InvoiceValidation.invoiceId, adminInvoiceController.issueInvoice);
 adminInvoicesRouter.put("/:invoiceId/cancel", InvoiceValidation.invoiceId, adminInvoiceController.cancelInvoice);
+adminInvoicesRouter.delete("/:invoiceId", InvoiceValidation.invoiceId, adminInvoiceController.deleteInvoice);
 
 export default adminInvoicesRouter;

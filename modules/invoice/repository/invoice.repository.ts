@@ -20,7 +20,7 @@ export default class InvoiceRepository {
 	}
 
 	async findById(invoiceId: string): Promise<InvoiceDocument | null> {
-		return InvoiceModel.findById(invoiceId).populate("user").exec();
+		return InvoiceModel.findOne({ _id: invoiceId, isActive: true }).populate("user").exec();
 	}
 
 	/**
@@ -31,6 +31,7 @@ export default class InvoiceRepository {
 		return InvoiceModel.findOne({
 			_id: invoiceId,
 			user: userId,
+			isActive: true,
 			status: { $in: [InvoiceStatus.ISSUED, InvoiceStatus.PAID] },
 		})
 			.populate("user")
@@ -44,6 +45,7 @@ export default class InvoiceRepository {
 	): Promise<PaginationResult<InvoiceDocument>> {
 		const query: any = {
 			user: userId,
+			isActive: true,
 			status: { $in: [InvoiceStatus.ISSUED, InvoiceStatus.PAID] },
 		};
 
@@ -81,13 +83,13 @@ export default class InvoiceRepository {
 		referenceId: string,
 		session?: mongoose.ClientSession
 	): Promise<InvoiceDocument | null> {
-		let query = InvoiceModel.findOne({ referenceType, referenceId });
+		let query = InvoiceModel.findOne({ referenceType, referenceId, isActive: true });
 		if (session) query = query.session(session);
 		return query.exec();
 	}
 
 	async findByReference(referenceType: InvoiceReferenceType, referenceId: string): Promise<InvoiceDocument[]> {
-		return InvoiceModel.find({ referenceType, referenceId })
+		return InvoiceModel.find({ referenceType, referenceId, isActive: true })
 			.populate("user")
 			.sort({ createdAt: -1 })
 			.exec();
@@ -97,7 +99,7 @@ export default class InvoiceRepository {
 		filters: InvoiceFilters,
 		pagination: PaginationInput
 	): Promise<PaginationResult<InvoiceDocument>> {
-		const query: any = {};
+		const query: any = { isActive: true };
 
 		if (filters.term) {
 			const numeric = Number(filters.term);

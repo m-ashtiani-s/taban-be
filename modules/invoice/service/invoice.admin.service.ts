@@ -144,6 +144,20 @@ export default class AdminInvoiceService {
 		};
 	}
 
+	/** حذف نرم: صورتحساب با isActive=false دیگر در هیچ لیست یا جزئیاتی نمایش داده نمی‌شود. */
+	async deleteInvoice(invoiceId: string) {
+		const invoice = await this.invoiceRepository.findById(invoiceId);
+		if (!invoice) throw new NotFoundError("صورتحساب یافت نشد");
+
+		await this.invoiceRepository.update(invoiceId, { isActive: false });
+		return {
+			field: "deleteInvoice",
+			success: true,
+			message: "صورتحساب با موفقیت حذف شد",
+			data: null,
+		};
+	}
+
 	/**
 	 * صدور خودکار صورتحساب هنگام پرداخت سفارش. صورتحساب با وضعیت «صادر شده» ساخته می‌شود و
 	 * چون سفارش همان لحظه پرداخت شده، متعاقباً به «پرداخت‌شده» منتقل می‌گردد. این متد توسط
