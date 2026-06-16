@@ -5,6 +5,7 @@ import Pagination from "../../../shared/utils/pagination.util";
 import CartRepository from "../../cart/repository/cart.repository";
 import CouponRepository from "../../coupon/repository/coupon.repository";
 import CustomerRepository from "../../customer/repository/customer.repository";
+import AdminInvoiceService from "../../invoice/service/invoice.admin.service";
 import RateCalculatorService from "../../rateCalculator/service/rateCalculator.service";
 import ShippingAddressRepository from "../../shippingAddress/repository/shippingAddress.repository";
 import { CreateOrderDto, UpdateOrderItemDto } from "../dto/order.dto";
@@ -21,6 +22,7 @@ export default class OrderService {
 	private shippingAddressRepository = new ShippingAddressRepository();
 	private rateCalculatorService = new RateCalculatorService();
 	private orderTransform = new OrderTransform();
+	private invoiceService = new AdminInvoiceService();
 
 	async createOrder(userId: string, data: CreateOrderDto) {
 		const session = await mongoose.startSession();
@@ -171,6 +173,9 @@ export default class OrderService {
 			order.paymentStatus = PaymentStatus.PAID;
 			await this.orderRepository.save(order);
 		}
+
+		// با پرداخت سفارش، سیستم خودش صورتحساب را صادر و متعاقباً پرداخت‌شده می‌کند (idempotent)
+		await this.invoiceService.issueForPaidOrder(order);
 
 		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
 		return {

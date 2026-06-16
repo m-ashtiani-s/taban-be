@@ -6,6 +6,7 @@ import adminPassportsRouter from "./passports";
 import adminOrdersRouter from "./orders";
 import adminUsersRouter from "./users";
 import adminCustomersRouter from "./customers";
+import adminInvoicesRouter from "./invoices";
 
 const adminRouter = express.Router();
 
@@ -16,5 +17,6 @@ adminRouter.use("/passports", adminPassportsRouter);
 adminRouter.use("/orders", adminOrdersRouter);
 adminRouter.use("/users", adminUsersRouter);
 adminRouter.use("/customers", adminCustomersRouter);
+adminRouter.use("/invoices", adminInvoicesRouter);
 
 export default adminRouter;

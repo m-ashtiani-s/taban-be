@@ -7,6 +7,7 @@ import userPassportsRouter from "./passports";
 import userOrdersRouter from "./orders";
 import userEnterpriseCustomersRouter from "./enterprise-customers";
 import userCustomersRouter from "./customers";
+import userInvoicesRouter from "./invoices";
 
 const userRouter = express.Router();
 const userController = new UserController();
@@ -21,5 +22,6 @@ userRouter.use("/shipping-addresses", userShippingAddressesRouter);
 userRouter.use("/orders", userOrdersRouter);
 userRouter.use("/enterprise-customers", userEnterpriseCustomersRouter);
 userRouter.use("/customers", userCustomersRouter);
+userRouter.use("/invoices", userInvoicesRouter);
 
 export default userRouter;

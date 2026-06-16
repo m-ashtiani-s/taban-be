@@ -1,4 +1,4 @@
-import { PaginateResult } from "mongoose";
+import mongoose, { PaginateResult } from "mongoose";
 import OrderModel, { OrderDocument, OrderStatus, PaymentStatus } from "../model/order.model";
 import { OrderFilters } from "../dto/orderFilters.dto";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
@@ -54,14 +54,16 @@ export default class AdminOrderRepository {
 		orderId: string,
 		status: OrderStatus,
 		rejectedRemarks: string | null,
-		paymentStatus?: PaymentStatus
+		paymentStatus?: PaymentStatus,
+		session?: mongoose.ClientSession
 	): Promise<OrderDocument | null> {
 		const update: any = { status, rejectedRemarks };
 		if (paymentStatus) update.paymentStatus = paymentStatus;
-		return OrderModel.findByIdAndUpdate(orderId, { $set: update }, { new: true })
+		let query = OrderModel.findByIdAndUpdate(orderId, { $set: update }, { new: true })
 			.populate("user")
 			.populate("shippingAddress")
-			.populate("coupon")
-			.exec();
+			.populate("coupon");
+		if (session) query = query.session(session);
+		return query.exec();
 	}
 }

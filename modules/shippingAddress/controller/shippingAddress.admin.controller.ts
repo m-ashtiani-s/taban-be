@@ -69,6 +69,7 @@ export default class AdminShippingAddressController extends ControllerBase {
 			provinceCode: req.body.provinceCode,
 			cityName: req.body.cityName?.trim(),
 			cityCode: req.body.cityCode,
+			postalCode: req.body.postalCode?.trim() as string,
 			plaque: req.body.plaque?.trim() || null,
 			unit: req.body.unit?.trim() || null,
 			fullAddress: req.body.fullAddress?.trim(),
