@@ -47,11 +47,11 @@ export default class AuthService {
 			});
 		}
 
-		try {
-			await sendOtpSms(username, otpCode);
-		} catch {
-			throw new BadRequestError("ارسال پیامک با خطا مواجه شد، لطفاً مجدداً تلاش کنید");
-		}
+		// try {
+		// 	await sendOtpSms(username, otpCode);
+		// } catch {
+		// 	throw new BadRequestError("ارسال پیامک با خطا مواجه شد، لطفاً مجدداً تلاش کنید");
+		// }
 
 		return {
 			field: "sendOTP",

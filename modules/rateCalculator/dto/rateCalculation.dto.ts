@@ -13,6 +13,11 @@ export type RateCalculationDocumentDto = {
 	embassyRateIds?: string[];
 	/** فایل‌های آپلودشده‌ی این مدرک (به‌صورت مجزا برای هر مدرک نگه‌داری می‌شود) */
 	assets?: string[];
+	/**
+	 * کاربر استعلام‌های این مدرک را خودش تهیه می‌کند (استعلام‌های پولیِ ما برای این مدرک
+	 * انتخاب نمی‌شوند و کاربر بعداً نتیجه را در جزئیات سفارش آپلود می‌کند).
+	 */
+	selfInquiry?: boolean;
 };
 
 export type RateCalculationRequestDto = {

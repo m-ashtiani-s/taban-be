@@ -36,8 +36,8 @@ const AdminOrderValidation = {
 			.isLength({ max: 1000 })
 			.withMessage("توضیحات رد سفارش نباید بیشتر از ۱۰۰۰ کاراکتر باشد")
 			.custom((value, { req }) => {
-				if (req.body.status === OrderStatus.REJECTED && (!value || !value.trim())) {
-					throw new Error("برای رد سفارش، وارد کردن دلیل الزامی است");
+				if (req.body.status === OrderStatus.NEEDS_EDITING && (!value || !value.trim())) {
+					throw new Error("برای ارجاع سفارش جهت ویرایش، وارد کردن دلیل الزامی است");
 				}
 				return true;
 			}),

@@ -4,14 +4,20 @@ import { AddDocumentToCartDto } from "../../cart/dto/cartItem.dto";
 import { RateCalculationResponseDto } from "../../rateCalculator/dto/rateCalculation.dto";
 
 export enum OrderStatus {
-	PENDING = "pending",
+	DOCUMENT_SUBMISSION = "document_submission",
 	APPROVED = "approved",
 	PAID = "paid",
-	PROCESSING = "processing",
-	SHIPPED = "shipped",
+	ADMIN_REGISTRATION = "admin_registration",
+	TRANSLATING = "translating",
+	DOCUMENTS_RECEIVED = "documents_received",
+	REVIEWING = "reviewing",
+	CERTIFICATIONS = "certifications",
+	READY_FOR_DELIVERY = "ready_for_delivery",
+	TRANSLATION_SCAN = "translation_scan",
+	DOCUMENTS_SENT = "documents_sent",
 	DELIVERED = "delivered",
-	CANCELED = "canceled",
-	REJECTED = "rejected",
+	// وضعیت جانبی (خارج از فلوی خطی) — جایگزین «رد شده»ی قبلی
+	NEEDS_EDITING = "needs_editing",
 }
 export enum PaymentStatus {
 	PENDING = "pending",
@@ -64,7 +70,7 @@ const orderSchema = new Schema(
 		status: {
 			type: String,
 			enum: Object.values(OrderStatus),
-			default: OrderStatus.PENDING,
+			default: OrderStatus.DOCUMENT_SUBMISSION,
 			required: true,
 		},
 		rejectedRemarks: { type: String, default: null },

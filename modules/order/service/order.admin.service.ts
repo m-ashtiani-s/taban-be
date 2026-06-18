@@ -40,11 +40,11 @@ export default class AdminOrderService {
 		const order = await this.orderRepository.findById(orderId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
-		if (data.status === OrderStatus.REJECTED && (!data.rejectedRemarks || !data.rejectedRemarks.trim())) {
-			throw new BadRequestError("برای رد سفارش، وارد کردن دلیل الزامی است");
+		if (data.status === OrderStatus.NEEDS_EDITING && (!data.rejectedRemarks || !data.rejectedRemarks.trim())) {
+			throw new BadRequestError("برای ارجاع سفارش جهت ویرایش، وارد کردن دلیل الزامی است");
 		}
 
-		const rejectedRemarks = data.status === OrderStatus.REJECTED ? data.rejectedRemarks!.trim() : null;
+		const rejectedRemarks = data.status === OrderStatus.NEEDS_EDITING ? data.rejectedRemarks!.trim() : null;
 
 		let paymentStatus: PaymentStatus | undefined;
 		if (data.status === OrderStatus.PAID) paymentStatus = PaymentStatus.PAID;

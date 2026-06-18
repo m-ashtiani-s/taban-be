@@ -72,7 +72,7 @@ export default class OrderService {
 					discountAmount,
 					totalAmount,
 					shippingAddress: data.shippingAddressId,
-					status: OrderStatus.PENDING,
+					status: OrderStatus.DOCUMENT_SUBMISSION,
 					rejectedRemarks: null,
 					paymentStatus: PaymentStatus.PENDING,
 					finalAmount,
@@ -256,7 +256,7 @@ export default class OrderService {
 		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
-		if (order.status !== OrderStatus.PENDING && order.status !== OrderStatus.REJECTED) {
+		if (order.status !== OrderStatus.DOCUMENT_SUBMISSION && order.status !== OrderStatus.NEEDS_EDITING) {
 			throw new BadRequestError("امکان ویرایش این سفارش وجود ندارد");
 		}
 
@@ -289,8 +289,8 @@ export default class OrderService {
 		order.totalAmount = order.orderedDocs.reduce((sum, it) => sum + (it.itemTotal ?? 0), 0);
 		order.finalAmount = Math.max(order.totalAmount - (order.discountAmount ?? 0), 0);
 
-		// any edit puts the order back into the pending pipeline for re-review
-		order.status = OrderStatus.PENDING;
+		// any edit puts the order back into the submission pipeline for re-review
+		order.status = OrderStatus.DOCUMENT_SUBMISSION;
 		order.rejectedRemarks = null;
 
 		await this.orderRepository.save(order);
