@@ -35,6 +35,7 @@ export default class CartService {
 			translationItemId: payload.translationItemId,
 			languageId: payload.languageId,
 			documents: payload.documents,
+			isOfficial: payload.isOfficial ?? true,
 		}, tierDiscountPercent);
 
 		const cart = await this.cartRepository.findOrCreateByUserId(userId);
@@ -60,6 +61,7 @@ export default class CartService {
 				assets: payload.assets ?? [],
 				customerId: newCustomerId,
 				desiredDeliveryDate: payload.desiredDeliveryDate ?? null,
+				isOfficial: payload.isOfficial ?? true,
 			},
 			breakdown,
 		};
@@ -115,6 +117,7 @@ export default class CartService {
 			translationItemId: payload.translationItemId,
 			languageId: payload.languageId,
 			documents: payload.documents,
+			isOfficial: payload.isOfficial ?? true,
 		}, tierDiscountPercent);
 
 		cart.items[itemIndex] = {
@@ -128,6 +131,7 @@ export default class CartService {
 				// مشتری آیتم هنگام ویرایش حفظ می‌شود تا یکپارچگی سبد خرید به هم نخورد
 				customerId: cart.items[itemIndex]?.payload?.customerId ?? payload.customerId ?? null,
 				desiredDeliveryDate: payload.desiredDeliveryDate ?? null,
+				isOfficial: payload.isOfficial ?? true,
 			},
 			breakdown,
 		};

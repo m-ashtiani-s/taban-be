@@ -12,5 +12,15 @@ adminOrdersRouter.put(
 	AdminOrderValidation.updateOrderStatus,
 	adminOrderController.updateOrderStatus
 );
+adminOrdersRouter.put(
+	"/:orderId/cart-items/:cartItemId/documents/:documentKey/scan-assets",
+	AdminOrderValidation.updateDocumentScanAssets,
+	adminOrderController.updateDocumentScanAssets
+);
+adminOrdersRouter.put(
+	"/:orderId/cart-items/:cartItemId/official",
+	AdminOrderValidation.updateOrderItemOfficial,
+	adminOrderController.updateOrderItemOfficial
+);
 
 export default adminOrdersRouter;

@@ -14,6 +14,14 @@ export interface UpdateOrderStatusDto {
 	rejectedRemarks?: string | null;
 }
 
+export interface UpdateDocumentScanAssetsDto {
+	scanAssets: string[];
+}
+
+export interface UpdateOrderItemOfficialDto {
+	isOfficial: boolean;
+}
+
 export interface OrderCustomerInfo {
 	customerId: string;
 	fullName: string;

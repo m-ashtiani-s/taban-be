@@ -274,6 +274,7 @@ export default class OrderService {
 				translationItemId: payload.translationItemId,
 				languageId: payload.languageId,
 				documents: payload.documents,
+				isOfficial: payload.isOfficial ?? true,
 			},
 			tierDiscountPercent
 		);
@@ -291,6 +292,7 @@ export default class OrderService {
 				passports: payload.passports ?? [],
 				assets: payload.assets ?? [],
 				desiredDeliveryDate: payload.desiredDeliveryDate ?? null,
+				isOfficial: payload.isOfficial ?? true,
 			},
 			breakdown,
 			itemTotal: breakdown?.summary?.totalPrice ?? 0,

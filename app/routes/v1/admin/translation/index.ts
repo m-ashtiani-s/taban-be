@@ -9,6 +9,7 @@ import justiceInquiryRateRouter from "./justice-inquiry-rate";
 import translationItemsCategoriesRouter from "./translation-items-categories";
 import embassiesRouter from "./embassies";
 import embassyRateRouter from "./embassy-rate";
+import scanRateRouter from "./scan-rate";
 
 const translationRouter = express.Router();
 
@@ -22,5 +23,6 @@ translationRouter.use("/certification-rate", certificationRateRouter);
 translationRouter.use("/justice-inquiry", justiceInquiryRouter);
 translationRouter.use("/justice-inquiry-rate", justiceInquiryRateRouter);
 translationRouter.use("/embassy-rate", embassyRateRouter);
+translationRouter.use("/scan-rate", scanRateRouter);
 
 export default translationRouter;

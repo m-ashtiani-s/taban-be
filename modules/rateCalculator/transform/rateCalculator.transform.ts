@@ -53,6 +53,7 @@ export default class RateCalculatorTransform {
 					price: e.price,
 				})),
 				embassyTotal: doc.embassyTotal,
+				scan: doc.scan ? { scanRateId: doc.scan.scanRateId, price: doc.scan.price } : null,
 				documentTotal: doc.documentTotal,
 			})),
 			summary: { ...data.summary },

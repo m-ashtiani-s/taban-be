@@ -21,6 +21,20 @@ const AdminOrderValidation = {
 		query("pageSize").optional().isInt({ min: 1, max: 100 }).withMessage("اندازه صفحه معتبر نیست"),
 	],
 
+	updateDocumentScanAssets: [
+		param("orderId").notEmpty().withMessage("شناسه سفارش الزامی است").isMongoId().withMessage("شناسه سفارش معتبر نیست"),
+		param("cartItemId").notEmpty().withMessage("شناسه آیتم الزامی است").isString(),
+		param("documentKey").notEmpty().withMessage("کلید مدرک الزامی است").isString(),
+		body("scanAssets").isArray().withMessage("scanAssets باید آرایه باشد"),
+		body("scanAssets.*").isURL().withMessage("هر آیتم scanAssets باید URL معتبر باشد"),
+	],
+
+	updateOrderItemOfficial: [
+		param("orderId").notEmpty().withMessage("شناسه سفارش الزامی است").isMongoId().withMessage("شناسه سفارش معتبر نیست"),
+		param("cartItemId").notEmpty().withMessage("شناسه آیتم الزامی است").isString(),
+		body("isOfficial").isBoolean().withMessage("isOfficial باید boolean باشد"),
+	],
+
 	updateOrderStatus: [
 		param("orderId").notEmpty().withMessage("شناسه سفارش الزامی است").isMongoId().withMessage("شناسه سفارش معتبر نیست"),
 		body("status")

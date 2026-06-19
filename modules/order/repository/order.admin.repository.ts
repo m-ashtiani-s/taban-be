@@ -50,6 +50,36 @@ export default class AdminOrderRepository {
 		};
 	}
 
+	async updateDocumentScanAssets(
+		orderId: string,
+		cartItemId: string,
+		documentKey: string,
+		scanAssets: string[]
+	): Promise<OrderDocument | null> {
+		return OrderModel.findByIdAndUpdate(
+			orderId,
+			{
+				$set: {
+					"orderedDocs.$[doc].payload.documents.$[d].scanAssets": scanAssets,
+				},
+			},
+			{
+				arrayFilters: [{ "doc.cartItemId": cartItemId }, { "d.documentKey": documentKey }],
+				new: true,
+			}
+		)
+			.populate("user")
+			.populate("shippingAddress")
+			.populate("coupon")
+			.populate("customer")
+			.exec();
+	}
+
+	async save(order: OrderDocument): Promise<OrderDocument> {
+		order.markModified("orderedDocs");
+		return order.save();
+	}
+
 	async updateStatus(
 		orderId: string,
 		status: OrderStatus,

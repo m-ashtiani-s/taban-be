@@ -11,6 +11,8 @@ export type RateCalculationDocumentDto = {
 	justiceCertificationRateId?: string | null;
 	justiceInquiryRateIds: string[];
 	embassyRateIds?: string[];
+	/** شناسه‌ی نرخ اسکن در صورت انتخاب اسکن برای این مدرک */
+	scanRateId?: string | null;
 	/** فایل‌های آپلودشده‌ی این مدرک (به‌صورت مجزا برای هر مدرک نگه‌داری می‌شود) */
 	assets?: string[];
 	/**
@@ -24,6 +26,8 @@ export type RateCalculationRequestDto = {
 	translationItemId: string;
 	languageId: string;
 	documents: RateCalculationDocumentDto[];
+	/** ترجمه رسمی است یا خیر. اگر false باشد، سنام و مهر مترجم از نرخ پایه حذف می‌شوند. پیش‌فرض: true */
+	isOfficial?: boolean;
 };
 
 export type RateCalculationSpecialLine = {
@@ -48,6 +52,11 @@ export type RateCalculationInquiryLine = {
 export type RateCalculationEmbassyLine = {
 	embassyRateId: string;
 	embassyName: string;
+	price: number;
+};
+
+export type RateCalculationScanLine = {
+	scanRateId: string;
 	price: number;
 };
 
@@ -76,6 +85,8 @@ export type RateCalculationDocumentBreakdown = {
 	inquiriesTotal: number;
 	embassyApprovals: RateCalculationEmbassyLine[];
 	embassyTotal: number;
+	/** اطلاعات اسکن در صورت انتخاب برای این مدرک */
+	scan: RateCalculationScanLine | null;
 	documentTotal: number;
 };
 
@@ -84,6 +95,8 @@ export type RateCalculationSummary = {
 	certificationPrice: number;
 	inquiryPrice: number;
 	embassyPrice: number;
+	/** مجموع هزینه‌ی اسکن برای همه‌ی مدارک */
+	scanPrice: number;
 	subtotal: number;
 	taxPercent: number;
 	taxPrice: number;

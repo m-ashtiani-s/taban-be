@@ -4,6 +4,7 @@ import CertificationRateRepository from "../../translation/certificationRate/rep
 import DynamicRateRepository from "../../translation/dynamicRate/repository/dynamicRate.repository";
 import JusticeInquiryRateRepository from "../../translation/justiceInquiryRate/repository/justiceInquiryRate.repository";
 import EmbassyRateRepository from "../../translation/embassyRate/repository/embassyRate.repository";
+import ScanRateRepository from "../../translation/scanRate/repository/scanRate.repository";
 import LanguageRepository from "../../translation/language/repository/language.repository";
 import TranslationItemRepository from "../../translation/translationItem/repository/translationItem.repository";
 import {
@@ -23,6 +24,7 @@ export default class RateCalculatorService {
 	private certificationRateRepository = new CertificationRateRepository();
 	private justiceInquiryRateRepository = new JusticeInquiryRateRepository();
 	private embassyRateRepository = new EmbassyRateRepository();
+	private scanRateRepository = new ScanRateRepository();
 	private translationItemRepository = new TranslationItemRepository();
 	private languageRepository = new LanguageRepository();
 
@@ -50,12 +52,14 @@ export default class RateCalculatorService {
 
 		// نرخ پایه‌ی واحد شامل خود نرخ پایه به‌علاوه‌ی سنام، هزینه دفتری، نرخ برابر اصل (تصدیق)
 		// و مهر مترجم است که همگی در مدل baseRate نگهداری می‌شوند.
+		// در ترجمه‌ی غیررسمی (isOfficial === false) سنام و مهر مترجم حذف می‌شوند.
+		const isOfficial = request.isOfficial !== false;
 		const baseUnitPrice =
 			(baseRate.basePrice ?? 0) +
-			(baseRate.sanamPrice ?? 0) +
+			(isOfficial ? (baseRate.sanamPrice ?? 0) : 0) +
 			(baseRate.daftariPrice ?? 0) +
 			(baseRate.tasdighPrice ?? 0) +
-			(baseRate.mohrPrice ?? 0);
+			(isOfficial ? (baseRate.mohrPrice ?? 0) : 0);
 
 		const documents: RateCalculationDocumentBreakdown[] = [];
 
@@ -136,11 +140,23 @@ export default class RateCalculatorService {
 			}
 			const embassyTotal = embassyApprovals.reduce((sum, line) => sum + line.price, 0);
 
+			// اسکن مدرک — هزینه‌ای ثابت به ازای هر مدرک (مستقل از تعداد نسخه)
+			let scan: { scanRateId: string; price: number } | null = null;
+			if (doc.scanRateId) {
+				const scanRate = await this.scanRateRepository.findByScanRateId(doc.scanRateId);
+				if (!scanRate) {
+					throw new BadRequestError("نرخ اسکن انتخاب‌شده یافت نشد");
+				}
+				scan = { scanRateId: doc.scanRateId, price: scanRate.price };
+			}
+			const scanTotal = scan?.price ?? 0;
+
 			// تعداد نسخه‌ی این مدرک (پیش‌فرض ۱). در نسخه‌های اضافه هزینه‌ی ترجمه (پایه + داینامیک)
 			// ثابت می‌ماند و فقط تاییدات، استعلام‌ها و تایید سفارت به ازای هر نسخه دریافت می‌شوند.
+			// هزینه‌ی اسکن نیز مانند هزینه‌ی ترجمه ثابت است و به تعداد نسخه وابسته نیست.
 			const copyCount = doc.copyCount && doc.copyCount > 0 ? doc.copyCount : 1;
 			const perCopyExtras = certificationsTotal + inquiriesTotal + embassyTotal;
-			const documentTotal = baseTotal + specialsTotal + perCopyExtras * copyCount;
+			const documentTotal = baseTotal + specialsTotal + scanTotal + perCopyExtras * copyCount;
 
 			documents.push({
 				documentKey: doc.documentKey,
@@ -162,6 +178,7 @@ export default class RateCalculatorService {
 				inquiriesTotal,
 				embassyApprovals,
 				embassyTotal,
+				scan,
 				documentTotal,
 			});
 		}
@@ -173,10 +190,11 @@ export default class RateCalculatorService {
 		const certificationPrice = documents.reduce((sum, d) => sum + d.certificationsTotal * d.copyCount, 0);
 		const inquiryPrice = documents.reduce((sum, d) => sum + d.inquiriesTotal * d.copyCount, 0);
 		const embassyPrice = documents.reduce((sum, d) => sum + d.embassyTotal * d.copyCount, 0);
+		const scanPrice = documents.reduce((sum, d) => sum + (d.scan?.price ?? 0), 0);
 		// تخفیف باشگاه مشتریان فقط روی مبلغ ترجمه (پایه + داینامیک‌ها) اعمال می‌شود
 		const safeDiscountPercent = Math.min(Math.max(tierDiscountPercent || 0, 0), 100);
 		const tierDiscountAmount = Math.round((translationPrice * safeDiscountPercent) / 100);
-		const subtotal = translationPrice - tierDiscountAmount + certificationPrice + inquiryPrice + embassyPrice;
+		const subtotal = translationPrice - tierDiscountAmount + certificationPrice + inquiryPrice + embassyPrice + scanPrice;
 		const taxPrice = Math.round((subtotal * TAX_PERCENT) / 100);
 		const totalPrice = subtotal + taxPrice;
 
@@ -191,6 +209,7 @@ export default class RateCalculatorService {
 				certificationPrice,
 				inquiryPrice,
 				embassyPrice,
+				scanPrice,
 				subtotal,
 				taxPercent: TAX_PERCENT,
 				taxPrice,

@@ -6,6 +6,7 @@ export type AddDocumentToCartDto = RateCalculationRequestDto & {
 	customerId?: string | null;
 	// تاریخ تحویل دلخواهِ کاربر (اختیاری) — صرفاً برای پیگیری توسط کارشناسان، روی قیمت اثری ندارد
 	desiredDeliveryDate?: string | null;
+	// isOfficial از RateCalculationRequestDto به ارث می‌رسد
 };
 
 export interface CartItemDto {
