@@ -7,4 +7,5 @@ export interface TranslationItemDto {
 	uploadDescription: string;
 	categoryId:string
 	categoryName:string
+	scoreMultiplier: number
 }

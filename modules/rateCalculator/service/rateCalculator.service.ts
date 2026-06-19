@@ -26,7 +26,10 @@ export default class RateCalculatorService {
 	private translationItemRepository = new TranslationItemRepository();
 	private languageRepository = new LanguageRepository();
 
-	async computeBreakdown(request: RateCalculationRequestDto): Promise<RateCalculationResponseDto> {
+	async computeBreakdown(
+		request: RateCalculationRequestDto,
+		tierDiscountPercent: number = 0
+	): Promise<RateCalculationResponseDto> {
 		const translationItem = await this.translationItemRepository.findByTranslationItemId(request.translationItemId);
 		if (!translationItem) {
 			throw new BadRequestError("مدرک انتخاب‌شده یافت نشد");
@@ -170,7 +173,10 @@ export default class RateCalculatorService {
 		const certificationPrice = documents.reduce((sum, d) => sum + d.certificationsTotal * d.copyCount, 0);
 		const inquiryPrice = documents.reduce((sum, d) => sum + d.inquiriesTotal * d.copyCount, 0);
 		const embassyPrice = documents.reduce((sum, d) => sum + d.embassyTotal * d.copyCount, 0);
-		const subtotal = translationPrice + certificationPrice + inquiryPrice + embassyPrice;
+		// تخفیف باشگاه مشتریان فقط روی مبلغ ترجمه (پایه + داینامیک‌ها) اعمال می‌شود
+		const safeDiscountPercent = Math.min(Math.max(tierDiscountPercent || 0, 0), 100);
+		const tierDiscountAmount = Math.round((translationPrice * safeDiscountPercent) / 100);
+		const subtotal = translationPrice - tierDiscountAmount + certificationPrice + inquiryPrice + embassyPrice;
 		const taxPrice = Math.round((subtotal * TAX_PERCENT) / 100);
 		const totalPrice = subtotal + taxPrice;
 
@@ -189,12 +195,14 @@ export default class RateCalculatorService {
 				taxPercent: TAX_PERCENT,
 				taxPrice,
 				totalPrice,
+				tierDiscountPercent: safeDiscountPercent,
+				tierDiscountAmount,
 			},
 		});
 	}
 
-	async calculate(request: RateCalculationRequestDto) {
-		const response = await this.computeBreakdown(request);
+	async calculate(request: RateCalculationRequestDto, tierDiscountPercent: number = 0) {
+		const response = await this.computeBreakdown(request, tierDiscountPercent);
 		return {
 			field: "calculateRate",
 			success: true,

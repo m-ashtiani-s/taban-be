@@ -3,6 +3,7 @@ import { BadRequestError } from "../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../shared/base/notFoundError.error";
 import Pagination from "../../../shared/utils/pagination.util";
 import AdminInvoiceService from "../../invoice/service/invoice.admin.service";
+import ClubService from "../../club/service/club.service";
 import { UpdateOrderStatusDto } from "../dto/order.dto";
 import { OrderFilters } from "../dto/orderFilters.dto";
 import { OrderStatus, PaymentStatus } from "../model/order.model";
@@ -13,6 +14,7 @@ export default class AdminOrderService {
 	private orderRepository = new AdminOrderRepository();
 	private orderTransform = new AdminOrderTransform();
 	private invoiceService = new AdminInvoiceService();
+	private clubService = new ClubService();
 
 	async getOrders(filters: OrderFilters, page: string, pageSize: string, sortOrders: string) {
 		const pagination = new Pagination({ page, pageSize, sortOrders });
@@ -66,6 +68,8 @@ export default class AdminOrderService {
 			// با پرداخت سفارش، سیستم خودش صورتحساب را صادر و متعاقباً پرداخت‌شده می‌کند
 			if (becamePaid) {
 				await this.invoiceService.issueForPaidOrder(updated!, session);
+				// و امتیاز باشگاه مشتریان برای کاربر ثبت می‌شود
+				await this.clubService.awardForPaidOrder(updated!, session);
 			}
 
 			await session.commitTransaction();

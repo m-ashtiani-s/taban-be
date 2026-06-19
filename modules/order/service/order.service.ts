@@ -6,6 +6,7 @@ import CartRepository from "../../cart/repository/cart.repository";
 import CouponRepository from "../../coupon/repository/coupon.repository";
 import CustomerRepository from "../../customer/repository/customer.repository";
 import AdminInvoiceService from "../../invoice/service/invoice.admin.service";
+import ClubService from "../../club/service/club.service";
 import RateCalculatorService from "../../rateCalculator/service/rateCalculator.service";
 import ShippingAddressRepository from "../../shippingAddress/repository/shippingAddress.repository";
 import { CreateOrderDto, UpdateOrderItemDto } from "../dto/order.dto";
@@ -23,6 +24,7 @@ export default class OrderService {
 	private rateCalculatorService = new RateCalculatorService();
 	private orderTransform = new OrderTransform();
 	private invoiceService = new AdminInvoiceService();
+	private clubService = new ClubService();
 
 	async createOrder(userId: string, data: CreateOrderDto) {
 		const session = await mongoose.startSession();
@@ -176,6 +178,8 @@ export default class OrderService {
 
 		// با پرداخت سفارش، سیستم خودش صورتحساب را صادر و متعاقباً پرداخت‌شده می‌کند (idempotent)
 		await this.invoiceService.issueForPaidOrder(order);
+		// و امتیاز باشگاه مشتریان برای کاربر ثبت می‌شود (idempotent)
+		await this.clubService.awardForPaidOrder(order);
 
 		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
 		return {
@@ -263,11 +267,16 @@ export default class OrderService {
 		const index = order.orderedDocs.findIndex((it) => it.cartItemId === cartItemId);
 		if (index === -1) throw new BadRequestError("آیتم مورد نظر در سفارش یافت نشد");
 
-		const breakdown = await this.rateCalculatorService.computeBreakdown({
-			translationItemId: payload.translationItemId,
-			languageId: payload.languageId,
-			documents: payload.documents,
-		});
+		const tierDiscountPercent = await this.clubService.getDiscountPercentForUser(userId);
+
+		const breakdown = await this.rateCalculatorService.computeBreakdown(
+			{
+				translationItemId: payload.translationItemId,
+				languageId: payload.languageId,
+				documents: payload.documents,
+			},
+			tierDiscountPercent
+		);
 
 		order.orderedDocs[index] = {
 			cartItemId,
@@ -281,6 +290,7 @@ export default class OrderService {
 				documents: payload.documents,
 				passports: payload.passports ?? [],
 				assets: payload.assets ?? [],
+				desiredDeliveryDate: payload.desiredDeliveryDate ?? null,
 			},
 			breakdown,
 			itemTotal: breakdown?.summary?.totalPrice ?? 0,

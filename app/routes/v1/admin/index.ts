@@ -7,6 +7,8 @@ import adminOrdersRouter from "./orders";
 import adminUsersRouter from "./users";
 import adminCustomersRouter from "./customers";
 import adminInvoicesRouter from "./invoices";
+import adminUrgencyRouter from "./urgency";
+import adminClubRouter from "./club";
 
 const adminRouter = express.Router();
 
@@ -18,5 +20,7 @@ adminRouter.use("/orders", adminOrdersRouter);
 adminRouter.use("/users", adminUsersRouter);
 adminRouter.use("/customers", adminCustomersRouter);
 adminRouter.use("/invoices", adminInvoicesRouter);
+adminRouter.use("/urgency", adminUrgencyRouter);
+adminRouter.use("/club", adminClubRouter);
 
 export default adminRouter;

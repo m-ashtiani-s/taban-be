@@ -15,6 +15,7 @@ export default class TranslationTransform {
 			uploadDescription: translationItem?.uploadDescription ?? "",
 			categoryId: (category?._id?.toString() || category?.toString()) ?? "",
 			categoryName: category?.title ?? "",
+			scoreMultiplier: translationItem?.scoreMultiplier ?? 1,
 		};
 		return loginData;
 	}

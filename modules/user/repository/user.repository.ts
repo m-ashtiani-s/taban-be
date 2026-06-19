@@ -1,4 +1,4 @@
-import { PaginateResult } from "mongoose";
+import mongoose, { PaginateResult } from "mongoose";
 import userModel, { UserDocument } from "../model/user.model";
 import { PaginationInput, PaginationResult } from "../../../shared/utils/pagination.util";
 import { AdminUserFilters } from "../dto/userFilters.admin.dto";
@@ -54,6 +54,11 @@ export default class UserRepository {
 		return await userModel
 			.findByIdAndUpdate(userId, { $set: { isActive } }, { new: true })
 			.exec();
+	}
+
+	/** امتیاز باشگاه مشتریانِ کاربر را به‌صورت اتمیک افزایش می‌دهد. */
+	async incrementScore(userId: string, points: number, session?: mongoose.ClientSession): Promise<void> {
+		await userModel.findByIdAndUpdate(userId, { $inc: { score: points } }, { session }).exec();
 	}
 
 	async findByUsername(username: string): Promise<UserDocument | null> {

@@ -9,6 +9,8 @@ export interface TranslationItem {
 	/** توضیحات راهنمای آپلود مدارک که ادمین می‌نویسد و در مرحله‌ی آپلود به کاربر نمایش داده می‌شود */
 	uploadDescription: string;
 	category: string | TranslationItemCategoryDocument;
+	/** ضریب امتیاز این مدرک در باشگاه مشتریان (به ازای هر نسخه). پیش‌فرض ۱ */
+	scoreMultiplier: number;
 }
 
 export type TranslationItemDocument = TranslationItem & Document;
@@ -37,6 +39,11 @@ const translationItemSchema = new Schema(
 		uploadDescription: {
 			type: String,
 			default: "",
+		},
+		scoreMultiplier: {
+			type: Number,
+			default: 1,
+			min: 0,
 		},
 	},
 	{ timestamps: true }

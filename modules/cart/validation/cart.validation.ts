@@ -9,6 +9,7 @@ const CartValidation = {
 		body("assets").optional({ nullable: true }).isArray().withMessage("لیست فایل‌ها باید آرایه باشد"),
 		body("assets.*").optional().isString().withMessage("شناسه فایل معتبر نیست"),
 		body("customerId").optional({ nullable: true }).isMongoId().withMessage("شناسه مشتری معتبر نیست"),
+		body("desiredDeliveryDate").optional({ nullable: true }).isString().withMessage("تاریخ تحویل دلخواه معتبر نیست"),
 	],
 	removeDocumentFromCart: [
 		param("cartItemId")
@@ -29,6 +30,7 @@ const CartValidation = {
 		body("assets").optional({ nullable: true }).isArray().withMessage("لیست فایل‌ها باید آرایه باشد"),
 		body("assets.*").optional().isString().withMessage("شناسه فایل معتبر نیست"),
 		body("customerId").optional({ nullable: true }).isMongoId().withMessage("شناسه مشتری معتبر نیست"),
+		body("desiredDeliveryDate").optional({ nullable: true }).isString().withMessage("تاریخ تحویل دلخواه معتبر نیست"),
 	],
 	applyCouponToCart: [
 		body("couponCode")

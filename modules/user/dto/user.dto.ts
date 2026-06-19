@@ -19,4 +19,5 @@ export interface UserDto {
 	referralSource?: string;
 	referralCode?: string;
 	ownReferralCode?: string;
+	score: number;
 }

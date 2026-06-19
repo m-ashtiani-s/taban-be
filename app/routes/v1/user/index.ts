@@ -8,6 +8,7 @@ import userOrdersRouter from "./orders";
 import userEnterpriseCustomersRouter from "./enterprise-customers";
 import userCustomersRouter from "./customers";
 import userInvoicesRouter from "./invoices";
+import userClubRouter from "./club";
 
 const userRouter = express.Router();
 const userController = new UserController();
@@ -23,5 +24,6 @@ userRouter.use("/orders", userOrdersRouter);
 userRouter.use("/enterprise-customers", userEnterpriseCustomersRouter);
 userRouter.use("/customers", userCustomersRouter);
 userRouter.use("/invoices", userInvoicesRouter);
+userRouter.use("/club", userClubRouter);
 
 export default userRouter;

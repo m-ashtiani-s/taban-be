@@ -50,6 +50,7 @@ export default class UserTransform {
 			referralSource: user?.referralSource ?? "",
 			referralCode: user?.referralCode ?? "",
 			ownReferralCode: user?.ownReferralCode ?? "",
+			score: user?.score ?? 0,
 		};
 	}
 }

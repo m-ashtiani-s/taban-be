@@ -33,6 +33,8 @@ export interface User {
 	referralSource?: string;
 	referralCode?: string;
 	ownReferralCode?: string;
+	/** امتیاز باشگاه مشتریان — هنگام ساخت کاربر ۰ و با پرداخت هر سفارش افزایش می‌یابد */
+	score: number;
 }
 
 export interface UserDocument extends User, Document {}
@@ -118,6 +120,11 @@ const userSchema = new mongoose.Schema(
 			required: false,
 			unique: true,
 			sparse: true,
+		},
+		score: {
+			type: Number,
+			default: 0,
+			min: 0,
 		},
 	},
 	{ timestamps: true }

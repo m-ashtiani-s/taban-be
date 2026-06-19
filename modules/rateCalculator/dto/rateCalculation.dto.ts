@@ -88,6 +88,9 @@ export type RateCalculationSummary = {
 	taxPercent: number;
 	taxPrice: number;
 	totalPrice: number;
+	/** تخفیف باشگاه مشتریان روی مبلغ ترجمه (پایه + داینامیک‌ها) — درصد و مبلغ کسرشده */
+	tierDiscountPercent: number;
+	tierDiscountAmount: number;
 };
 
 export type RateCalculationResponseDto = {

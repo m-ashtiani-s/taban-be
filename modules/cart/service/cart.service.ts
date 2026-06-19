@@ -13,12 +13,14 @@ import {
 import { CartDocument } from "../model/cart.model";
 import { AppliesTo, CouponDocument, DiscountType } from "../../coupon/model/coupon.model";
 import CouponRepository from "../../coupon/repository/coupon.repository";
+import ClubService from "../../club/service/club.service";
 
 export default class CartService {
 	private userRepository = new UserRepository();
 	private cartRepository = new CartRepository();
 	private rateCalculatorService = new RateCalculatorService();
 	private couponRepository = new CouponRepository();
+	private clubService = new ClubService();
 
 	async addDocumentToCart(userId: string, payload: AddDocumentToCartDto) {
 		const user = await this.userRepository.findByUserId(userId);
@@ -26,11 +28,14 @@ export default class CartService {
 			throw new BadRequestError("مشکلی در یافتن کاربری شما بوجود آمد");
 		}
 
+		// تخفیف سطح باشگاه مشتریانِ کاربر روی مبلغ ترجمه اعمال می‌شود
+		const tierDiscountPercent = await this.clubService.getDiscountPercentForScore(user.score ?? 0);
+
 		const breakdown = await this.rateCalculatorService.computeBreakdown({
 			translationItemId: payload.translationItemId,
 			languageId: payload.languageId,
 			documents: payload.documents,
-		});
+		}, tierDiscountPercent);
 
 		const cart = await this.cartRepository.findOrCreateByUserId(userId);
 
@@ -54,6 +59,7 @@ export default class CartService {
 				passports: payload.passports ?? [],
 				assets: payload.assets ?? [],
 				customerId: newCustomerId,
+				desiredDeliveryDate: payload.desiredDeliveryDate ?? null,
 			},
 			breakdown,
 		};
@@ -103,11 +109,13 @@ export default class CartService {
 			throw new BadRequestError("آیتم مورد نظر در سبد خرید یافت نشد");
 		}
 
+		const tierDiscountPercent = await this.clubService.getDiscountPercentForUser(userId);
+
 		const breakdown = await this.rateCalculatorService.computeBreakdown({
 			translationItemId: payload.translationItemId,
 			languageId: payload.languageId,
 			documents: payload.documents,
-		});
+		}, tierDiscountPercent);
 
 		cart.items[itemIndex] = {
 			cartItemId,
@@ -119,6 +127,7 @@ export default class CartService {
 				assets: payload.assets ?? [],
 				// مشتری آیتم هنگام ویرایش حفظ می‌شود تا یکپارچگی سبد خرید به هم نخورد
 				customerId: cart.items[itemIndex]?.payload?.customerId ?? payload.customerId ?? null,
+				desiredDeliveryDate: payload.desiredDeliveryDate ?? null,
 			},
 			breakdown,
 		};

@@ -4,6 +4,8 @@ export type AddDocumentToCartDto = RateCalculationRequestDto & {
 	passports?: string[];
 	assets?: string[];
 	customerId?: string | null;
+	// تاریخ تحویل دلخواهِ کاربر (اختیاری) — صرفاً برای پیگیری توسط کارشناسان، روی قیمت اثری ندارد
+	desiredDeliveryDate?: string | null;
 };
 
 export interface CartItemDto {
