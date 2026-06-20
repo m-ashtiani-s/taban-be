@@ -17,6 +17,7 @@ const AdminOrderValidation = {
 		query("dateTo").optional().isISO8601().withMessage("فرمت تاریخ پایان معتبر نیست"),
 		query("userId").optional().isMongoId().withMessage("شناسه کاربر معتبر نیست"),
 		query("customerId").optional().isMongoId().withMessage("شناسه مشتری معتبر نیست"),
+		query("withCustomer").optional().isBoolean().withMessage("مقدار withCustomer معتبر نیست"),
 		query("page").optional().isInt({ min: 1 }).withMessage("شماره صفحه باید عددی صحیح باشد"),
 		query("pageSize").optional().isInt({ min: 1, max: 100 }).withMessage("اندازه صفحه معتبر نیست"),
 	],

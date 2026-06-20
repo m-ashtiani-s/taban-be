@@ -24,6 +24,7 @@ const OrderValidation = {
 			.withMessage("وضعیت سفارش معتبر نیست"),
 		query("paymentStatus").optional().isIn(Object.values(PaymentStatus)).withMessage("وضعیت پرداخت معتبر نیست"),
 		query("customerId").optional().isMongoId().withMessage("شناسه مشتری معتبر نیست"),
+		query("withCustomer").optional().isBoolean().withMessage("مقدار withCustomer معتبر نیست"),
 		query("page").optional().isInt({ min: 1 }).withMessage("شماره صفحه باید عددی صحیح باشد"),
 		query("pageSize").optional().isInt({ min: 1, max: 100 }).withMessage("اندازه صفحه معتبر نیست"),
 	],

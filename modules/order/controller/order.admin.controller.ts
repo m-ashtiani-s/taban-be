@@ -24,6 +24,7 @@ export default class AdminOrderController extends ControllerBase {
 				dateTo: (req.query.dateTo as string) ?? undefined,
 				userId: (req.query.userId as string) ?? undefined,
 				customerId: (req.query.customerId as string) ?? undefined,
+				withCustomer: req.query.withCustomer === "true" ? true : undefined,
 			};
 			const result = await adminOrderService.getOrders(filters, page, pageSize, sortOrders);
 			return res.status(200).json(result);

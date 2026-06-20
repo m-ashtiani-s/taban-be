@@ -37,6 +37,7 @@ export default class OrderController extends ControllerBase {
 				status: (req.query.status as OrderStatus) ?? undefined,
 				paymentStatus: (req.query.paymentStatus as PaymentStatus) ?? undefined,
 				customerId: (req.query.customerId as string) ?? undefined,
+				withCustomer: req.query.withCustomer === "true" ? true : undefined,
 			};
 			const result = await orderService.getOrders(req.user?._id as string, filters, page, pageSize, sortOrders);
 			return res.status(200).json(result);

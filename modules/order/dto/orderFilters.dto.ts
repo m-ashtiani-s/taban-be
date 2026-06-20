@@ -8,4 +8,6 @@ export interface OrderFilters {
 	dateTo?: string;
 	userId?: string;
 	customerId?: string;
+	// فقط سفارش‌هایی که برای یک مشتری زیرمجموعه ثبت شده‌اند (customer ست شده) برگردانده شوند
+	withCustomer?: boolean;
 }

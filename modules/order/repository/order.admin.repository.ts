@@ -27,6 +27,8 @@ export default class AdminOrderRepository {
 		if (filters.paymentStatus) query.paymentStatus = filters.paymentStatus;
 		if (filters.userId) query.user = filters.userId;
 		if (filters.customerId) query.customer = filters.customerId;
+		// فقط سفارش‌های ثبت‌شده برای یک مشتری زیرمجموعه (نه سفارش‌های بدون مشتری)
+		if (filters.withCustomer) query.customer = { $ne: null };
 
 		if (filters.dateFrom || filters.dateTo) {
 			query.createdAt = {};

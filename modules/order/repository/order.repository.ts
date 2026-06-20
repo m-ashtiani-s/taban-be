@@ -40,6 +40,8 @@ export default class OrderRepository {
 		if (filters.status) query.status = filters.status;
 		if (filters.paymentStatus) query.paymentStatus = filters.paymentStatus;
 		if (filters.customerId) query.customer = filters.customerId;
+		// فقط سفارش‌های ثبت‌شده برای یک مشتری زیرمجموعه (نه سفارش‌های شخصیِ بدون مشتری)
+		if (filters.withCustomer) query.customer = { $ne: null };
 
 		const res: PaginateResult<OrderDocument> = await OrderModel.paginate(query, {
 			page: pagination.page,
