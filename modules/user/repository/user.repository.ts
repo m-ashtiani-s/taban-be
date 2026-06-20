@@ -69,6 +69,24 @@ export default class UserRepository {
 		return await userModel.findOne({ ownReferralCode: code });
 	}
 
+	/**
+	 * پرچم «پاداش معرف صادر شد» را به‌صورت اتمیک تنها در صورتی که هنوز false باشد true می‌کند.
+	 * مقدار بازگشتی true یعنی همین فراخوانی موفق به رزرو شد (و باید پاداش را صادر کند) و
+	 * false یعنی قبلاً صادر شده — جلوگیری از صدور دوباره حتی در پرداخت‌های هم‌زمان.
+	 */
+	async markReferralRewardGranted(userId: string, session?: mongoose.ClientSession): Promise<boolean> {
+		const res = await userModel
+			.updateOne({ _id: userId, referralRewardGranted: { $ne: true } }, { $set: { referralRewardGranted: true } })
+			.session(session ?? null)
+			.exec();
+		return res.modifiedCount === 1;
+	}
+
+	/** پرچم پاداش معرف را به false برمی‌گرداند (در صورت شکستِ صدور کوپن، برای تلاش مجدد). */
+	async markReferralRewardReset(userId: string): Promise<void> {
+		await userModel.updateOne({ _id: userId }, { $set: { referralRewardGranted: false } }).exec();
+	}
+
 	/** تولید یک کد معرفِ یکتا (تکرار تا زمانی که کد تکراری نباشد) */
 	async generateUniqueReferralCode(length: number = 8): Promise<string> {
 		let candidate = "";

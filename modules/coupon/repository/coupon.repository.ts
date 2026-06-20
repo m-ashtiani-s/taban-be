@@ -1,4 +1,4 @@
-import { PaginateResult } from "mongoose";
+import { ClientSession, PaginateResult } from "mongoose";
 import CouponModel, { CouponDocument } from "../model/coupon.model";
 import { CreateCouponDto, UpdateCouponDto } from "../dto/coupon.dto";
 import { CouponFilters } from "../dto/couponFilters.dto";
@@ -64,6 +64,29 @@ export default class CouponRepository {
 	async createCoupon(data: CreateCouponDto): Promise<CouponDocument> {
 		const coupon = new CouponModel(data);
 		return coupon.save();
+	}
+
+	/** ساخت کوپن از روی فیلدهای کامل مدل (برای کوپن‌های سیستمی مثل پاداش معرف). */
+	async createFromPartial(data: Partial<CouponDocument>, session?: ClientSession): Promise<CouponDocument> {
+		const coupon = new CouponModel(data);
+		return coupon.save({ session: session ?? undefined });
+	}
+
+	/** تولید یک کد تخفیفِ یکتا با پیشوند دلخواه (تکرار تا زمانی که کد تکراری نباشد). */
+	async generateUniqueCode(prefix: string = "REF", randomLength: number = 6): Promise<string> {
+		const chars = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+		let candidate = "";
+		let exists = true;
+		while (exists) {
+			let random = "";
+			for (let i = 0; i < randomLength; i++) {
+				random += chars.charAt(Math.floor(Math.random() * chars.length));
+			}
+			candidate = `${prefix}${random}`.toUpperCase();
+			const found = await this.findByCode(candidate);
+			exists = !!found;
+		}
+		return candidate;
 	}
 
 	async updateCoupon(couponId: string, data: Partial<UpdateCouponDto>): Promise<CouponDocument | null> {

@@ -85,7 +85,7 @@ export default class AuthService {
 			data: null,
 		};
 	}
-	async setPassword(username: string, password: string) {
+	async setPassword(username: string, password: string, referralCode?: string) {
 		const existingOtp = await this.otpRepository.findByOtpId(username);
 		const now = new Date();
 
@@ -100,6 +100,14 @@ export default class AuthService {
 			if (!!user) {
 				throw new BadRequestError("این کاربری وجود دارد");
 			}
+			// اگر کد معرف وارد شده باشد، باید متعلق به یک کاربر موجود باشد؛ در غیر این صورت خطا می‌دهیم
+			const normalizedReferralCode = referralCode?.trim().toUpperCase() || undefined;
+			if (normalizedReferralCode) {
+				const referrer = await this.userRepository.findByOwnReferralCode(normalizedReferralCode);
+				if (!referrer) {
+					throw new BadRequestError("کد معرف وارد شده معتبر نیست");
+				}
+			}
 			// هر کاربر هنگام ساخت، یک کد معرفِ یکتا برای دعوت دیگران دریافت می‌کند
 			const ownReferralCode = await this.userRepository.generateUniqueReferralCode();
 			// سایر فیلدهای غیرالزامی از طریق default: null در اسکیما روی دیتابیس می‌نشینند
@@ -108,6 +116,7 @@ export default class AuthService {
 				password: password,
 				role: UserRole.USER,
 				ownReferralCode,
+				referralCode: normalizedReferralCode,
 			});
 			await this.otpRepository.deleteOtp(existingOtp);
 			return {

@@ -33,6 +33,8 @@ export default class CouponTransform {
 			description: doc.description ?? "",
 			appliesTo: doc.appliesTo,
 			applicableTranslationItems: transformedItems,
+			source: doc.source,
+			assignedUser: doc.assignedUser ? ((doc.assignedUser as any)?._id ?? doc.assignedUser)?.toString() ?? null : null,
 			createdAt: doc.createdAt,
 			updatedAt: doc.updatedAt,
 		};

@@ -67,7 +67,7 @@ export default class CartService {
 		};
 
 		cart.items.push(newItem);
-		await this.recalculateAndRevalidateCoupon(cart);
+		await this.recalculateAndRevalidateCoupon(cart, userId);
 		await this.cartRepository.updateCart(cart);
 
 		return {
@@ -90,7 +90,7 @@ export default class CartService {
 			throw new BadRequestError("آیتم مورد نظر در سبد خرید یافت نشد");
 		}
 
-		await this.recalculateAndRevalidateCoupon(cart);
+		await this.recalculateAndRevalidateCoupon(cart, userId);
 		await this.cartRepository.updateCart(cart);
 		return {
 			field: "removeDocumentFromCart",
@@ -136,7 +136,7 @@ export default class CartService {
 			breakdown,
 		};
 
-		await this.recalculateAndRevalidateCoupon(cart);
+		await this.recalculateAndRevalidateCoupon(cart, userId);
 		await this.cartRepository.updateCart(cart);
 
 		return {
@@ -173,7 +173,7 @@ export default class CartService {
 			throw new BadRequestError("کد تخفیف یافت نشد");
 		}
 
-		this.assertCouponUsable(coupon);
+		this.assertCouponUsable(coupon, userId);
 
 		const applied = this.evaluateCouponForCart(cart, coupon);
 
@@ -226,7 +226,7 @@ export default class CartService {
 	 * (مثلاً حذف آخرین مدرک مجاز)، بی‌سر‌و‌صدا برداشته می‌شود تا مبلغ سبد
 	 * با واقعیت آیتم‌های فعلی هم‌خوان بماند.
 	 */
-	private async recalculateAndRevalidateCoupon(cart: CartDocument) {
+	private async recalculateAndRevalidateCoupon(cart: CartDocument, userId: string) {
 		cart.cartSum = this.computeCartSum(cart);
 
 		if (!cart.appliedCoupon || cart.items.length === 0) {
@@ -243,7 +243,7 @@ export default class CartService {
 		}
 
 		try {
-			this.assertCouponUsable(coupon);
+			this.assertCouponUsable(coupon, userId);
 			const applied = this.evaluateCouponForCart(cart, coupon);
 			cart.appliedCoupon = applied;
 			cart.cartSumWithDiscount = Math.max(cart.cartSum - applied.discountAmount, 0);
@@ -257,8 +257,12 @@ export default class CartService {
 		return cart.items.reduce((sum, it) => sum + (it?.breakdown?.summary?.totalPrice ?? 0), 0);
 	}
 
-	private assertCouponUsable(coupon: CouponDocument) {
+	private assertCouponUsable(coupon: CouponDocument, userId: string) {
 		const now = new Date();
+		// کوپن‌های اختصاصی (مثل پاداش معرف) فقط برای همان کاربری که به او تخصیص داده شده قابل استفاده‌اند
+		if (coupon.assignedUser && String((coupon.assignedUser as any)?._id ?? coupon.assignedUser) !== String(userId)) {
+			throw new BadRequestError("این کد تخفیف برای حساب شما صادر نشده است");
+		}
 		if (!coupon.isActive) {
 			throw new BadRequestError("کد تخفیف غیرفعال است");
 		}

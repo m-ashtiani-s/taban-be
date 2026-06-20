@@ -7,6 +7,7 @@ import CouponRepository from "../../coupon/repository/coupon.repository";
 import CustomerRepository from "../../customer/repository/customer.repository";
 import AdminInvoiceService from "../../invoice/service/invoice.admin.service";
 import ClubService from "../../club/service/club.service";
+import ReferralService from "../../referral/service/referral.service";
 import RateCalculatorService from "../../rateCalculator/service/rateCalculator.service";
 import ShippingAddressRepository from "../../shippingAddress/repository/shippingAddress.repository";
 import { CreateOrderDto, UpdateOrderItemDto } from "../dto/order.dto";
@@ -25,6 +26,7 @@ export default class OrderService {
 	private orderTransform = new OrderTransform();
 	private invoiceService = new AdminInvoiceService();
 	private clubService = new ClubService();
+	private referralService = new ReferralService();
 
 	async createOrder(userId: string, data: CreateOrderDto) {
 		const session = await mongoose.startSession();
@@ -180,6 +182,8 @@ export default class OrderService {
 		await this.invoiceService.issueForPaidOrder(order);
 		// و امتیاز باشگاه مشتریان برای کاربر ثبت می‌شود (idempotent)
 		await this.clubService.awardForPaidOrder(order);
+		// اگر این کاربر با کد معرف ثبت‌نام کرده، روی اولین پرداخت برای معرِّفش کد تخفیف صادر می‌شود (idempotent)
+		await this.referralService.rewardReferrerForFirstPaidOrder(order);
 
 		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
 		return {
@@ -236,6 +240,10 @@ export default class OrderService {
 		}
 
 		const now = new Date();
+		// کوپن‌های اختصاصی (مثل پاداش معرف) فقط برای کاربری که به او تخصیص داده شده مجازند
+		if (coupon.assignedUser && String((coupon.assignedUser as any)?._id ?? coupon.assignedUser) !== String(userId)) {
+			throw new BadRequestError("این کد تخفیف برای حساب شما صادر نشده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
+		}
 		if (!coupon.isActive) {
 			throw new BadRequestError("کد تخفیف اعمال‌شده غیرفعال شده است. لطفاً آن را از سفارش حذف کرده و دوباره تلاش کنید");
 		}

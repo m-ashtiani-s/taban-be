@@ -13,12 +13,11 @@ export default class UserService {
 		if (!user) {
 			throw new BadRequestError("مشکلی در یافتن کاربری شما بوجود آمد");
 		}
+		// تصویر پروفایل و شماره تماس در محاسبه‌ی درصد تکمیل پروفایل لحاظ نمی‌شوند
 		const userItemsForComplete: IncompleteItem[] = [
 			{ itemKey: "firstName", itemName: "نام" },
 			{ itemKey: "lastName", itemName: "نام خانوادگی" },
-			{ itemKey: "profilePic", itemName: "تصویر پروفایل" },
 			{ itemKey: "nationalId", itemName: "کد ملی" },
-			{ itemKey: "phoneNumber", itemName: "شماره تماس" },
 			{ itemKey: "userType", itemName: "نوع کاربری" },
 			{ itemKey: "requiredLanguages", itemName: "زبان‌های مورد نیاز" },
 			{ itemKey: "specialtyField", itemName: "حوزه تخصصی" },
@@ -60,11 +59,27 @@ export default class UserService {
 
 		const updateData: Partial<UserDocument> = {};
 		(Object.keys(updateUserData) as (keyof UpdateUserRequestDto)[]).forEach((key) => {
+			// کد معرف جداگانه و با قانون تغییرناپذیری مدیریت می‌شود
+			if (key === "referralCode") return;
 			const value = updateUserData[key];
 			if (value !== undefined) {
 				(updateData as any)[key] = value;
 			}
 		});
+
+		// کد معرف فقط یک‌بار قابل ثبت است؛ پس از ثبت، تغییرپذیر نیست.
+		const incomingReferralCode = updateUserData.referralCode?.trim().toUpperCase() || "";
+		if (incomingReferralCode && !user.referralCode) {
+			// کد معرف باید متعلق به یک کاربر موجود باشد و کاربر نمی‌تواند کد خودش را وارد کند
+			if (user.ownReferralCode && incomingReferralCode === user.ownReferralCode) {
+				throw new BadRequestError("نمی‌توانید کد معرف خودتان را وارد کنید");
+			}
+			const referrer = await this.userRepository.findByOwnReferralCode(incomingReferralCode);
+			if (!referrer) {
+				throw new BadRequestError("کد معرف وارد شده معتبر نیست");
+			}
+			updateData.referralCode = incomingReferralCode;
+		}
 
 		// تضمین وجود کد معرف برای کاربرانی که قبلاً (پیش از این قابلیت) ساخته شده‌اند
 		if (!user.ownReferralCode) {

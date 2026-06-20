@@ -34,6 +34,8 @@ export interface User {
 	referralSource?: string;
 	referralCode?: string;
 	ownReferralCode?: string;
+	/** آیا پاداش معرف (کد تخفیف برای معرِّفِ این کاربر) پس از اولین پرداخت صادر شده است؟ یکبارمصرف. */
+	referralRewardGranted: boolean;
 	/** امتیاز باشگاه مشتریان — هنگام ساخت کاربر ۰ و با پرداخت هر سفارش افزایش می‌یابد */
 	score: number;
 }
@@ -121,6 +123,10 @@ const userSchema = new mongoose.Schema(
 			required: false,
 			unique: true,
 			sparse: true,
+		},
+		referralRewardGranted: {
+			type: Boolean,
+			default: false,
 		},
 		score: {
 			type: Number,

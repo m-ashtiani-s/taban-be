@@ -20,6 +20,13 @@ const AuthValidation = {
 			.withMessage("رمز عبور باید حداقل ۶ کاراکتر باشد")
 			.matches(/[a-zA-Z]/)
 			.withMessage("رمز عبور باید شامل حروف انگلیسی باشد"),
+		body("referralCode")
+			.optional({ nullable: true })
+			.isString()
+			.withMessage("کد معرف معتبر نیست")
+			.bail()
+			.isLength({ max: 40 })
+			.withMessage("طول کد معرف نمی‌تواند بیش از ۴۰ کاراکتر باشد"),
 	],
 	login: [body("username").notEmpty().withMessage("نام کاربری الزامی است"), body("password").notEmpty().withMessage("رمز عبور الزامی است")],
 };

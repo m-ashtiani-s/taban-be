@@ -76,7 +76,8 @@ export default class AuthController extends ControllerBase {
 		try {
 			const username = req.body.username as string;
 			const password = req.body.password as string;
-			const result = await authService.setPassword(username, password);
+			const referralCode = (req.body.referralCode as string) ?? undefined;
+			const result = await authService.setPassword(username, password, referralCode);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;

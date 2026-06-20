@@ -1,4 +1,4 @@
-import { AppliesTo, DiscountType } from "../model/coupon.model";
+import { AppliesTo, CouponSource, DiscountType } from "../model/coupon.model";
 
 export interface CreateCouponDto {
 	code: string;
@@ -34,6 +34,8 @@ export interface CouponDto {
 	description: string;
 	appliesTo: AppliesTo;
 	applicableTranslationItems: { translationItemId: string; title: string }[] | string[];
+	source: CouponSource;
+	assignedUser: string | null;
 	createdAt: Date;
 	updatedAt: Date;
 }

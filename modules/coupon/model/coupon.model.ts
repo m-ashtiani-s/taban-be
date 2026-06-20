@@ -9,6 +9,11 @@ export enum AppliesTo {
 	BASE = "base",
 	TOTAL = "total",
 }
+/** مبدأ ایجاد کد تخفیف — برای تشخیص اینکه کد دستی ساخته شده یا توسط سیستم (مثلاً پاداش معرف) */
+export enum CouponSource {
+	MANUAL = "manual",
+	REFERRAL = "referral",
+}
 
 export interface Coupon {
 	code: string;
@@ -25,6 +30,9 @@ export interface Coupon {
 	description: string;
 	appliesTo: AppliesTo;
 	applicableTranslationItems: ObjectId[] | string[];
+	source: CouponSource;
+	/** اگر مقدار داشته باشد، این کد فقط برای همین کاربر قابل استفاده است (مثلاً پاداش معرف) */
+	assignedUser: ObjectId | string | null;
 }
 
 export interface CouponDocument extends Coupon, Document {
@@ -48,11 +56,14 @@ const couponSchema = new Schema(
 		description: { type: String, default: "" },
 		appliesTo: { type: String, enum: Object.values(AppliesTo), default: AppliesTo.TOTAL, required: true },
 		applicableTranslationItems: [{ type: Schema.Types.ObjectId, ref: "TranslationItem" }],
+		source: { type: String, enum: Object.values(CouponSource), default: CouponSource.MANUAL, required: true },
+		assignedUser: { type: Schema.Types.ObjectId, ref: "User", default: null },
 	},
 	{ timestamps: true }
 );
 
 couponSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
+couponSchema.index({ assignedUser: 1 });
 couponSchema.plugin(mongoosePaginate);
 
 const CouponModel = mongoose.model<CouponDocument, PaginateModel<CouponDocument>>("Coupon", couponSchema);
