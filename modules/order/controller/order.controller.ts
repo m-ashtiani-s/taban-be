@@ -3,10 +3,12 @@ import { Request, Response } from "express";
 import ControllerBase from "../../../shared/base/controller.base";
 import { ControllerError } from "../../../types/controllerError.type";
 import OrderService from "../service/order.service";
+import OrderInvoiceService from "../service/orderInvoice.service";
 import { OrderFilters } from "../dto/orderFilters.dto";
 import { OrderStatus, PaymentStatus } from "../model/order.model";
 
 const orderService = new OrderService();
+const orderInvoiceService = new OrderInvoiceService();
 
 export default class OrderController extends ControllerBase {
 	createOrder = async (req: Request, res: Response) => {
@@ -103,6 +105,27 @@ export default class OrderController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "ویرایش آیتم سفارش با خطا مواجه شد",
+			});
+		}
+	};
+
+	downloadInvoice = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) return this.showValidationErrors(res, errors);
+		try {
+			const orderId: string = req.params.orderId;
+			const { buffer, fileName } = await orderInvoiceService.getOrderInvoicePdf(req.user?._id as string, orderId);
+			res.setHeader("Content-Type", "application/pdf");
+			res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+			res.setHeader("Content-Length", buffer.length);
+			return res.status(200).end(buffer);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : error.name === "NotFoundError" ? 404 : 500;
+			return res.status(statusCode).json({
+				field: "downloadInvoice",
+				success: false,
+				data: null,
+				message: error.message || "صدور فاکتور با خطا مواجه شد",
 			});
 		}
 	};

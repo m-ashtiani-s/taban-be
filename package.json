@@ -23,6 +23,7 @@
 		"mongoose-paginate-v2": "^1.8.0",
 		"passport": "^0.7.0",
 		"passport-local": "^1.0.0",
+		"puppeteer": "^25.1.0",
 		"tsc": "^2.0.4"
 	},
 	"devDependencies": {
