@@ -163,16 +163,12 @@ function companyCard(c: InvoiceCompany): string {
 }
 
 function itemRow(item: InvoiceLineItem): string {
-	const details = item.details.length
-		? `<div class="row-details">${item.details.map((d) => `<span>${esc(d)}</span>`).join("")}</div>`
-		: "";
 	return `
 	<tr>
 		<td class="col-no">${esc(faDigits(item.rowNo))}</td>
 		<td class="col-desc">
 			<div class="row-item-label">${esc(item.itemLabel)}</div>
 			<div class="row-title">${esc(item.title)}</div>
-			${details}
 		</td>
 		<td class="col-copy">${esc(faDigits(item.copyCount))}</td>
 		<td class="col-amount">${esc(toCurrency(item.amount))}</td>
@@ -253,13 +249,11 @@ export function buildOrderInvoiceHtml(vm: OrderInvoiceViewModel): string {
 	thead th.col-amount { text-align: left; }
 	tbody td { padding: 11px 12px; border-top: 1px solid #eef0f3; vertical-align: top; }
 	tbody tr:nth-child(even) { background: #fafbfc; }
-	.col-no { text-align: center; color: #94a3b8; width: 6%; }
-	.col-copy { text-align: center; color: #475569; width: 10%; }
-	.col-amount { text-align: left; font-weight: 700; color: #1a3047; white-space: nowrap; width: 22%; }
+	td.col-no { text-align: center; color: #94a3b8; width: 6%; }
+	td.col-copy { text-align: center; color: #475569; width: 10%; }
+	td.col-amount { text-align: left; font-weight: 700; color: #1a3047; white-space: nowrap; width: 22%; }
 	.row-item-label { font-size: 12.5px; font-weight: 700; color: #1a3047; }
 	.row-title { font-size: 11.5px; color: #64748b; margin-top: 1px; }
-	.row-details { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-	.row-details span { font-size: 10.5px; color: #5b6b7c; background: #eef1f5; border: 1px solid #e2e7ee; border-radius: 6px; padding: 2px 7px; }
 
 	/* جمع‌بندی */
 	.summary { display: flex; justify-content: flex-start; padding: 16px 28px 0; }

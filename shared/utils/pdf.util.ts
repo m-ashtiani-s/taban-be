@@ -1,5 +1,18 @@
 import fs from "fs";
-import puppeteer, { Browser } from "puppeteer";
+import type { Browser, PuppeteerNode } from "puppeteer";
+
+// puppeteer v25 فقط ESM است و این پروژه CommonJS (ts-node با require) است،
+// پس باید با dynamic import لود شود. از new Function استفاده می‌کنیم تا TypeScript
+// این import() را به require() تبدیل نکند (وگرنه با module=commonjs خطای ERR_REQUIRE_ESM می‌گیریم).
+const importEsm = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<any>;
+
+let puppeteerPromise: Promise<PuppeteerNode> | null = null;
+function loadPuppeteer(): Promise<PuppeteerNode> {
+	if (!puppeteerPromise) {
+		puppeteerPromise = importEsm("puppeteer").then((m) => (m.default ?? m) as PuppeteerNode);
+	}
+	return puppeteerPromise;
+}
 
 /**
  * رندر HTML به PDF با کروم headless.
@@ -30,7 +43,7 @@ const CANDIDATE_EXECUTABLES = [
 	"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 ];
 
-async function resolveExecutablePath(): Promise<string | undefined> {
+async function resolveExecutablePath(puppeteer: PuppeteerNode): Promise<string | undefined> {
 	const fromEnv = process.env.PUPPETEER_EXECUTABLE_PATH;
 	if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
 
@@ -50,14 +63,15 @@ async function resolveExecutablePath(): Promise<string | undefined> {
 /** مرورگر را یک‌بار راه‌اندازی و بین درخواست‌ها بازاستفاده می‌کند. */
 async function getBrowser(): Promise<Browser> {
 	if (!browserPromise) {
-		browserPromise = resolveExecutablePath()
-			.then((executablePath) =>
-				puppeteer.launch({
+		browserPromise = loadPuppeteer()
+			.then(async (puppeteer) => {
+				const executablePath = await resolveExecutablePath(puppeteer);
+				return puppeteer.launch({
 					headless: true,
 					executablePath,
 					args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
-				})
-			)
+				});
+			})
 			.catch((err: unknown) => {
 				// در صورت خطا اجازه‌ی تلاش مجدد در درخواست بعدی داده می‌شود
 				browserPromise = null;
