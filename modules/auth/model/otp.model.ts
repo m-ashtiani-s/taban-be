@@ -4,6 +4,8 @@ export interface OTP {
 	expireTime: Date;
 	otpId: String;
 	approved: Boolean;
+	/** تعداد تلاش‌های ناموفقِ واردکردن کد — برای جلوگیری از brute-force */
+	attempts: Number;
 }
 
 export type OTPDocument = OTP & Document;
@@ -21,6 +23,11 @@ const otpSchema = new Schema(
 		approved: {
 			type: Boolean,
 			required: true,
+		},
+		attempts: {
+			type: Number,
+			required: true,
+			default: 0,
 		},
 	},
 	{ timestamps: true }
