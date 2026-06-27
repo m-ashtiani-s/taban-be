@@ -115,10 +115,14 @@ export default class OrderController extends ControllerBase {
 		try {
 			const orderId: string = req.params.orderId;
 			const { buffer, fileName } = await orderInvoiceService.getOrderInvoicePdf(req.user?._id as string, orderId);
-			res.setHeader("Content-Type", "application/pdf");
-			res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
-			res.setHeader("Content-Length", buffer.length);
-			return res.status(200).end(buffer);
+			// فایل را به‌صورت JSON/base64 می‌فرستیم تا دانلودرهای خارجی (مثل IDM) پاسخ را
+			// به‌عنوان فایل دانلودی شناسایی نکنند و درخواست را بدون توکن دوباره صدا نزنند (۴۰۱).
+			return res.status(200).json({
+				field: "downloadInvoice",
+				success: true,
+				data: { fileName, mimeType: "application/pdf", base64: buffer.toString("base64") },
+				message: "",
+			});
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : error.name === "NotFoundError" ? 404 : 500;
 			return res.status(statusCode).json({

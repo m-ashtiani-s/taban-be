@@ -2,6 +2,7 @@ import UserRepository from "../../user/repository/user.repository";
 import { generateOtp } from "../../../shared/utils/generateOtp.util";
 import { sendOtpSms } from "../../../shared/utils/kavenegar.util";
 import OtpRepository from "../repository/otp.repository";
+import { OTPDocument } from "../model/otp.model";
 import { ObjectId } from "mongoose";
 import { compare } from "bcryptjs";
 import { BadRequestError } from "../../../shared/base/badRequestError.error";
@@ -11,6 +12,31 @@ import { UserRole } from "../../user/model/user.model";
 export default class AuthService {
 	private userRepository = new UserRepository();
 	private otpRepository = new OtpRepository();
+
+	/** حداکثر تعداد تلاشِ ناموفق برای واردکردن کد تایید پیش از باطل‌شدنِ آن */
+	private static readonly MAX_OTP_ATTEMPTS = 5;
+
+	/**
+	 * صحتِ کدِ واردشده را در برابر OTPِ ذخیره‌شده بررسی می‌کند و در صورت خطا throw می‌کند.
+	 * شامل بررسیِ انقضا و محدودیتِ تعداد تلاش (ضدِ brute-force). در صورت رد شدن، تعداد تلاش
+	 * را افزایش می‌دهد و با رسیدن به سقف، کد را باطل می‌کند تا کاربر مجبور به دریافت کد جدید شود.
+	 */
+	private async assertOtpCodeValid(existingOtp: OTPDocument, otpCode: number) {
+		const now = new Date();
+		if (existingOtp.expireTime < now) {
+			throw new BadRequestError("زمان تایید شماره موبایل شما بسیار طولانی شده، مجددا تلاش کنید");
+		}
+		if (otpCode !== existingOtp.code) {
+			const attempts = Number(existingOtp.attempts ?? 0) + 1;
+			if (attempts >= AuthService.MAX_OTP_ATTEMPTS) {
+				// باطل‌کردن کد: زمان انقضا را به گذشته می‌بریم تا فقط با کد جدید بتوان ادامه داد
+				await this.otpRepository.updateOtp(existingOtp, { attempts, expireTime: new Date(now.getTime() - 1000) });
+				throw new BadRequestError("تعداد تلاش‌های مجاز به پایان رسید، لطفاً کد جدید دریافت کنید");
+			}
+			await this.otpRepository.updateOtp(existingOtp, { attempts });
+			throw new BadRequestError("کد تایید صحیح نیست");
+		}
+	}
 
 	async checkUsername(username: string) {
 		const user = await this.userRepository.findByUsername(username);
@@ -37,6 +63,7 @@ export default class AuthService {
 				code: otpCode,
 				expireTime,
 				approved: false,
+				attempts: 0,
 			});
 		} else {
 			await this.otpRepository.createOtp({
@@ -44,14 +71,15 @@ export default class AuthService {
 				code: otpCode,
 				expireTime,
 				approved: false,
+				attempts: 0,
 			});
 		}
 
-		// try {
-		// 	await sendOtpSms(username, otpCode);
-		// } catch {
-		// 	throw new BadRequestError("ارسال پیامک با خطا مواجه شد، لطفاً مجدداً تلاش کنید");
-		// }
+		try {
+			await sendOtpSms(username, otpCode);
+		} catch {
+			throw new BadRequestError("ارسال پیامک با خطا مواجه شد، لطفاً مجدداً تلاش کنید");
+		}
 
 		return {
 			field: "sendOTP",
@@ -62,22 +90,14 @@ export default class AuthService {
 	}
 	async checkOtp(username: string, otpCode: number) {
 		const existingOtp = await this.otpRepository.findByOtpId(username);
-		const now = new Date();
 
-		if (existingOtp) {
-			if (existingOtp.expireTime < now) {
-				throw new BadRequestError("زمان تایید شماره موبایل شما بسیار طولانی شده، مجددا تلاش کنید");
-			}
-			if (otpCode === existingOtp?.code) {
-				await this.otpRepository.updateOtp(existingOtp, {
-					approved: true,
-				});
-			} else {
-				throw new BadRequestError("کد تایید صحیح نیست");
-			}
-		} else {
+		if (!existingOtp) {
 			throw new BadRequestError("کد تاییدی برای این کاربری ارسال نشده");
 		}
+		await this.assertOtpCodeValid(existingOtp, otpCode);
+		await this.otpRepository.updateOtp(existingOtp, {
+			approved: true,
+		});
 		return {
 			field: "sendOTP",
 			success: true,
@@ -145,6 +165,40 @@ export default class AuthService {
 			data: new AuthTransform().login(user),
 		};
 	}
+
+	/** ارسال کد یکبارمصرف برای «ورود با رمز یکبارمصرف» — فقط برای کاربرِ موجود. */
+	async sendLoginOtp(username: string) {
+		const user = await this.userRepository.findByUsername(username);
+		if (!user) {
+			throw new BadRequestError("این کاربری وجود ندارد");
+		}
+		return this.sendOtp(username);
+	}
+
+	/**
+	 * ورود با کد یکبارمصرف. کد به‌صورت اتمیک تایید و بلافاصله مصرف (حذف) می‌شود تا قابل
+	 * استفاده‌ی مجدد (replay) نباشد. در صورت موفقیت، توکنِ ورود مانند لاگین معمولی بازگردانده می‌شود.
+	 */
+	async loginWithOtp(username: string, otpCode: number) {
+		const user = await this.userRepository.findByUsername(username);
+		if (!user) {
+			throw new BadRequestError("این کاربری وجود ندارد");
+		}
+		const existingOtp = await this.otpRepository.findByOtpId(username);
+		if (!existingOtp) {
+			throw new BadRequestError("کد تاییدی برای این کاربری ارسال نشده");
+		}
+		await this.assertOtpCodeValid(existingOtp, otpCode);
+		// مصرفِ یکبارمصرف: حذف کد بلافاصله پس از تایید موفق
+		await this.otpRepository.deleteOtp(existingOtp);
+		return {
+			field: "login",
+			success: true,
+			message: "ورود با موفقیت انجام شد",
+			data: new AuthTransform().login(user),
+		};
+	}
+
 	async changePassword(username: string, password: string) {
 		const existingOtp = await this.otpRepository.findByOtpId(username);
 		const now = new Date();
