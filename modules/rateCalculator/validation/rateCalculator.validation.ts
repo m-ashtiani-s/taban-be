@@ -69,6 +69,12 @@ const RateCalculatorValidation = {
 		body("documents.*.assets.*")
 			.isString()
 			.withMessage("شناسه فایل مدرک معتبر نیست"),
+		body("documents.*.description")
+			.optional({ nullable: true })
+			.isString()
+			.withMessage("توضیحات مدرک باید رشته باشد")
+			.isLength({ max: 1000 })
+			.withMessage("توضیحات مدرک نمی‌تواند بیش از ۱۰۰۰ کاراکتر باشد"),
 	],
 };
 

@@ -20,6 +20,8 @@ export type RateCalculationDocumentDto = {
 	 * انتخاب نمی‌شوند و کاربر بعداً نتیجه را در جزئیات سفارش آپلود می‌کند).
 	 */
 	selfInquiry?: boolean;
+	/** توضیحاتِ نوشته‌شده توسط کاربر برای این مدرک (در فلوهای ثبت/ویرایش سفارش). */
+	description?: string;
 };
 
 export type RateCalculationRequestDto = {
