@@ -13,6 +13,7 @@ export default class TranslationTransform {
 			isActive: translationItem?.isActive,
 			description: translationItem?.description,
 			uploadDescription: translationItem?.uploadDescription ?? "",
+			namePlaceholder: translationItem?.namePlaceholder ?? "",
 			categoryId: (category?._id?.toString() || category?.toString()) ?? "",
 			categoryName: category?.title ?? "",
 			scoreMultiplier: translationItem?.scoreMultiplier ?? 1,

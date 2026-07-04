@@ -21,9 +21,10 @@ export class TranslationAdminController extends ControllerBase {
 			const documentType: string = req.body.documentType ?? "";
 			const description: string = req.body.description ?? "";
 			const uploadDescription: string = req.body.uploadDescription ?? "";
+			const namePlaceholder: string = req.body.namePlaceholder ?? "";
 			const categoryId: string = req.body.categoryId ?? "";
 			const scoreMultiplier: number = req.body.scoreMultiplier ?? 1;
-			const result = await translationService.createTranslationItem(title, documentType, description, uploadDescription, categoryId, scoreMultiplier);
+			const result = await translationService.createTranslationItem(title, documentType, description, uploadDescription, namePlaceholder, categoryId, scoreMultiplier);
 			return res.status(200).json(result);
 		} catch (error: ControllerError) {
 			const statusCode = error.name === "BadRequestError" ? 400 : 500;
@@ -135,6 +136,7 @@ export class TranslationAdminController extends ControllerBase {
 				documentType: req?.body?.documentType ?? "",
 				description: req?.body?.description ?? "",
 				uploadDescription: req?.body?.uploadDescription ?? "",
+				namePlaceholder: req?.body?.namePlaceholder ?? "",
 				category: req?.body?.categoryId ?? "",
 				isActive: req.body.isActive ?? false,
 				scoreMultiplier: req?.body?.scoreMultiplier ?? 1,

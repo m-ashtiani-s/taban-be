@@ -8,6 +8,8 @@ export interface TranslationItem {
 	description: string;
 	/** توضیحات راهنمای آپلود مدارک که ادمین می‌نویسد و در مرحله‌ی آپلود به کاربر نمایش داده می‌شود */
 	uploadDescription: string;
+	/** پلیس‌هولدرِ نام مدرک که ادمین می‌نویسد و در ورودیِ نام‌گذاریِ مدرک به کاربر نمایش داده می‌شود */
+	namePlaceholder: string;
 	category: string | TranslationItemCategoryDocument;
 	/** ضریب امتیاز این مدرک در باشگاه مشتریان (به ازای هر نسخه). پیش‌فرض ۱ */
 	scoreMultiplier: number;
@@ -37,6 +39,10 @@ const translationItemSchema = new Schema(
 			default: "",
 		},
 		uploadDescription: {
+			type: String,
+			default: "",
+		},
+		namePlaceholder: {
 			type: String,
 			default: "",
 		},

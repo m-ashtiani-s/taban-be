@@ -5,6 +5,7 @@ export interface TranslationItemDto {
 	isActive: boolean;
 	description: string;
 	uploadDescription: string;
+	namePlaceholder: string;
 	categoryId:string
 	categoryName:string
 	scoreMultiplier: number

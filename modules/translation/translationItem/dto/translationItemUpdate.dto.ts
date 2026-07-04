@@ -4,6 +4,7 @@ export type TranslationItemUpdateDto = {
 	category:string;
 	description:string;
 	uploadDescription:string;
+	namePlaceholder:string;
 	isActive:boolean;
 	scoreMultiplier?:number;
 };
