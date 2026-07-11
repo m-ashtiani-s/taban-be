@@ -72,24 +72,6 @@ export default class OrderController extends ControllerBase {
 		}
 	};
 
-	payOrder = async (req: Request, res: Response) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) return this.showValidationErrors(res, errors);
-		try {
-			const orderId: string = req.params.orderId;
-			const result = await orderService.payOrder(req.user?._id as string, orderId);
-			return res.status(200).json(result);
-		} catch (error: ControllerError) {
-			const statusCode = error.name === "BadRequestError" ? 400 : error.name === "NotFoundError" ? 404 : 500;
-			return res.status(statusCode).json({
-				field: "payOrder",
-				success: false,
-				data: null,
-				message: error.message || "پرداخت سفارش با خطا مواجه شد",
-			});
-		}
-	};
-
 	updateOrderItem = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) return this.showValidationErrors(res, errors);

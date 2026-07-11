@@ -12,7 +12,7 @@ import RateCalculatorService from "../../rateCalculator/service/rateCalculator.s
 import ShippingAddressRepository from "../../shippingAddress/repository/shippingAddress.repository";
 import { CreateOrderDto, UpdateOrderItemDto } from "../dto/order.dto";
 import { OrderFilters } from "../dto/orderFilters.dto";
-import { OrderedDoc, OrderStatus, PaymentStatus } from "../model/order.model";
+import { OrderDocument, OrderedDoc, OrderStatus, PaymentStatus } from "../model/order.model";
 import OrderRepository from "../repository/order.repository";
 import OrderTransform from "../transform/order.transform";
 
@@ -132,29 +132,44 @@ export default class OrderService {
 		};
 	}
 
-	// TODO: این یک پیاده‌سازی موقت است. در آینده باید با درگاه پرداخت واقعی جایگزین شود
-	// (هدایت به درگاه، ساخت تراکنش، و تایید پرداخت از طریق callback درگاه).
-	async payOrder(userId: string, orderId: string) {
+	/**
+	 * بررسی می‌کند که یک سفارش در وضعیت قابل پرداخت است و آن را برای شروع پرداخت برمی‌گرداند.
+	 * توسط سرویس پرداخت پیش از هدایت کاربر به درگاه فراخوانی می‌شود. اگر روی سفارش کد تخفیف
+	 * اعمال شده باشد، اعتبار کوپن هم پیش‌بررسی می‌شود (بدون مصرف ظرفیت — مصرف واقعی هنگام
+	 * نهایی‌شدن پرداخت در finalizePaidOrder انجام می‌شود).
+	 */
+	async assertOrderPayable(userId: string, orderId: string): Promise<OrderDocument> {
 		const order = await this.orderRepository.findByIdAndUser(orderId, userId);
 		if (!order) throw new NotFoundError("سفارش یافت نشد");
 
+		if (order.paymentStatus === PaymentStatus.PAID || order.status === OrderStatus.PAID) {
+			throw new BadRequestError("این سفارش قبلاً پرداخت شده است");
+		}
 		if (order.status !== OrderStatus.APPROVED) {
 			throw new BadRequestError("این سفارش در وضعیت قابل پرداخت قرار ندارد");
 		}
 
-		// اگر روی سفارش کد تخفیف اعمال شده، درست پیش از پرداخت تمام قوانین کوپن دوباره
-		// بررسی می‌شوند. دلیلش این است که شمارنده‌ی استفاده فقط هنگام پرداخت بالا می‌رود؛
-		// بنابراین تا قبل از این لحظه چند سفارش می‌توانند هم‌زمان یک کوپن محدود را در خود
-		// نگه دارند و باید جلوی استفاده‌ی بیش از حد در زمان پرداخت گرفته شود.
+		const couponId = this.extractCouponId(order.coupon);
+		if (couponId) await this.assertOrderCouponStillValid(userId, couponId);
+
+		return order;
+	}
+
+	/**
+	 * نهایی‌کردن یک سفارش پس از پرداخت موفق درگاه. این متد توسط callback درگاه (سرویس پرداخت)
+	 * فراخوانی می‌شود و idempotent است: اگر سفارش قبلاً پرداخت‌شده باشد کاری انجام نمی‌دهد.
+	 *
+	 * اگر روی سفارش کد تخفیف اعمال شده باشد، شمارنده‌ی استفاده‌ی کوپن دقیقاً همین‌جا (و نه در
+	 * لحظه‌ی هدایت به درگاه) به‌صورت اتمیک مصرف می‌شود تا حتی در پرداخت‌های هم‌زمان هم از سقف
+	 * فراتر نرویم. در صورت شکست ذخیره‌سازی سفارش، ظرفیت رزروشده آزاد می‌شود.
+	 */
+	async finalizePaidOrder(order: OrderDocument): Promise<void> {
+		if (order.paymentStatus === PaymentStatus.PAID || order.status === OrderStatus.PAID) return;
+
 		const couponId = this.extractCouponId(order.coupon);
 		if (couponId) {
-			// مرحله ۱: بررسی قوانینی که از روی وضعیت کوپن و تاریخچه‌ی کاربر سنجیده می‌شوند
-			// (فعال بودن، بازه‌ی زمانی و سقف استفاده‌ی هر کاربر).
-			await this.assertOrderCouponStillValid(userId, couponId);
+			await this.assertOrderCouponStillValid(String((order.user as any)?._id ?? order.user), couponId);
 
-			// مرحله ۲: رزرو اتمیک ظرفیت کلی کوپن. این کار شمارنده‌ی استفاده را تنها در صورت
-			// نرسیدن به سقف، در یک عملیات اتمیک افزایش می‌دهد تا حتی در پرداخت‌های هم‌زمان هم
-			// از سقف فراتر نرویم. اگر ظرفیت پر باشد، پرداخت انجام نمی‌شود.
 			const consumed = await this.couponRepository.tryConsumeUsage(couponId);
 			if (!consumed) {
 				throw new BadRequestError(
@@ -162,8 +177,6 @@ export default class OrderService {
 				);
 			}
 
-			// مرحله ۳: نهایی‌کردن پرداخت. اگر ذخیره‌سازی سفارش با خطا مواجه شد، ظرفیت رزروشده
-			// را آزاد می‌کنیم تا شمارنده‌ی کوپن بی‌دلیل مصرف‌شده باقی نماند.
 			try {
 				order.status = OrderStatus.PAID;
 				order.paymentStatus = PaymentStatus.PAID;
@@ -184,14 +197,6 @@ export default class OrderService {
 		await this.clubService.awardForPaidOrder(order);
 		// اگر این کاربر با کد معرف ثبت‌نام کرده، روی اولین پرداخت برای معرِّفش کد تخفیف صادر می‌شود (idempotent)
 		await this.referralService.rewardReferrerForFirstPaidOrder(order);
-
-		const populated = await this.orderRepository.findByIdAndUser(orderId, userId);
-		return {
-			field: "payOrder",
-			success: true,
-			message: "پرداخت سفارش با موفقیت انجام شد",
-			data: this.orderTransform.order(populated ?? order),
-		};
 	}
 
 	async removeCouponFromOrder(userId: string, orderId: string) {

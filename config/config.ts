@@ -19,6 +19,20 @@ const Config = {
 		website: process.env.COMPANY_WEBSITE ?? "",
 		address: process.env.COMPANY_ADDRESS ?? "",
 	},
+	zarinpal: {
+		// merchant_id از پنل زرین‌پال. حتماً از طریق env مقداردهی شود.
+		merchantId: process.env.ZARINPAL_MERCHANT_ID || "",
+		// در حالت پیش‌فرض sandbox روشن است تا پرداخت واقعی به‌اشتباه انجام نشود.
+		// برای محیط تولید باید ZARINPAL_SANDBOX=false تنظیم شود.
+		sandbox: process.env.ZARINPAL_SANDBOX !== "false",
+		// واحد مبلغ ارسالی به درگاه: IRR = ریال، IRT = تومان. قیمت‌های سیستم به تومان است،
+		// پس در حالت IRR مبلغ ×۱۰ می‌شود. پیش‌فرض ریال (سازگارترین حالت با درگاه).
+		currency: (process.env.ZARINPAL_CURRENCY as "IRR" | "IRT") || "IRR",
+		// آدرس پایه‌ی بکند برای ساخت callback_url که کاربر بعد از پرداخت به آن برمی‌گردد.
+		callbackBase: process.env.PAYMENT_CALLBACK_BASE || "http://localhost:8000",
+		// صفحه‌ی نتیجه‌ی پرداخت در فرانت که بکند بعد از verify کاربر را به آن هدایت می‌کند.
+		frontendResultUrl: process.env.PAYMENT_FRONTEND_RESULT || "http://localhost:3001/payment/result",
+	},
 };
 
 export default Config;
