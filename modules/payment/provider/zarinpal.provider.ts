@@ -15,7 +15,7 @@ const START_PAY_BASE = zp.sandbox ? "https://sandbox.zarinpal.com/pg/StartPay/" 
 export interface ZarinpalRequestInput {
 	amount: number;
 	description: string;
-	callbackUrl: string;
+	callbackUrl: string | null;
 	mobile?: string;
 	email?: string;
 }

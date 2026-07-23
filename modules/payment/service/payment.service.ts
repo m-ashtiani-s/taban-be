@@ -89,7 +89,7 @@ export default class PaymentService {
 		const requestResult = await requestPayment({
 			amount: gatewayAmount,
 			description,
-			callbackUrl: this.callbackUrl,
+			callbackUrl: this.sanitizeBackUrl(backUrl)
 		});
 
 		if (!requestResult.success || !requestResult.authority) {
