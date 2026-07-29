@@ -6,6 +6,7 @@ import LanguageService from "../service/language.service";
 import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { LanguageUpdateDto } from "../dto/languageUpdate.dto";
+import { LanguageOrderDto } from "../../languageOrder/dto/languageOrder.dto";
 const languageService = new LanguageService();
 
 export class LanguageAdminController extends ControllerBase {
@@ -110,6 +111,28 @@ export class LanguageAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در غیرفعالسازی زبان رخ داد",
+			});
+		}
+	};
+	reorderLanguages = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const orders: LanguageOrderDto[] = (req.body.orders ?? []).map((it: LanguageOrderDto) => ({
+				languageId: it.languageId,
+				order: it.order,
+			}));
+			const result = await languageService.reorderLanguages(orders);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "reorderLanguages",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در تغییر ترتیب زبان ها رخ داد",
 			});
 		}
 	};

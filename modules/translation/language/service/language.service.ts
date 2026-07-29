@@ -1,4 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import { LanguageOrderDto } from "../../languageOrder/dto/languageOrder.dto";
+import LanguageOrderService from "../../languageOrder/service/languageOrder.service";
 import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
 import { LanguageUpdateDto } from "../dto/languageUpdate.dto";
 import LanguageRepository from "../repository/language.repository";
@@ -6,6 +8,7 @@ import LanguageTransform from "../transform/language.transform";
 
 export default class LanguageService {
 	private languageRepository = new LanguageRepository();
+	private languageOrderService = new LanguageOrderService();
 
 	async createLanguage(languageName: string, languageCode: string, icon: string) {
 		const language = await this.languageRepository.findLanguageByTitle(languageName);
@@ -34,12 +37,16 @@ export default class LanguageService {
 		if (!languages) {
 			throw new BadRequestError("مشکلی در یافتن زبان ها بوجود آمد");
 		}
+		const orderMap = await this.languageOrderService.getOrderMap();
 		return {
 			field: "getLanguages",
 			success: true,
 			message: "لیست زبان ها با موفقیت دریافت شد",
-			data: new LanguageTransform().languages(languages),
+			data: new LanguageTransform().languages(languages, orderMap),
 		};
+	}
+	async reorderLanguages(orders: LanguageOrderDto[]) {
+		return this.languageOrderService.setLanguagesOrder(orders);
 	}
 	async getLanguage(languageId: string, isActive?: boolean) {
 		const language = await this.languageRepository.findOneLanguage(languageId, isActive);

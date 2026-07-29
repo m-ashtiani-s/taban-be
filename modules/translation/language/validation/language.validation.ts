@@ -17,6 +17,11 @@ const LanguageValidation = {
 		body("languageCode").notEmpty().withMessage("وارد کردن کد زبان الزامی است"),
 		body("isActive").notEmpty().withMessage("وارد کردن وضعیت الزامی است"),
 	],
+	reorderLanguages: [
+		body("orders").isArray({ min: 1 }).withMessage("لیست ترتیب زبان‌ها الزامی است"),
+		body("orders.*.languageId").notEmpty().withMessage("شناسه زبان الزامی است").isMongoId().withMessage("شناسه زبان معتبر نیست"),
+		body("orders.*.order").isInt({ min: 0 }).withMessage("ترتیب زبان معتبر نیست"),
+	],
 };
 
 export default LanguageValidation;
