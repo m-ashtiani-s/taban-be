@@ -6,6 +6,7 @@ const translationItemsRouter = express.Router();
 const translationController = new TranslationAdminController();
 
 translationItemsRouter.get("/", translationController.getTranslationItems);
+translationItemsRouter.put("/order", TranslationValidation.reorderTranslationItems, translationController.reorderTranslationItems);
 translationItemsRouter.get("/:translationItemId", TranslationValidation.translationItemId, translationController.getTranslationItem);
 translationItemsRouter.post("/", TranslationValidation.createTranslationItem, translationController.createTranslationItem);
 translationItemsRouter.post("/:translationItemId/activate", TranslationValidation.translationItemId, translationController.activateTranslationItem);

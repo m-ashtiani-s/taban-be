@@ -20,11 +20,13 @@ export default class TranslationTransform {
 		};
 		return loginData;
 	}
-	translationItems(translationItems: TranslationItemDocument[]): TranslationItemDto[] {
-		const transformedTranslationItems: TranslationItemDto[] = [];
-		translationItems?.map((it) => {
-			transformedTranslationItems.push(this.translationItem(it));
+	translationItems(translationItems: TranslationItemDocument[], orderMap: Record<string, number> = {}): TranslationItemDto[] {
+		// مدارکی که ترتیب نمایش دارند اول (صعودی) و بی‌ترتیب‌ها انتها؛ sort پایدار است پس تساوی‌ها ترتیب اصلی را حفظ می‌کنند
+		const sorted = [...(translationItems ?? [])].sort((a, b) => {
+			const aOrder = orderMap[String(a?._id)] ?? Number.MAX_SAFE_INTEGER;
+			const bOrder = orderMap[String(b?._id)] ?? Number.MAX_SAFE_INTEGER;
+			return aOrder - bOrder;
 		});
-		return transformedTranslationItems;
+		return sorted.map((it) => this.translationItem(it));
 	}
 }

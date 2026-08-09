@@ -1,4 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import { EmbassyOrderDto } from "../../embassyOrder/dto/embassyOrder.dto";
+import EmbassyOrderService from "../../embassyOrder/service/embassyOrder.service";
 import { GetEmbassiesFilters } from "../dto/getEmbassyFilters.dto";
 import { EmbassyUpdateDto } from "../dto/embassyUpdate.dto";
 import EmbassyRepository from "../repository/embassy.repository";
@@ -6,6 +8,7 @@ import EmbassyTransform from "../transform/embassy.transform";
 
 export default class EmbassyService {
 	private embassyRepository = new EmbassyRepository();
+	private embassyOrderService = new EmbassyOrderService();
 
 	async createEmbassy(title: string, description: string) {
 		const embassy = await this.embassyRepository.findEmbassyByTitle(title);
@@ -29,12 +32,16 @@ export default class EmbassyService {
 		if (!embassies) {
 			throw new BadRequestError("مشکلی در یافتن سفارت ها بوجود آمد");
 		}
+		const orderMap = await this.embassyOrderService.getOrderMap();
 		return {
 			field: "getEmbassies",
 			success: true,
 			message: "لیست سفارت‌ها با موفقیت دریافت شد",
-			data: new EmbassyTransform().embassies(embassies),
+			data: new EmbassyTransform().embassies(embassies, orderMap),
 		};
+	}
+	async reorderEmbassies(orders: EmbassyOrderDto[]) {
+		return this.embassyOrderService.setEmbassiesOrder(orders);
 	}
 	async getEmbassy(embassyId: string, isActive?: boolean) {
 		const embassy = await this.embassyRepository.findOneEmbassy(embassyId, isActive,[]);

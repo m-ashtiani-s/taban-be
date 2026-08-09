@@ -1,4 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import { TranslationItemOrderDto } from "../../translationItemOrder/dto/translationItemOrder.dto";
+import TranslationItemOrderService from "../../translationItemOrder/service/translationItemOrder.service";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
 import { TranslationItemUpdateDto } from "../dto/translationItemUpdate.dto";
 import TranslationItemRepository from "../repository/translationItem.repository";
@@ -6,6 +8,7 @@ import TranslationTransform from "../transform/translationItem.transform";
 
 export default class TranslationService {
 	private translationItemRepository = new TranslationItemRepository();
+	private translationItemOrderService = new TranslationItemOrderService();
 
 	async createTranslationItem(title: string, documentType: string, description: string, uploadDescription: string, namePlaceholder: string, categoryId: string, scoreMultiplier: number = 1) {
 		const translationItem = await this.translationItemRepository.findTranslationItemByTitle(title);
@@ -38,12 +41,16 @@ export default class TranslationService {
 		if (!translationItems) {
 			throw new BadRequestError("مشکلی در یافتن سند ها بوجود آمد");
 		}
+		const orderMap = await this.translationItemOrderService.getOrderMap();
 		return {
 			field: "getTranslationItems",
 			success: true,
 			message: "لیست اسناد با موفقیت دریافت شد",
-			data: new TranslationTransform().translationItems(translationItems),
+			data: new TranslationTransform().translationItems(translationItems, orderMap),
 		};
+	}
+	async reorderTranslationItems(orders: TranslationItemOrderDto[]) {
+		return this.translationItemOrderService.setTranslationItemsOrder(orders);
 	}
 	async getTranslationItem(translationItemId: string, isActive?: boolean) {
 		const translationItem = await this.translationItemRepository.findOneTranslationItem(translationItemId, isActive,["category"]);

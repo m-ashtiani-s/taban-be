@@ -6,6 +6,7 @@ const embassiesRouter = express.Router();
 const embassyController = new EmbassyAdminController();
 
 embassiesRouter.get("/", embassyController.getEmbassies);
+embassiesRouter.put("/order", EmbassyValidation.reorderEmbassies, embassyController.reorderEmbassies);
 embassiesRouter.get("/:embassyId", EmbassyValidation.embassyId, embassyController.getEmbassy);
 embassiesRouter.post("/", EmbassyValidation.createEmbassy, embassyController.createEmbassy);
 embassiesRouter.post("/:embassyId/activate", EmbassyValidation.embassyId, embassyController.activateEmbassy);

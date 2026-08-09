@@ -7,6 +7,7 @@ import EmbassyService from "../service/embassy.service";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { GetEmbassiesFilters } from "../dto/getEmbassyFilters.dto";
 import { EmbassyUpdateDto } from "../dto/embassyUpdate.dto";
+import { EmbassyOrderDto } from "../../embassyOrder/dto/embassyOrder.dto";
 const embassyService = new EmbassyService();
 
 export class EmbassyAdminController extends ControllerBase {
@@ -113,6 +114,28 @@ export class EmbassyAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در غیرفعالسازی سفارت رخ داد",
+			});
+		}
+	};
+	reorderEmbassies = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const orders: EmbassyOrderDto[] = (req.body.orders ?? []).map((it: EmbassyOrderDto) => ({
+				embassyId: it.embassyId,
+				order: it.order,
+			}));
+			const result = await embassyService.reorderEmbassies(orders);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "reorderEmbassies",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در تغییر ترتیب سفارت ها رخ داد",
 			});
 		}
 	};

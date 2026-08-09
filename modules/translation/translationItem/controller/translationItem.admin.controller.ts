@@ -7,6 +7,7 @@ import TranslationService from "../service/translationItem.service";
 import { convertStringToBoolean } from "../../../../shared/utils/convertStringToBoolean.util";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
 import { TranslationItemUpdateDto } from "../dto/translationItemUpdate.dto";
+import { TranslationItemOrderDto } from "../../translationItemOrder/dto/translationItemOrder.dto";
 const translationService = new TranslationService();
 
 export class TranslationAdminController extends ControllerBase {
@@ -120,6 +121,28 @@ export class TranslationAdminController extends ControllerBase {
 				success: false,
 				data: null,
 				message: error.message || "مشکلی در غیرفعالسازی مدرک رخ داد",
+			});
+		}
+	};
+	reorderTranslationItems = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+		try {
+			const orders: TranslationItemOrderDto[] = (req.body.orders ?? []).map((it: TranslationItemOrderDto) => ({
+				translationItemId: it.translationItemId,
+				order: it.order,
+			}));
+			const result = await translationService.reorderTranslationItems(orders);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : 500;
+			return res.status(statusCode).json({
+				field: "reorderTranslationItems",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در تغییر ترتیب مدارک رخ داد",
 			});
 		}
 	};

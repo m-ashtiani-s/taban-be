@@ -12,11 +12,13 @@ export default class EmbassyTransform {
 		};
 		return loginData;
 	}
-	embassies(embassies: EmbassyDocument[]): EmbassyDto[] {
-		const transformedEmbassies: EmbassyDto[] = [];
-		embassies?.map((it) => {
-			transformedEmbassies.push(this.embassy(it));
+	embassies(embassies: EmbassyDocument[], orderMap: Record<string, number> = {}): EmbassyDto[] {
+		// سفارت‌هایی که ترتیب نمایش دارند اول (صعودی) و بی‌ترتیب‌ها انتها؛ sort پایدار است پس تساوی‌ها ترتیب اصلی را حفظ می‌کنند
+		const sorted = [...(embassies ?? [])].sort((a, b) => {
+			const aOrder = orderMap[String(a?._id)] ?? Number.MAX_SAFE_INTEGER;
+			const bOrder = orderMap[String(b?._id)] ?? Number.MAX_SAFE_INTEGER;
+			return aOrder - bOrder;
 		});
-		return transformedEmbassies;
+		return sorted.map((it) => this.embassy(it));
 	}
 }

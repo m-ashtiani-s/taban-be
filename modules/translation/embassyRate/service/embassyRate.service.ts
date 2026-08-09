@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
 import { NotFoundError } from "../../../../shared/base/notFoundError.error";
 import EmbassyRepository from "../../embassy/repository/embassy.repository";
+import EmbassyOrderService from "../../embassyOrder/service/embassyOrder.service";
 import TranslationItemRepository from "../../translationItem/repository/translationItem.repository";
 import { GetEmbassyRatesFilters } from "../dto/embassyRateFilters.dto";
 import EmbassyRateRepository from "../repository/embassyRate.repository";
@@ -12,6 +13,7 @@ export default class EmbassyRateService {
 	private embassyRateRepository = new EmbassyRateRepository();
 	private translationItemRepository = new TranslationItemRepository();
 	private embassyRepository = new EmbassyRepository();
+	private embassyOrderService = new EmbassyOrderService();
 
 	async createEmbassyRate(translationItemId: string, embassyId: string, price: number) {
 
@@ -46,11 +48,12 @@ export default class EmbassyRateService {
 		if (!embassyRates) {
 			throw new BadRequestError("مشکلی در یافتن نرخ های سفارت بوجود آمد");
 		}
+		const orderMap = await this.embassyOrderService.getOrderMap();
 		return {
 			field: "getEmbassyRates",
 			success: true,
 			message: "لیست نرخ های سفارت با موفقیت دریافت شد",
-			data: new EmbassyRateTransform().embassyRates(embassyRates),
+			data: new EmbassyRateTransform().embassyRates(embassyRates, orderMap),
 		};
 	}
 	async getEmbassyRate(embassyRateId: string) {

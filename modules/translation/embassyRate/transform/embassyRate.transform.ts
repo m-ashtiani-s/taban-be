@@ -20,9 +20,15 @@ export default class TranslationTransform {
 			isRequired: embassyRate.isRequired,
 		};
 	}
-	embassyRates(embassyRates: EmbassyRateDocument[]): EmbassyRateDto[] {
+	embassyRates(embassyRates: EmbassyRateDocument[], orderMap: Record<string, number> = {}): EmbassyRateDto[] {
+		// نرخ‌ها بر اساس ترتیبِ نمایشِ سفارتِ متناظر مرتب می‌شوند تا فرانت سفارت‌ها را به همان ترتیب ادمین ببیند
+		const sorted = [...(embassyRates ?? [])].sort((a, b) => {
+			const aOrder = orderMap[String((a?.embassy as EmbassyDocument)?._id)] ?? Number.MAX_SAFE_INTEGER;
+			const bOrder = orderMap[String((b?.embassy as EmbassyDocument)?._id)] ?? Number.MAX_SAFE_INTEGER;
+			return aOrder - bOrder;
+		});
 		const transformedEmbassyRates: EmbassyRateDto[] = [];
-		embassyRates?.map((it) => {
+		sorted?.map((it) => {
 			const justicInquiryRate = this.embassyRate(it);
 			if (justicInquiryRate?.embassyIsActive) {
 				transformedEmbassyRates.push(justicInquiryRate);
