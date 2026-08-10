@@ -1,4 +1,6 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import OrderRepository from "../../../order/repository/order.repository";
+import JusticeInquiryRateRepository from "../../justiceInquiryRate/repository/justiceInquiryRate.repository";
 import { GetJusticeInquiryiesFilters } from "../dto/getJusticeInquiryFilters.dto";
 import { JusticeInquiryUpdateDto } from "../dto/justiceInquiryUpdate.dto";
 import JusticeInquiryRepository from "../repository/justiceInquiry.repository";
@@ -6,6 +8,8 @@ import JusticeInquiryTransform from "../transform/justiceInquiry.transform";
 
 export default class JusticeInquiryService {
 	private justiceInquiryRepository = new JusticeInquiryRepository();
+	private justiceInquiryRateRepository = new JusticeInquiryRateRepository();
+	private orderRepository = new OrderRepository();
 
 	async createJusticeInquiry(justiceInquiryName: string, description: string) {
 		const justiceInquiry = await this.justiceInquiryRepository.findJusticeInquiryByTitle(justiceInquiryName);
@@ -94,6 +98,30 @@ export default class JusticeInquiryService {
 			success: true,
 			data: null,
 			message: "استعلام با موفقیت به روز شد",
+		};
+	}
+	async deleteJusticeInquiry(justiceInquiryId: string) {
+		const justiceInquiry = await this.justiceInquiryRepository.findByJusticeInquiryId(justiceInquiryId);
+		if (!justiceInquiry) {
+			throw new BadRequestError("مشکلی در یافتن استعلام بوجود آمد");
+		}
+
+		const [hasRate, hasOrder] = await Promise.all([
+			this.justiceInquiryRateRepository.existsByJusticeInquiry(justiceInquiryId),
+			this.orderRepository.existsByJusticeInquiryName(justiceInquiry.justiceInquiryName),
+		]);
+
+		if (hasRate || hasOrder) {
+			throw new BadRequestError("این استعلام در نرخ‌ها یا سفارش‌ها استفاده شده و قابل حذف نیست");
+		}
+
+		await this.justiceInquiryRepository.deleteJusticeInquiry(justiceInquiry);
+
+		return {
+			field: "deleteJusticeInquiry",
+			success: true,
+			data: null,
+			message: "استعلام با موفقیت حذف شد",
 		};
 	}
 }

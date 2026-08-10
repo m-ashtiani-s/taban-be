@@ -42,4 +42,9 @@ export default class ScanRateRepository {
 	async deleteScanRate(scanRate: ScanRateDocument): Promise<void> {
 		await scanRate.deleteOne();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await ScanRateModel.exists({ translationItem: translationItemId }).exec();
+		return !!found;
+	}
 }

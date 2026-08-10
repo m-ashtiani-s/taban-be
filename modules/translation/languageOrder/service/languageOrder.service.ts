@@ -23,4 +23,8 @@ export default class LanguageOrderService {
 			message: "ترتیب نمایش زبان‌ها با موفقیت ذخیره شد",
 		};
 	}
+
+	async removeLanguageOrder(languageId: string): Promise<void> {
+		await this.languageOrderRepository.deleteByLanguage(languageId);
+	}
 }

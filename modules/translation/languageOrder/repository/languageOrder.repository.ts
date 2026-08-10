@@ -19,4 +19,8 @@ export default class LanguageOrderRepository {
 			})),
 		);
 	}
+
+	async deleteByLanguage(languageId: string): Promise<void> {
+		await LanguageOrderModel.deleteOne({ language: new Types.ObjectId(languageId) });
+	}
 }

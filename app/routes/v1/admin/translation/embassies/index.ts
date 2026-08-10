@@ -12,4 +12,5 @@ embassiesRouter.post("/", EmbassyValidation.createEmbassy, embassyController.cre
 embassiesRouter.post("/:embassyId/activate", EmbassyValidation.embassyId, embassyController.activateEmbassy);
 embassiesRouter.post("/:embassyId/deactivate", EmbassyValidation.embassyId, embassyController.deactivateEmbassy);
 embassiesRouter.put("/:embassyId", EmbassyValidation.embassyId, EmbassyValidation.updateEmbassy, embassyController.updateEmbassy);
+embassiesRouter.delete("/:embassyId", EmbassyValidation.embassyId, embassyController.deleteEmbassy);
 export default embassiesRouter;

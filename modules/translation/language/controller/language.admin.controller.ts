@@ -162,4 +162,24 @@ export class LanguageAdminController extends ControllerBase {
 			});
 		}
 	};
+	deleteLanguage = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		try {
+			const languageId: string = req.params.languageId ?? "";
+			const result = await languageService.deleteLanguage(languageId);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : error.name === "NotFoundError" ? 404 : 500;
+			return res.status(statusCode).json({
+				field: "deleteLanguage",
+				success: false,
+				data: null,
+				message: error.message || "مشکلی در حذف زبان رخ داد",
+			});
+		}
+	};
 }

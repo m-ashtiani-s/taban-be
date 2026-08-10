@@ -12,4 +12,5 @@ languagesRouter.get("/:languageId", LanguageValidation.languageId, languageAdmin
 languagesRouter.post("/:languageId/activate", LanguageValidation.languageId, languageAdminController.activateLanguage);
 languagesRouter.post("/:languageId/deactivate", LanguageValidation.languageId, languageAdminController.deactivateLanguage);
 languagesRouter.put("/:languageId", LanguageValidation.languageId, LanguageValidation.updateLanguage, languageAdminController.updateLanguage);
+languagesRouter.delete("/:languageId", LanguageValidation.languageId, languageAdminController.deleteLanguage);
 export default languagesRouter;

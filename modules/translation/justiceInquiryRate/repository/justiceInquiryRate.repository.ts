@@ -44,4 +44,19 @@ export default class JusticeInquiryRateRepository {
 	async deleteJusticeInquiryRate(justiceInquiryRate: JusticeInquiryRateDocument): Promise<void> {
 		await justiceInquiryRate.deleteOne();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await JusticeInquiryRateModel.exists({ translationItem: translationItemId }).exec();
+		return !!found;
+	}
+
+	async existsByLanguage(languageId: string): Promise<boolean> {
+		const found = await JusticeInquiryRateModel.exists({ language: languageId }).exec();
+		return !!found;
+	}
+
+	async existsByJusticeInquiry(justiceInquiryId: string): Promise<boolean> {
+		const found = await JusticeInquiryRateModel.exists({ justiceInquiry: justiceInquiryId }).exec();
+		return !!found;
+	}
 }

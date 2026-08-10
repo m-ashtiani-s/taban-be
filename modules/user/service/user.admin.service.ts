@@ -54,6 +54,22 @@ export default class AdminUserService {
 		};
 	}
 
+	async changeUserPassword(userId: string, password: string) {
+		const user = await this.userRepository.findByUserId(userId);
+		if (!user) throw new NotFoundError("کاربر یافت نشد");
+
+		// از updateUser (که .save() صدا می‌زند) استفاده می‌شود تا هوک pre-save رمز را هش کند؛
+		// findByIdAndUpdate این هوک را اجرا نمی‌کند و رمز خام ذخیره می‌شد.
+		await this.userRepository.updateUser(user, { password });
+
+		return {
+			field: "changeUserPassword",
+			success: true,
+			message: "رمز عبور کاربر با موفقیت تغییر کرد",
+			data: null,
+		};
+	}
+
 	async activateUser(userId: string) {
 		const user = await this.userRepository.findByUserId(userId);
 		if (!user) throw new NotFoundError("کاربر یافت نشد");

@@ -40,4 +40,14 @@ export default class DynamicRateRepository {
 	async deleteDynamicRate(dynamicRate: DynamicRateDocument): Promise<void> {
 		await dynamicRate.deleteOne();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await DynamicRateModel.exists({ translationItem: translationItemId }).exec();
+		return !!found;
+	}
+
+	async existsByLanguage(languageId: string): Promise<boolean> {
+		const found = await DynamicRateModel.exists({ language: languageId }).exec();
+		return !!found;
+	}
 }

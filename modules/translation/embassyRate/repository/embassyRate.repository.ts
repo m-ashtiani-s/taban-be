@@ -43,4 +43,14 @@ export default class EmbassyRateRepository {
 	async deleteEmbassyRate(embassyRate: EmbassyRateDocument): Promise<void> {
 		await embassyRate.deleteOne();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await EmbassyRateModel.exists({ translationItem: translationItemId }).exec();
+		return !!found;
+	}
+
+	async existsByEmbassy(embassyId: string): Promise<boolean> {
+		const found = await EmbassyRateModel.exists({ embassy: embassyId }).exec();
+		return !!found;
+	}
 }

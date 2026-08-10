@@ -1,4 +1,11 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import OrderRepository from "../../../order/repository/order.repository";
+import BaseRateRepository from "../../baseRate/repository/baseRate.repository";
+import CertificationRateRepository from "../../certificationRate/repository/certificationRate.repository";
+import DynamicRateRepository from "../../dynamicRate/repository/dynamicRate.repository";
+import EmbassyRateRepository from "../../embassyRate/repository/embassyRate.repository";
+import JusticeInquiryRateRepository from "../../justiceInquiryRate/repository/justiceInquiryRate.repository";
+import ScanRateRepository from "../../scanRate/repository/scanRate.repository";
 import { TranslationItemOrderDto } from "../../translationItemOrder/dto/translationItemOrder.dto";
 import TranslationItemOrderService from "../../translationItemOrder/service/translationItemOrder.service";
 import { GetTranslationItemsFilters } from "../dto/getTranslationItemsFilters.dto";
@@ -9,6 +16,13 @@ import TranslationTransform from "../transform/translationItem.transform";
 export default class TranslationService {
 	private translationItemRepository = new TranslationItemRepository();
 	private translationItemOrderService = new TranslationItemOrderService();
+	private baseRateRepository = new BaseRateRepository();
+	private certificationRateRepository = new CertificationRateRepository();
+	private dynamicRateRepository = new DynamicRateRepository();
+	private scanRateRepository = new ScanRateRepository();
+	private embassyRateRepository = new EmbassyRateRepository();
+	private justiceInquiryRateRepository = new JusticeInquiryRateRepository();
+	private orderRepository = new OrderRepository();
 
 	async createTranslationItem(title: string, documentType: string, description: string, uploadDescription: string, namePlaceholder: string, categoryId: string, scoreMultiplier: number = 1) {
 		const translationItem = await this.translationItemRepository.findTranslationItemByTitle(title);
@@ -110,6 +124,45 @@ export default class TranslationService {
 			success: true,
 			data: null,
 			message: "مدرک با موفقیت به روز شد",
+		};
+	}
+	async deleteTranslationItem(translationItemId: string) {
+		const translationItem = await this.translationItemRepository.findByTranslationItemId(translationItemId);
+		if (!translationItem) {
+			throw new BadRequestError("مشکلی در یافتن مدرک بوجود آمد");
+		}
+
+		const [
+			hasBaseRate,
+			hasCertificationRate,
+			hasDynamicRate,
+			hasScanRate,
+			hasEmbassyRate,
+			hasJusticeInquiryRate,
+			hasOrder,
+		] = await Promise.all([
+			this.baseRateRepository.existsByTranslationItem(translationItemId),
+			this.certificationRateRepository.existsByTranslationItem(translationItemId),
+			this.dynamicRateRepository.existsByTranslationItem(translationItemId),
+			this.scanRateRepository.existsByTranslationItem(translationItemId),
+			this.embassyRateRepository.existsByTranslationItem(translationItemId),
+			this.justiceInquiryRateRepository.existsByTranslationItem(translationItemId),
+			this.orderRepository.existsByTranslationItem(translationItemId),
+		]);
+
+		const hasRate = hasBaseRate || hasCertificationRate || hasDynamicRate || hasScanRate || hasEmbassyRate || hasJusticeInquiryRate;
+		if (hasRate || hasOrder) {
+			throw new BadRequestError("این مدرک در نرخ‌ها یا سفارش‌ها استفاده شده و قابل حذف نیست");
+		}
+
+		await this.translationItemRepository.deleteTranslationItem(translationItem);
+		await this.translationItemOrderService.removeTranslationItemOrder(translationItemId);
+
+		return {
+			field: "deleteTranslationItem",
+			success: true,
+			data: null,
+			message: "مدرک با موفقیت حذف شد",
 		};
 	}
 }

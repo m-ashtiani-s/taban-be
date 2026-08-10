@@ -76,4 +76,30 @@ export default class OrderRepository {
 			paymentStatus: PaymentStatus.PAID,
 		}).exec();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await OrderModel.exists({ "orderedDocs.translationItemId": translationItemId }).exec();
+		return !!found;
+	}
+
+	async existsByLanguage(languageId: string): Promise<boolean> {
+		const found = await OrderModel.exists({ "orderedDocs.languageId": languageId }).exec();
+		return !!found;
+	}
+
+	// سفارت/استعلام در سفارش فقط با نام (نه شناسه) داخل breakdown ذخیره می‌شوند؛ چون عنوان این
+	// موجودیت‌ها یکتاست، تطبیق با نام امن است و حتی وقتی نرخِ مربوطه حذف شده باشد هم کار می‌کند.
+	async existsByEmbassyName(embassyName: string): Promise<boolean> {
+		const found = await OrderModel.exists({
+			"orderedDocs.breakdown.documents.embassyApprovals.embassyName": embassyName,
+		}).exec();
+		return !!found;
+	}
+
+	async existsByJusticeInquiryName(justiceInquiryName: string): Promise<boolean> {
+		const found = await OrderModel.exists({
+			"orderedDocs.breakdown.documents.justiceInquiries.justiceInquiryName": justiceInquiryName,
+		}).exec();
+		return !!found;
+	}
 }

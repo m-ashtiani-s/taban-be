@@ -72,6 +72,25 @@ export default class AdminUserController extends ControllerBase {
 		}
 	};
 
+	changeUserPassword = async (req: Request, res: Response) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) return this.showValidationErrors(res, errors);
+		try {
+			const userId: string = req.params.userId;
+			const password = req.body.password as string;
+			const result = await adminUserService.changeUserPassword(userId, password);
+			return res.status(200).json(result);
+		} catch (error: ControllerError) {
+			const statusCode = error.name === "BadRequestError" ? 400 : error.name === "NotFoundError" ? 404 : 500;
+			return res.status(statusCode).json({
+				field: "changeUserPassword",
+				success: false,
+				data: null,
+				message: error.message || "تغییر رمز عبور کاربر با خطا مواجه شد",
+			});
+		}
+	};
+
 	activateUser = async (req: Request, res: Response) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) return this.showValidationErrors(res, errors);

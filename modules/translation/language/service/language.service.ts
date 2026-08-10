@@ -1,4 +1,9 @@
 import { BadRequestError } from "../../../../shared/base/badRequestError.error";
+import OrderRepository from "../../../order/repository/order.repository";
+import BaseRateRepository from "../../baseRate/repository/baseRate.repository";
+import CertificationRateRepository from "../../certificationRate/repository/certificationRate.repository";
+import DynamicRateRepository from "../../dynamicRate/repository/dynamicRate.repository";
+import JusticeInquiryRateRepository from "../../justiceInquiryRate/repository/justiceInquiryRate.repository";
 import { LanguageOrderDto } from "../../languageOrder/dto/languageOrder.dto";
 import LanguageOrderService from "../../languageOrder/service/languageOrder.service";
 import { GetLanguagesFilters } from "../dto/getLanguagesFilters.dto";
@@ -9,6 +14,11 @@ import LanguageTransform from "../transform/language.transform";
 export default class LanguageService {
 	private languageRepository = new LanguageRepository();
 	private languageOrderService = new LanguageOrderService();
+	private baseRateRepository = new BaseRateRepository();
+	private certificationRateRepository = new CertificationRateRepository();
+	private dynamicRateRepository = new DynamicRateRepository();
+	private justiceInquiryRateRepository = new JusticeInquiryRateRepository();
+	private orderRepository = new OrderRepository();
 
 	async createLanguage(languageName: string, languageCode: string, icon: string) {
 		const language = await this.languageRepository.findLanguageByTitle(languageName);
@@ -106,6 +116,35 @@ export default class LanguageService {
 			success: true,
 			data: null,
 			message: "زبان با موفقیت به روز شد",
+		};
+	}
+	async deleteLanguage(languageId: string) {
+		const language = await this.languageRepository.findByLanguageId(languageId);
+		if (!language) {
+			throw new BadRequestError("مشکلی در یافتن زبان بوجود آمد");
+		}
+
+		const [hasBaseRate, hasCertificationRate, hasDynamicRate, hasJusticeInquiryRate, hasOrder] = await Promise.all([
+			this.baseRateRepository.existsByLanguage(languageId),
+			this.certificationRateRepository.existsByLanguage(languageId),
+			this.dynamicRateRepository.existsByLanguage(languageId),
+			this.justiceInquiryRateRepository.existsByLanguage(languageId),
+			this.orderRepository.existsByLanguage(languageId),
+		]);
+
+		const hasRate = hasBaseRate || hasCertificationRate || hasDynamicRate || hasJusticeInquiryRate;
+		if (hasRate || hasOrder) {
+			throw new BadRequestError("این زبان در نرخ‌ها یا سفارش‌ها استفاده شده و قابل حذف نیست");
+		}
+
+		await this.languageRepository.deleteLanguage(language);
+		await this.languageOrderService.removeLanguageOrder(languageId);
+
+		return {
+			field: "deleteLanguage",
+			success: true,
+			data: null,
+			message: "زبان با موفقیت حذف شد",
 		};
 	}
 }

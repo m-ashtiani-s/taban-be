@@ -19,4 +19,8 @@ export default class TranslationItemOrderRepository {
 			})),
 		);
 	}
+
+	async deleteByTranslationItem(translationItemId: string): Promise<void> {
+		await TranslationItemOrderModel.deleteOne({ translationItem: new Types.ObjectId(translationItemId) });
+	}
 }

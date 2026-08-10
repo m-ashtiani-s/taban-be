@@ -11,4 +11,5 @@ justiceInquiryRouter.get("/:justiceInquiryId", JusticeInquiryValidation.justiceI
 justiceInquiryRouter.post("/:justiceInquiryId/activate", JusticeInquiryValidation.justiceInquiryId, justiceInquiryAdminController.activateJusticeInquiry);
 justiceInquiryRouter.post("/:justiceInquiryId/deactivate", JusticeInquiryValidation.justiceInquiryId, justiceInquiryAdminController.deactivateJusticeInquiry);
 justiceInquiryRouter.put("/:justiceInquiryId", JusticeInquiryValidation.justiceInquiryId, JusticeInquiryValidation.updateJusticeInquiry, justiceInquiryAdminController.updateJusticeInquiry);
+justiceInquiryRouter.delete("/:justiceInquiryId", JusticeInquiryValidation.justiceInquiryId, justiceInquiryAdminController.deleteJusticeInquiry);
 export default justiceInquiryRouter;

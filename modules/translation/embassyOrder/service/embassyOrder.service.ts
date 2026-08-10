@@ -23,4 +23,8 @@ export default class EmbassyOrderService {
 			message: "ترتیب نمایش سفارت‌ها با موفقیت ذخیره شد",
 		};
 	}
+
+	async removeEmbassyOrder(embassyId: string): Promise<void> {
+		await this.embassyOrderRepository.deleteByEmbassy(embassyId);
+	}
 }

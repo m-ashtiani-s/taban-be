@@ -52,4 +52,14 @@ export default class BaseRateRepository {
 	async deleteBaseRate(baseRate: BaseRateDocument): Promise<void> {
 		await baseRate.deleteOne();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await BaseRateModel.exists({ translationItem: translationItemId }).exec();
+		return !!found;
+	}
+
+	async existsByLanguage(languageId: string): Promise<boolean> {
+		const found = await BaseRateModel.exists({ language: languageId }).exec();
+		return !!found;
+	}
 }

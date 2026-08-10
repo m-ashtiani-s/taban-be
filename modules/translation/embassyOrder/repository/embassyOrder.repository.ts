@@ -19,4 +19,8 @@ export default class EmbassyOrderRepository {
 			})),
 		);
 	}
+
+	async deleteByEmbassy(embassyId: string): Promise<void> {
+		await EmbassyOrderModel.deleteOne({ embassy: new Types.ObjectId(embassyId) });
+	}
 }

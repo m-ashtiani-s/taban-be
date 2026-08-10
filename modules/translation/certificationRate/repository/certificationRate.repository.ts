@@ -40,4 +40,14 @@ export default class CertificationRateRepository {
 	async deleteCertificationRate(certificationRate: CertificationRateDocument): Promise<void> {
 		await certificationRate.deleteOne();
 	}
+
+	async existsByTranslationItem(translationItemId: string): Promise<boolean> {
+		const found = await CertificationRateModel.exists({ translationItem: translationItemId }).exec();
+		return !!found;
+	}
+
+	async existsByLanguage(languageId: string): Promise<boolean> {
+		const found = await CertificationRateModel.exists({ language: languageId }).exec();
+		return !!found;
+	}
 }

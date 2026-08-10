@@ -76,4 +76,8 @@ export default class TranslationItemRepository {
 	async deleteTranslationItem(translationItem: TranslationItemDocument): Promise<void> {
 		await translationItem.deleteOne();
 	}
+
+	async countByCategory(categoryId: string): Promise<number> {
+		return TranslationItemModel.countDocuments({ category: categoryId }).exec();
+	}
 }

@@ -101,6 +101,17 @@ const AdminUserValidation = {
 			.isBoolean()
 			.withMessage("وضعیت فعال‌سازی معتبر نیست"),
 	],
+
+	changeUserPassword: [
+		body("password")
+			.notEmpty()
+			.withMessage("رمز عبور الزامی است")
+			.bail()
+			.isLength({ min: 6 })
+			.withMessage("رمز عبور باید حداقل ۶ کاراکتر باشد")
+			.matches(/[a-zA-Z]/)
+			.withMessage("رمز عبور باید شامل حروف انگلیسی باشد"),
+	],
 };
 
 export default AdminUserValidation;

@@ -12,4 +12,5 @@ translationItemsRouter.post("/", TranslationValidation.createTranslationItem, tr
 translationItemsRouter.post("/:translationItemId/activate", TranslationValidation.translationItemId, translationController.activateTranslationItem);
 translationItemsRouter.post("/:translationItemId/deactivate", TranslationValidation.translationItemId, translationController.deactivateTranslationItem);
 translationItemsRouter.put("/:translationItemId", TranslationValidation.translationItemId, TranslationValidation.updateTranslationItem, translationController.updateTranslationItem);
+translationItemsRouter.delete("/:translationItemId", TranslationValidation.translationItemId, translationController.deleteTranslationItem);
 export default translationItemsRouter;

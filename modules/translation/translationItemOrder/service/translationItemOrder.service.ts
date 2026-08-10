@@ -23,4 +23,8 @@ export default class TranslationItemOrderService {
 			message: "ترتیب نمایش مدارک با موفقیت ذخیره شد",
 		};
 	}
+
+	async removeTranslationItemOrder(translationItemId: string): Promise<void> {
+		await this.translationItemOrderRepository.deleteByTranslationItem(translationItemId);
+	}
 }
