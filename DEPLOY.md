@@ -23,6 +23,12 @@ git push origin master
 
 ### ۱. روی سرور
 
+همه‌ی موارد زیر را اسکریپت `scripts/server-setup.sh` انجام می‌دهد (با root روی Ubuntu/Debian):
+
+```bash
+bash server-setup.sh "<محتوای کلید عمومی دیپلوی>"
+```
+
 - Node.js 22 و pm2 (`npm i -g pm2`) و `curl` نصب باشد.
 - یک کاربر با دسترسی SSH (کلید عمومیِ دیپلوی در `~/.ssh/authorized_keys`) که روی `DEPLOY_PATH` دسترسی نوشتن دارد.
 - فایل env تولید را بسازید:
