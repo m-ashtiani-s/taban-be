@@ -5,7 +5,9 @@
 	"main": "index.ts",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node index.ts",
+		"build": "tsc -p . && node scripts/copyAssets.js",
+		"typecheck": "tsc -p . --noEmit",
+		"start": "node build/index.js",
 		"dev": "nodemon --exec ts-node --files index.ts"
 	},
 	"author": "",
@@ -23,8 +25,7 @@
 		"mongoose-paginate-v2": "^1.8.0",
 		"passport": "^0.7.0",
 		"passport-local": "^1.0.0",
-		"puppeteer": "^25.1.0",
-		"tsc": "^2.0.4"
+		"puppeteer": "^25.1.0"
 	},
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.6",

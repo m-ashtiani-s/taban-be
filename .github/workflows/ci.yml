@@ -1,0 +1,28 @@
+name: CI
+
+# روی هر PR و هر push به برنچ‌های غیر از master، فقط بیلد گرفته می‌شود تا خطای TypeScript زود دیده شود.
+# دیپلوی در release.yml انجام می‌شود.
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - master
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build

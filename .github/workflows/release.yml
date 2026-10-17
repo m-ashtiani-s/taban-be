@@ -1,0 +1,173 @@
+name: Release & Deploy
+
+# هر وقت package.json روی master تغییر کند و "version" آن بالا رفته باشد:
+#   بیلد ← دیپلوی روی سرور ← ساخت تگ v<version> و GitHub Release.
+# با Run workflow (workflow_dispatch) می‌شود نسخه‌ی فعلی را دستی دوباره دیپلوی کرد.
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - package.json
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: check
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Current version: $VERSION"
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "Manual run → deploying $VERSION"
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "Tag v$VERSION already exists → skip"
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # نسخه‌ی قبلی: package.json در کامیت قبل از push؛ اگر نبود، آخرین تگ v*.
+          PREV=""
+          if [ -n "$BEFORE_SHA" ] && git cat-file -e "$BEFORE_SHA:package.json" 2>/dev/null; then
+            PREV="$(git show "$BEFORE_SHA:package.json" | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")"
+          else
+            PREV="$(git tag -l 'v*' --sort=-v:refname | head -n1 | sed 's/^v//')"
+          fi
+          echo "Previous version: ${PREV:-none}"
+
+          if [ "$PREV" = "$VERSION" ]; then
+            echo "Version unchanged → skip"
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          elif [ -n "$PREV" ] && [ "$(printf '%s\n%s\n' "$PREV" "$VERSION" | sort -V | tail -n1)" != "$VERSION" ]; then
+            echo "::warning::Version went down ($PREV → $VERSION) → skip"
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version bumped ($PREV → $VERSION) → release"
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check-version
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # node_modules فقط با وابستگی‌های production داخل بسته قرار می‌گیرد تا سرور نیازی به npm install
+      # (و دسترسی به رجیستری npm) نداشته باشد.
+      - name: Package release
+        run: |
+          rm -rf node_modules
+          npm ci --omit=dev
+          tar -czf release.tar.gz build node_modules package.json package-lock.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ needs.check-version.outputs.version }}
+          path: release.tar.gz
+          retention-days: 30
+
+  deploy:
+    needs: [check-version, build]
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERSION: ${{ needs.check-version.outputs.version }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/var/www/taban-be' }}
+      PM2_APP_NAME: ${{ vars.PM2_APP_NAME || 'taban-be' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-${{ env.VERSION }}
+
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "::error::Secrets SSH_HOST / SSH_USER / SSH_PRIVATE_KEY are not set"
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          if [ -n "$SSH_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" > ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Upload & deploy
+        run: |
+          SSH_OPTS=(-i ~/.ssh/id_deploy -p "$SSH_PORT" -o StrictHostKeyChecking=yes)
+          REMOTE="$SSH_USER@$SSH_HOST"
+          REMOTE_TMP="/tmp/taban-be-$VERSION-$GITHUB_RUN_ID"
+          ssh "${SSH_OPTS[@]}" "$REMOTE" "mkdir -p '$REMOTE_TMP'"
+          scp -i ~/.ssh/id_deploy -P "$SSH_PORT" release.tar.gz scripts/deploy.sh "$REMOTE:$REMOTE_TMP/"
+          ssh "${SSH_OPTS[@]}" "$REMOTE" \
+            "bash -l '$REMOTE_TMP/deploy.sh' '$VERSION' '$REMOTE_TMP/release.tar.gz' '$DEPLOY_PATH' '$PM2_APP_NAME'; status=\$?; rm -rf '$REMOTE_TMP'; exit \$status"
+
+  release:
+    needs: [check-version, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.check-version.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-${{ env.VERSION }}
+
+      - name: Create tag & GitHub Release
+        run: |
+          if gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v$VERSION already exists → skip"
+            exit 0
+          fi
+          gh release create "v$VERSION" release.tar.gz \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "v$VERSION" \
+            --generate-notes
