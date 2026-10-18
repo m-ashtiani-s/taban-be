@@ -9,8 +9,8 @@ const start = async () => {
 	const app = createServer();
 	const PORT = Config.port;
 
-	app.listen(PORT, () => {
-		console.log(`🚀 Server running on port ${PORT}`);
+	app.listen(Number(PORT), Config.host, () => {
+		console.log(`🚀 Server running on ${Config.host}:${PORT}`);
 	});
 };
 

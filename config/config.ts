@@ -1,5 +1,7 @@
 const Config = {
 	port: process.env.PORT || 8000,
+	// روی سرور 127.0.0.1 تا پورت فقط از طریق nginx در دسترس باشد؛ بدون مقدار روی همه‌ی اینترفیس‌ها گوش می‌دهد
+	host: process.env.HOST || "0.0.0.0",
 	secret: process.env.SECRET_KEY as string,
 	invoice: {
 		// نرخ مالیات بر ارزش افزوده به‌صورت کسری (۰ یعنی ۰٪، ۰.۰۹ یعنی ۹٪). فعلاً صفر؛
